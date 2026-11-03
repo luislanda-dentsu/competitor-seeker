@@ -139,6 +139,26 @@ function acumular(estado: SalidaClaude, ev: EventoStream): void {
   }
 }
 
+/**
+ * Manda `senal` al grupo de procesos del hijo (lanzado con `detached: true`,
+ * el hijo es líder de su grupo: así caen también sus subprocesos). Si el grupo
+ * ya no existe, false.
+ */
+export function matarGrupo(pid: number | undefined, senal: NodeJS.Signals = 'SIGTERM'): boolean {
+  if (!pid) return false
+  try {
+    process.kill(-pid, senal)
+    return true
+  } catch {
+    try {
+      process.kill(pid, senal)
+      return true
+    } catch {
+      return false
+    }
+  }
+}
+
 export function lanzarClaude(o: OpcionesClaude): ProcesoClaude {
   const env = cargarEnv()
   const modo = o.runner ?? env.CS_RUNNER
@@ -150,7 +170,9 @@ function lanzarReal(o: OpcionesClaude, args: string[], bin: string): ProcesoClau
   const cola = new Cola<EventoStream>()
   const estado: SalidaClaude = { code: null }
   const volcado = abrirVolcado(o.volcarA)
-  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: process.env })
+  // `detached`: el hijo lidera su propio grupo de procesos para poder cancelar
+  // el árbol entero (claude + subagentes + navegador) con `process.kill(-pid)`.
+  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: process.env, detached: true })
   let resto = ''
   const stderr: string[] = []
 
@@ -169,7 +191,7 @@ function lanzarReal(o: OpcionesClaude, args: string[], bin: string): ProcesoClau
   proceso.stderr?.on('data', (c: string) => stderr.push(c))
 
   const onAbort = () => {
-    if (proceso.exitCode === null && !proceso.killed) proceso.kill('SIGTERM')
+    if (proceso.exitCode === null && !proceso.killed) matarGrupo(proceso.pid, 'SIGTERM')
   }
   if (o.signal) {
     if (o.signal.aborted) onAbort()

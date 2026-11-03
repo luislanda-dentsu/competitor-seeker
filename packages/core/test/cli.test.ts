@@ -2,9 +2,10 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { ejecutar, parsearArgs, SalidaTexto } from '../src/cli.ts'
+import { conLockCorrida, CorridaBloqueada, ejecutar, parsearArgs, rutaLockCorrida, SalidaTexto } from '../src/cli.ts'
 import { guardarCorrida, leerCorrida, listarCorridas } from '../src/corridas.ts'
 import { leerLog } from '../src/log.ts'
+import type { Corrida } from '../src/schemas/corrida.ts'
 import { crearMarca } from '../src/marcas.ts'
 import { rutaLog, rutaMarca } from '../src/rutas.ts'
 import { crearRepoTemporal, type RepoTemporal } from './helpers.ts'
@@ -117,5 +118,66 @@ describe('cs help', () => {
     expect(r.status).toBe(0)
     expect(r.stdout).toMatch(/^Uso: scripts\/cs <comando>/)
     expect(r.stderr).toBe('')
+  })
+})
+
+const entrada = { marca: 'Coca Cola RD', fecha: '2026-11-03', movimiento: "Campaña 'Destapa la Navidad' con influencers", senal: 'nuevo', lectura: "Apuesta por el 'tono festivo' temprano" }
+const b64 = (v: unknown) => Buffer.from(JSON.stringify(v), 'utf8').toString('base64')
+
+function pendiente(id: string): Corrida {
+  return {
+    id, marca: 'k', fecha: '2026-11-03', ultimaCorrida: null, inicio: '2026-11-03T10:00:00.000Z', estado: 'pendiente-confirmacion',
+    verificado: false, intentos: 3, objeciones: [{ marca: 'A', problema: 'sin evidencia' }], fuentes: ['web'], competidores: [],
+    entradas: [{ ...entrada, senal: 'nuevo', id: '0123456789abcdef', corrida: id }], modo: 'ui', maquina: 'h',
+  }
+}
+
+describe('cli', () => {
+  it('parsearArgs acepta --json-b64 como valor y como --json-b64=valor', () => {
+    expect(parsearArgs(['registrar', '--marca', 'k', '--json-b64', 'eyJhIjoxfQ==', '--pendiente']).opciones).toEqual({ marca: 'k', 'json-b64': 'eyJhIjoxfQ==', pendiente: true })
+    expect(parsearArgs(['registrar', '--json-b64=eyJhIjoxfQ=='])).toEqual({ posicionales: ['registrar'], opciones: { 'json-b64': 'eyJhIjoxfQ==' } })
+  })
+
+  it('registrar --json-b64 registra un JSON con apóstrofos sin pasar por stdin', async () => {
+    const id = '2026-11-03-1000-k-mac'
+    const r = (await ejecutar(['registrar', '--marca', 'k', '--corrida-id', id, '--modo', 'ui', '--json-b64', b64({ entradas: [entrada], verificado: true, intentos: 1 })])) as { estado: string; registradas: number }
+    expect(r.estado).toBe('registrada')
+    expect(r.registradas).toBe(1)
+    const log = leerLog('k').items
+    expect(log[0]?.movimiento).toBe("Campaña 'Destapa la Navidad' con influencers")
+    expect(leerCorrida('k', id).estado).toBe('registrada')
+    expect(fs.existsSync(rutaLockCorrida('k', id))).toBe(false)
+  })
+
+  it('registrar rechaza --json-b64 vacío o no base64', async () => {
+    await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--json-b64'])).rejects.toThrow(/json-b64/)
+    await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--json-b64', '%%%'])).rejects.toThrow(/base64/)
+  })
+
+  it('confirmar toma el lock por corrida: una segunda confirmación concurrente falla y el lock se libera siempre', async () => {
+    const id = 'c-pendiente'
+    guardarCorrida(pendiente(id))
+    const lock = rutaLockCorrida('k', id)
+
+    // Lock ajeno presente: no se confirma ni se toca el log.
+    fs.writeFileSync(lock, '999 x\n', { flag: 'wx' })
+    await expect(ejecutar(['confirmar', '--marca', 'k', '--corrida-id', id, '--accion', 'registrar'])).rejects.toThrow(CorridaBloqueada)
+    expect(leerCorrida('k', id).estado).toBe('pendiente-confirmacion')
+    expect(leerLog('k').items).toHaveLength(0)
+    fs.rmSync(lock)
+
+    // Dos confirmaciones en paralelo: solo una entra; la otra ve el lock o el estado ya cambiado.
+    const [a, b] = await Promise.allSettled([
+      ejecutar(['confirmar', '--marca', 'k', '--corrida-id', id, '--accion', 'registrar']),
+      ejecutar(['confirmar', '--marca', 'k', '--corrida-id', id, '--accion', 'registrar']),
+    ])
+    expect([a.status, b.status].filter((s) => s === 'fulfilled')).toHaveLength(1)
+    expect(leerLog('k').items).toHaveLength(1)
+    expect(leerCorrida('k', id).estado).toBe('registrada')
+    expect(fs.existsSync(lock)).toBe(false)
+
+    // El lock se libera aunque fn lance.
+    await expect(conLockCorrida('k', id, () => { throw new Error('boom') })).rejects.toThrow('boom')
+    expect(fs.existsSync(lock)).toBe(false)
   })
 })

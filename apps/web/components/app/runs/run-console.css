@@ -1,0 +1,45 @@
+/*
+ * Isla oscura de la consola de corridas. Los tokens oscuros de globals.css
+ * viven en `:root[data-theme="dark"]`; aquí se repiten acotados a la isla para
+ * que `bg-surface`, `text-fg`, `border-border`… se resuelvan en oscuro aunque
+ * el resto del panel esté en claro. Mantener en sincronía con globals.css.
+ */
+.run-console[data-theme="dark"] {
+  color-scheme: dark;
+
+  --canvas: #141517;
+  --surface: #1e1f22;
+  --card: #26272b;
+  --card-2: #2d2e33;
+  --border: #33353a;
+  --border-strong: #44474e;
+  --fg: #ecedef;
+  --fg-muted: #9a9ea6;
+  --fg-dim: #6b7079;
+  --primary: #ecedef;
+  --primary-fg: #141518;
+  --ring: #6b7079;
+
+  --s-nuevo: #3fb950;
+  --s-nuevo-soft: rgb(63 185 80 / 0.16);
+  --s-confuso: #d29922;
+  --s-confuso-soft: rgb(210 153 34 / 0.16);
+  --s-sin-datos: #8b949e;
+  --s-sin-datos-soft: rgb(139 148 158 / 0.16);
+  --s-no-funciona: #f85149;
+  --s-no-funciona-soft: rgb(248 81 73 / 0.16);
+  --s-invalida: #a371f7;
+  --s-invalida-soft: rgb(163 113 247 / 0.16);
+
+  --brand: #3fb950;
+  --brand-soft: rgb(63 185 80 / 0.16);
+  --brand-line: #4ade80;
+  --chart-6: #58a6ff;
+
+  --sh-xs: 0 1px 2px rgb(0 0 0 / 0.24);
+  --sh-sm: 0 1px 3px rgb(0 0 0 / 0.32), 0 1px 2px rgb(0 0 0 / 0.2);
+
+  --input: var(--border-strong);
+  --info: var(--chart-6);
+  --info-foreground: var(--chart-6);
+}

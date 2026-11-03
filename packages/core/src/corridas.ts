@@ -23,9 +23,17 @@ export function fechaLocal(ahora: Date = new Date()): FechaISO {
   return `${ahora.getFullYear()}-${dosDigitos(ahora.getMonth() + 1)}-${dosDigitos(ahora.getDate())}`
 }
 
-/** `${AAAA-MM-DD}-${HHmm}-${hostCorto}`: incluye máquina para no colisionar entre equipos. */
-export function nuevoIdCorrida(_slug: string, ahora: Date = new Date(), host: string = hostCorto()): string {
-  return `${fechaLocal(ahora)}-${dosDigitos(ahora.getHours())}${dosDigitos(ahora.getMinutes())}-${host}`
+/**
+ * `${AAAA-MM-DD}-${HHmm}-${slug}-${hostCorto}`: lleva la marca (dos marcas en el
+ * mismo minuto no comparten id ni stream) y la máquina (no colisiona entre equipos).
+ */
+export function nuevoIdCorrida(slug: string, ahora: Date = new Date(), host: string = hostCorto()): string {
+  return `${fechaLocal(ahora)}-${dosDigitos(ahora.getHours())}${dosDigitos(ahora.getMinutes())}-${slug}-${host}`
+}
+
+/** Id de corrida válido: lo que produce `nuevoIdCorrida` o la migración (sin rutas ni separadores raros). */
+export function esIdCorridaValido(id: string): boolean {
+  return /^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$/.test(id) && !id.includes('..')
 }
 
 export interface CorridaInvalida {
