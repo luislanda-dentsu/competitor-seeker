@@ -1,8 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
 import { Suspense } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import {
@@ -12,9 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToastProvider } from "@/components/ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { BrandSwitcher } from "@/components/app/shell/BrandSwitcher";
 import { MobileNav } from "@/components/app/shell/MobileNav";
+import { NotificationCenter } from "@/components/app/shell/NotificationCenter";
 import { usePageTitle } from "@/components/app/shell/PageTitle";
 import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
 
@@ -66,29 +66,10 @@ export function Topbar(): React.ReactElement {
 
         <BrandSwitcher />
 
-        {/* Notificaciones */}
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                aria-label="Notificaciones: 0"
-                className="relative text-fg-muted"
-                size="icon-sm"
-                variant="ghost"
-              />
-            }
-          >
-            <Bell aria-hidden="true" />
-            <Badge
-              aria-hidden="true"
-              className="absolute -top-1 -right-1 h-4 min-w-4 px-1 font-mono text-[10px] sm:h-4 sm:min-w-4 sm:text-[10px]"
-              variant="secondary"
-            >
-              0
-            </Badge>
-          </TooltipTrigger>
-          <TooltipPopup>Sin notificaciones</TooltipPopup>
-        </Tooltip>
+        {/* Notificaciones (campana + viewport de toasts: el toastManager es global) */}
+        <ToastProvider position="bottom-right">
+          <NotificationCenter />
+        </ToastProvider>
 
         <div className="hidden sm:block">
           <ThemeToggle />

@@ -1,6 +1,13 @@
 // Solo servidor (Node): nunca importar desde componentes cliente.
 
-import { decidirApifyDesdeEstado, leerConfig, leerSecrets, USD_POR_RESULTADO, type ApifyPrompt, type Marca } from "@competitor-seeker/core";
+import {
+  leerConfig,
+  leerSecrets,
+  obtenerUsoActual,
+  USD_POR_RESULTADO,
+  type ApifyPrompt,
+  type Marca,
+} from "@competitor-seeker/core";
 import type { ApifyUi } from "@/lib/runs/tipos";
 
 /** Lo que el lanzador necesita para pintar el Switch y la estimación. */
@@ -24,10 +31,17 @@ export function estimarApifyUsd(marca: Marca, resultsLimit: number, usdPorResult
 }
 
 /**
- * Decide si Apify entra en esta corrida. Delega en `decidirApifyDesdeEstado`
- * (la misma decisión que `cs apify-uso`); nunca lanza.
+ * Decide si Apify entra en esta corrida (equivale a `cs apify-uso`): delega en
+ * `obtenerUsoActual` (caché de 10 min + corridas de todas las marcas).
+ * Nunca lanza: cualquier fallo deja Apify fuera con motivo.
  */
 export async function decidirApifyParaCorrida(incluir: boolean): Promise<ApifyPrompt> {
-  const d = await decidirApifyDesdeEstado({ incluir });
-  return { habilitado: d.habilitado, resultsLimit: d.resultsLimit, ...(d.motivo ? { motivo: d.motivo } : {}) };
+  const resultsLimit = leerConfig().apify.resultsLimitPorPerfil;
+  if (!incluir) return { habilitado: false, resultsLimit, motivo: "desactivado por la usuaria" };
+  try {
+    const { decision } = await obtenerUsoActual();
+    return { habilitado: decision.habilitado, resultsLimit: decision.resultsLimit, ...(decision.motivo ? { motivo: decision.motivo } : {}) };
+  } catch (e) {
+    return { habilitado: false, resultsLimit, motivo: `no se pudo consultar Apify: ${(e as Error).message}` };
+  }
 }

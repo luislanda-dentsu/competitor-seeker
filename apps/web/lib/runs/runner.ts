@@ -20,6 +20,7 @@ import {
   listarMarcas,
   LockOcupado,
   matarGrupo,
+  notificarFinCorrida,
   nuevoIdCorrida,
   procesoVivo,
   promptCorrida,
@@ -345,6 +346,11 @@ function cerrarCorrida(viva: CorridaViva, fin: FinProceso, ultimoTexto: string):
       : `el orquestador terminó (código ${fin.code ?? "?"}) sin registrar la corrida${detalle ? `: ${detalle}` : ""}`;
   }
   guardarCorrida(actualizada);
+  try {
+    notificarFinCorrida(actualizada); // Fase 5: campana (corrida-ok / rechazada / ig-sesion / git-error)
+  } catch {
+    /* una notificación fallida nunca rompe el cierre de la corrida */
+  }
 }
 
 // ---------------------------------------------------------------------------
