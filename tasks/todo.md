@@ -8,25 +8,30 @@ Gates: rama por fase → PR → revisión independiente (`/code-review`) → mer
 - [x] Decisión: Workflow en headless FUNCIONA (sin fallback)
 
 ## Fase 1 — Scaffold + core + migración + knowledge (`feat/scaffold-core`)
-- [ ] Monorepo npm workspaces (`apps/web`, `packages/core`), tsconfig.base, vitest
-- [ ] `create-next-app apps/web` + `shadcn init @coss/style` + `add @coss/ui` + 4 React Bits
-- [ ] `packages/core`: schemas zod, jsonl, log, corridas, marcas, competidores, migracion, cli
-- [ ] `scripts/cs migrar kolareal` → `log.jsonl` (16) + `marca.json` + `corridas/2026-08-20-migrada.json`
-- [ ] CLAUDE.md / agent.md / corrida.js / analista.md reescritos; panelista.md eliminado
-- [ ] `.env.example`, `.gitattributes` (merge=union), `config.json`, README
-- [ ] `~/SecondBrain/projects/competitor-seeker/` + HOME.md; `/graphify . --obsidian`
-- [ ] `npm test` verde
+- [x] Monorepo npm workspaces (`apps/web`, `packages/core`), tsconfig.base, vitest
+- [x] `create-next-app apps/web` + `shadcn init @coss/style` + `add @coss/ui` + 4 React Bits
+- [x] `packages/core`: schemas zod, jsonl, log, corridas, marcas, competidores, migracion, cli
+- [x] `scripts/cs migrar kolareal` → `log.jsonl` (16) + `marca.json` + `corridas/2026-08-20-migrada.json`
+- [x] CLAUDE.md / agent.md / corrida.js / analista.md reescritos; panelista.md eliminado; rastreador-ig vía Claude in Chrome
+- [x] `.env.example`, `.gitattributes` (merge=union), `config.json`, README, setup-maquina.sh
+- [x] `~/SecondBrain/projects/competitor-seeker/` + HOME.md; `graphify update .` (1289 nodos)
+- [x] `npm test` verde (35) · revisión independiente: 3 ALTA + 5 MEDIA + 5 BAJA → corrigiendo
+- [ ] PR #1 abierto y mergeado por el owner
+- [ ] PENDIENTE OWNER: `cp docs/claude-settings.json .claude/settings.json` (bloqueado para el agente)
 - Paralelizable: subagente A (core + tests) ∥ subagente B (Next + coss + tokens + shell)
 
 ## Fase 2 — Shell + Home + Competidor (`feat/ui-home`)   ∥ Fase 3
-- [ ] AppShell, Sidebar 240/64, Topbar, BrandSwitcher, ThemeToggle, ⌘K
-- [ ] KPIs, SignalTrendChart, SignalDistribution, FunnelBars, CompetitorCard/Table, RunTimeline
-- [ ] `/competidores/[slug]`: header, EntryTimeline, SignalStrip, PostMetricsTable
-- [ ] Estados vacío / demo / loading / error
+- [x] AppShell, Sidebar 240/64, Topbar, BrandSwitcher (cookie cs-marca), ThemeToggle, ⌘K
+- [x] KPIs, SignalTrendChart, SignalDistribution, FunnelBars, CompetitorCard/Table, RunTimeline
+- [x] `/competidores/[slug]`: header, EntryTimeline, SignalStrip, PostMetricsTable; 404 vía proxy.ts
+- [x] Estados vacío / loading / error · 47 tests · rama `feat/ui-home`
+- [ ] Revisión independiente + PR #2
 
 ## Fase 3 — Runner de corridas (`feat/runner`)   ∥ Fase 2
-- [ ] runner.ts, stream-json.ts, lock.ts, api/corridas/* (SSE), CS_RUNNER=mock
-- [ ] RunLauncher, RunConsole (dark), PhaseStepper, RunHistoryTable, flujo verificado=false
+- [x] lib/runs, api/corridas/* (SSE, lock, cancelar, confirmar), CS_RUNNER=mock
+- [x] RunLauncher, RunConsole (dark), PhaseStepper, RunHistoryTable, flujo pendiente-confirmación
+- [x] E2E real desde la UI: corrida registrada, 5 entradas, verificada en intento 2, 4m38s · rama `feat/runner`
+- [ ] Revisión independiente + PR #3
 
 ## Fase 4 — Asistente (`feat/asistente`)   ∥ Fase 5
 - [ ] agente asistente.md, api/asistente (SSE, --resume), chat UI, artefactos, historial local

@@ -1,5 +1,6 @@
 // Lock global de corrida en `data/corrida.lock` (creación atómica con `wx`).
-// Un lock cuyo pid ya no vive se considera huérfano y se reemplaza.
+// Un lock cuyo pid ya no vive, o con más de `MAX_EDAD_LOCK_MS` de antigüedad
+// (pid reutilizado por otro proceso), se considera huérfano y se reemplaza.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -26,6 +27,16 @@ export class LockOcupado extends Error {
 
 export function rutaLock(): string {
   return rutaDataArchivo('corrida.lock')
+}
+
+/** Ninguna corrida dura tanto: pasado este tiempo el lock es huérfano aunque el pid viva. */
+export const MAX_EDAD_LOCK_MS = 6 * 60 * 60 * 1000
+
+/** Huérfano: pid muerto, o `inicio` más viejo que `MAX_EDAD_LOCK_MS` (pid reutilizado). */
+export function esLockHuerfano(lock: ContenidoLock, ahora: Date = new Date()): boolean {
+  if (!procesoVivo(lock.pid)) return true
+  const inicio = Date.parse(lock.inicio)
+  return Number.isFinite(inicio) && ahora.getTime() - inicio > MAX_EDAD_LOCK_MS
 }
 
 /** Contenido actual del lock, o null si no existe o está corrupto. */
@@ -75,17 +86,25 @@ function escribirExclusivo(ruta: string, contenido: ContenidoLock): boolean {
 export function adquirirLock(opciones: OpcionesLock): ContenidoLock {
   const ruta = rutaLock()
   fs.mkdirSync(path.dirname(ruta), { recursive: true })
+  const ahora = opciones.ahora ?? new Date()
   const contenido: ContenidoLock = {
     pid: opciones.pid ?? process.pid,
     corridaId: opciones.corridaId,
     marca: opciones.marca,
-    inicio: (opciones.ahora ?? new Date()).toISOString(),
+    inicio: ahora.toISOString(),
     host: opciones.host ?? os.hostname(),
   }
   if (escribirExclusivo(ruta, contenido)) return contenido
 
   const actual = leerLock()
-  if (actual && procesoVivo(actual.pid)) throw new LockOcupado(actual)
+  if (actual && !esLockHuerfano(actual, ahora)) throw new LockOcupado(actual)
+
+  // Relectura justo antes de retirarlo: si otro proceso lo reemplazó entre
+  // medias (pid o inicio distintos), el dueño nuevo manda y no lo tocamos.
+  const relectura = leerLock()
+  if (relectura && (!actual || relectura.pid !== actual.pid || relectura.inicio !== actual.inicio)) {
+    throw new LockOcupado(relectura)
+  }
 
   // Huérfano o corrupto: lo retiramos y reintentamos una sola vez.
   try {

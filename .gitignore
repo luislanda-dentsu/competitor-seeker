@@ -9,7 +9,7 @@ dist/
 .env.*
 !.env.example
 # estado local (no sincronizado)
-data/
+/data/
 # claude local
 .claude/settings.local.json
 # knowledge layer generado

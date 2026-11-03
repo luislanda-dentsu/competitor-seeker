@@ -70,9 +70,8 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
       → analista (schema) → verificador (soul.md) → reintento con objeciones, máx. 3
    Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig? }
 5. REGISTRO — únicamente con el CLI (nunca edites log.jsonl ni corridas/ a mano):
-     scripts/cs registrar --marca <slug> --corrida-id <id> [--modo terminal|ui] [--pendiente|--forzar] <<'EOF'
-     { ...JSON devuelto por el workflow... }
-     EOF
+     scripts/cs registrar --marca <slug> --corrida-id <id> [--modo terminal|ui] [--pendiente|--forzar] <<< '<JSON devuelto por el workflow, en UNA línea>'
+   (here-string de una línea; en headless el heredoc multilínea `<<'EOF'` se deniega por el patrón de permisos)
    · verificado:true  → se registra (corrida `registrada` + entradas al log).
    · verificado:false → interactivo: muestra las objeciones al usuario y pregunta; solo con su "sí" usa `--forzar`.
                         MODO HEADLESS: usa `--pendiente` (queda `pendiente-confirmacion`; la app pide confirmación).
@@ -115,5 +114,5 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que abra Chrome (perfil con 
 ## Gotchas
 - El campo `marca` de cada Entrada es el **nombre del competidor** (herencia del v1); la marca-carpeta es `slug`. La UI nunca lo llama "marca".
 - `Workflow` por nombre puede resolver un snapshot viejo: siempre `scriptPath`.
-- En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`).
+- En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`); un heredoc multilínea no casa con ese patrón → usa here-string `<<< '…'` en una línea.
 - Claude in Chrome solo existe si Chrome (perfil con la extensión) está abierto; en `claude -p` hay que pasar `--chrome` o los tools `mcp__claude-in-chrome__*` no aparecen.

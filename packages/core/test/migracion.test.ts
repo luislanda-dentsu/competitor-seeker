@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { leerCorrida, ultimaCorridaRegistrada } from '../src/corridas.ts'
 import { leerLog } from '../src/log.ts'
 import { leerMarca } from '../src/marcas.ts'
+import { adquirirLock, leerLock, liberarLock, LockOcupado } from '../src/lock.ts'
 import { fechaCorridaDesdeIndex, migrarMarca } from '../src/migracion.ts'
 import { rutaMarca } from '../src/rutas.ts'
 import { crearRepoTemporal, leerFixture, type RepoTemporal } from './helpers.ts'
@@ -24,7 +25,8 @@ describe('migracion', () => {
   it('migra las 16 entradas, crea marca.json y la corrida sintética', () => {
     const carpeta = sembrar()
     const r = migrarMarca('kolareal')
-    expect(r).toEqual({ entradas: 16, competidores: 2, corridaId: '2026-08-20-migrada', yaMigrada: false })
+    expect(r).toEqual({ entradas: 16, competidores: 2, corridaId: '2026-08-20-migrada', yaMigrada: false, duplicadas: 0 })
+    expect(leerLock()).toBeNull()
     expect(fs.readFileSync(path.join(carpeta, 'log.jsonl'), 'utf8').split('\n').filter(Boolean).length).toBe(16)
     const log = leerLog('kolareal')
     expect(log.lineasInvalidas).toEqual([])
@@ -52,7 +54,7 @@ describe('migracion', () => {
     migrarMarca('kolareal')
     const antes = fs.readFileSync(path.join(carpeta, 'log.jsonl'), 'utf8')
     const r2 = migrarMarca('kolareal')
-    expect(r2).toEqual({ entradas: 16, competidores: 2, corridaId: '2026-08-20-migrada', yaMigrada: true })
+    expect(r2).toEqual({ entradas: 16, competidores: 2, corridaId: '2026-08-20-migrada', yaMigrada: true, duplicadas: 0 })
     expect(fs.readFileSync(path.join(carpeta, 'log.jsonl'), 'utf8')).toBe(antes)
 
     // Ids estables entre dos migraciones independientes.
@@ -75,5 +77,32 @@ describe('migracion', () => {
 
   it('sin nada que migrar lanza', () => {
     expect(() => migrarMarca('nadie')).toThrow(/Nada que migrar/)
+  })
+
+  it('entradas legacy duplicadas (mismo marca|fecha|movimiento) no abortan: se conserva la primera', () => {
+    const a = { marca: 'A', fecha: '2026-08-20', movimiento: 'Lanzó promo', senal: 'nuevo', lectura: 'primera lectura' }
+    const b = { marca: 'B', fecha: '2026-08-19', movimiento: 'Sin rastro', senal: 'sin-datos', lectura: 'primera de B' }
+    const carpeta = rutaMarca('dup')
+    fs.mkdirSync(carpeta, { recursive: true })
+    fs.writeFileSync(path.join(carpeta, 'log.json'), JSON.stringify([a, { ...a, lectura: 'lectura distinta' }, b, { ...b, senal: 'confuso' }]))
+    const r = migrarMarca('dup')
+    expect(r).toEqual({ entradas: 2, competidores: 2, corridaId: '2026-08-20-migrada', yaMigrada: false, duplicadas: 2 })
+    const log = leerLog('dup')
+    expect(log.lineasInvalidas).toEqual([])
+    expect(log.items.map((e) => [e.marca, e.lectura, e.senal])).toEqual([['A', 'primera lectura', 'nuevo'], ['B', 'primera de B', 'sin-datos']])
+    expect(leerCorrida('dup', '2026-08-20-migrada').entradas.length).toBe(2)
+    expect(fs.existsSync(path.join(carpeta, 'log.json.migrado'))).toBe(true)
+  })
+
+  it('toma el lock global mientras migra y lo suelta al terminar o fallar', () => {
+    sembrar()
+    adquirirLock({ corridaId: 'c-en-curso', marca: 'otra' })
+    expect(() => migrarMarca('kolareal')).toThrow(LockOcupado)
+    expect(fs.existsSync(path.join(rutaMarca('kolareal'), 'log.jsonl'))).toBe(false)
+    liberarLock('c-en-curso')
+
+    fs.writeFileSync(path.join(rutaMarca('rota'), 'log.json').replace('/rota/', '/kolareal/'), '{no es json')
+    expect(() => migrarMarca('kolareal')).toThrow(/ilegible/)
+    expect(leerLock()).toBeNull()
   })
 })

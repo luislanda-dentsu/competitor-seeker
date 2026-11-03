@@ -5,6 +5,7 @@ import path from 'node:path'
 import { parseCompetidoresTxt } from './competidores.ts'
 import { listarCorridas, guardarCorrida, existeCorrida } from './corridas.ts'
 import { appendJsonl, describirErrorZod, leerJsonl } from './jsonl.ts'
+import { adquirirLock, liberarLock } from './lock.ts'
 import { conId, leerLog } from './log.ts'
 import { crearMarca, existeMarca, leerMarca } from './marcas.ts'
 import { rutaCorridas, rutaLog, rutaMarca } from './rutas.ts'
@@ -17,7 +18,11 @@ export interface ResumenMigracion {
   competidores: number
   corridaId: string
   yaMigrada: boolean
+  /** Entradas del log legacy con el mismo id (`marca|fecha|movimiento`) que otra anterior: se conserva la primera. */
+  duplicadas: number
 }
+
+const LOCK_MIGRACION = 'migracion'
 
 /** Extrae `corrida` del bloque `<script type="application/json" id="datos">`. */
 export function fechaCorridaDesdeIndex(html: string): FechaISO | null {
@@ -54,19 +59,32 @@ function resumenYaMigrada(slug: string): ResumenMigracion {
     competidores: marca.competidores.length,
     corridaId: migrada?.id ?? '',
     yaMigrada: true,
+    duplicadas: 0,
   }
 }
 
 export function migrarMarca(slug: string): ResumenMigracion {
   const carpeta = rutaMarca(slug)
   const rutaLegacy = path.join(carpeta, 'log.json')
-  const rutaTxt = path.join(carpeta, 'competidores.txt')
-  const rutaIndex = path.join(carpeta, 'index.html')
 
   if (!fs.existsSync(rutaLegacy)) {
     if (existeMarca(slug)) return resumenYaMigrada(slug)
     throw new Error(`Nada que migrar en ${carpeta}: no hay log.json ni marca.json`)
   }
+
+  // La migración escribe log.jsonl y corridas/: toma el lock global para no
+  // solaparse nunca con una corrida (y lo suelta también si falla).
+  adquirirLock({ corridaId: LOCK_MIGRACION, marca: slug })
+  try {
+    return migrarConLock(slug, carpeta, rutaLegacy)
+  } finally {
+    liberarLock(LOCK_MIGRACION)
+  }
+}
+
+function migrarConLock(slug: string, carpeta: string, rutaLegacy: string): ResumenMigracion {
+  const rutaTxt = path.join(carpeta, 'competidores.txt')
+  const rutaIndex = path.join(carpeta, 'index.html')
 
   // 1. Log legacy validado entrada por entrada.
   let crudo: unknown
@@ -87,11 +105,15 @@ export function migrarMarca(slug: string): ResumenMigracion {
   const corridaId = `${fecha}-migrada`
 
   // 3. log.jsonl: solo las ids que falten; relectura y comparación campo a campo.
-  const entradas = legacy.map((e) => conId(e, corridaId))
+  // Dos entradas legacy con el mismo `marca|fecha|movimiento` comparten id: se
+  // conserva la primera y las demás se cuentan como duplicadas (no abortan).
+  const todas = legacy.map((e) => conId(e, corridaId))
+  const entradas = todas.filter((e, i) => todas.findIndex((x) => x.id === e.id) === i)
+  const duplicadas = todas.length - entradas.length
   const ruta = rutaLog(slug)
   const previas = leerJsonl(ruta, Entrada).items
   const idsPrevias = new Set(previas.map((e) => e.id))
-  const faltantes = entradas.filter((e, i) => !idsPrevias.has(e.id) && entradas.findIndex((x) => x.id === e.id) === i)
+  const faltantes = entradas.filter((e) => !idsPrevias.has(e.id))
   const tamanoPrevio = fs.existsSync(ruta) ? fs.statSync(ruta).size : 0
   appendJsonl(ruta, Entrada, faltantes)
 
@@ -153,5 +175,6 @@ export function migrarMarca(slug: string): ResumenMigracion {
     competidores: leerMarca(slug).competidores.length,
     corridaId,
     yaMigrada: false,
+    duplicadas,
   }
 }

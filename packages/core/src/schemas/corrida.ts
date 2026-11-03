@@ -16,12 +16,17 @@ export type Objecion = z.infer<typeof Objecion>
 export const ApifyCorrida = z.object({
   resultados: z.number().int().nonnegative().default(0),
   costeEstimadoUsd: z.number().nonnegative().default(0),
+  incluido: z.boolean().optional(),
   omitido: z.boolean().optional(),
-  motivo: z.string().optional(),
+  /** Id del run en Apify. El workflow lo omite si no lo hay; `null` se tolera por compatibilidad. */
+  runId: z.string().nullish(),
+  /** Por qué se omitió. Ídem: ausente o `null`. */
+  motivo: z.string().nullish(),
 })
 export type ApifyCorrida = z.infer<typeof ApifyCorrida>
 
-export const SesionIg = z.enum(['ok', 'no-disponible', 'desconocido'])
+/** `no-usado`: la corrida no tenía perfiles de IG; `error`: el rastreador-ig no respondió. */
+export const SesionIg = z.enum(['ok', 'no-disponible', 'no-usado', 'error', 'desconocido'])
 export type SesionIg = z.infer<typeof SesionIg>
 
 export const Corrida = z.object({

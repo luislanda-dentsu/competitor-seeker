@@ -27,7 +27,8 @@ export const EntradaAgente = z.object({
   lectura: z.string().min(1),
   fuentes: z.array(Fuente).optional(),
   metricas: Metricas.optional(),
-  evidencia: z.array(z.url()).optional(),
+  /** URLs o referencias textuales (p. ej. "post del 3/11 en el feed"): no se exige URL. */
+  evidencia: z.array(z.string().min(1)).optional(),
 })
 export type EntradaAgente = z.infer<typeof EntradaAgente>
 

@@ -79,6 +79,10 @@ export interface DecisionApify {
 export function decidirApify(uso: UsoApify, cfg: ConfigApify): DecisionApify {
   const resultsLimit = cfg.resultsLimitPorPerfil
   if (!cfg.habilitado) return { habilitado: false, motivo: 'deshabilitado en config', resultsLimit }
+  // Sin presupuesto no hay nada que gastar: `pct` daría 0 con gasto 0 y se colaría.
+  if (uso.mensual.limiteUsd <= 0 || uso.diario.limiteUsd <= 0 || uso.semanal.limiteUsd <= 0) {
+    return { habilitado: false, motivo: 'presupuesto 0', resultsLimit }
+  }
   if (uso.mensual.pct >= cfg.saltarSiPctMensual) {
     return { habilitado: false, motivo: `uso mensual ${uso.mensual.pct}% ≥ ${cfg.saltarSiPctMensual}%`, resultsLimit }
   }

@@ -104,7 +104,10 @@ if (perfilesIG.length) {
 }
 
 // Rastreador Apify (métricas numéricas de IG): solo si el orquestador lo habilitó tras consultar el uso.
-let apifyInfo = { incluido: false, resultados: 0, costeEstimadoUsd: 0, motivo: apifyCfg.motivo || null }
+// `motivo` solo si es string y `runId` solo si existe: el schema de `cs registrar`
+// (ResultadoWorkflow) no debe recibir `null` en campos opcionales.
+let apifyInfo = { incluido: false, omitido: true, resultados: 0, costeEstimadoUsd: 0 }
+if (typeof apifyCfg.motivo === 'string' && apifyCfg.motivo) apifyInfo.motivo = apifyCfg.motivo
 if (perfilesIG.length && apifyCfg.habilitado) {
   const resultsLimit = apifyCfg.resultsLimit || 12
   tareas.push(() =>
@@ -116,7 +119,8 @@ if (perfilesIG.length && apifyCfg.habilitado) {
       `Haz UNA sola llamada al actor con todos los perfiles y devuelve hallazgos crudos con METRICAS por post, según tu formato de salida.`,
       { label: 'rastreo-apify:todos', phase: 'Rastreo', agentType: 'rastreador-apify', schema: APIFY_SCHEMA }
     ).then(r => {
-      apifyInfo = { incluido: true, resultados: r.resultados, costeEstimadoUsd: Math.round(r.resultados * 0.0027 * 10000) / 10000, runId: r.runId || null, motivo: null }
+      apifyInfo = { incluido: true, omitido: false, resultados: r.resultados, costeEstimadoUsd: Math.round(r.resultados * 0.0027 * 10000) / 10000 }
+      if (typeof r.runId === 'string' && r.runId) apifyInfo.runId = r.runId
       return { nombre: 'APIFY', hallazgos: r.hallazgos }
     })
   )

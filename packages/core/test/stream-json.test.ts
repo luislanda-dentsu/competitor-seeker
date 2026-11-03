@@ -31,7 +31,7 @@ describe('stream-json', () => {
     expect(fin.length).toBe(1)
     expect(fin[0]?.extra?.structured_output).toEqual({ verificado: true, intentos: 1, entradas: 2, igSesion: 'no-disponible' })
     expect(fin[0]?.extra?.duration_api_ms).toBe(85842)
-    expect(fin[0]?.extra?.session_id).toBe('9bb59c5d-b02a-4bb8-b2fe-631fef7e3b66')
+    expect(fin[0]?.extra?.session_id).toBe('00000000-0000-4000-8000-000000000001')
     const tools = eventos.filter((e) => e.tipo === 'tool').map((e) => e.texto)
     expect(tools).toContain('▶ Workflow corrida')
     expect(eventos.filter((e) => e.tipo === 'texto').map((e) => e.texto).join('')).toContain('Lanzo el workflow por scriptPath')

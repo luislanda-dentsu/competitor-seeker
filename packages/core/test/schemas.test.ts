@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ConfigCompartida, Corrida, Entrada, EntradaAgente, Marca, Senal } from '../src/schemas/index.ts'
+import { ApifyCorrida, ConfigCompartida, Corrida, Entrada, EntradaAgente, Marca, ResultadoWorkflow, Senal, SesionIg } from '../src/schemas/index.ts'
 
 const base = { marca: 'X', fecha: '2026-08-20', movimiento: 'Hizo algo', senal: 'nuevo', lectura: 'Significa algo' }
 
@@ -9,6 +9,20 @@ describe('schemas', () => {
     const conExtras = EntradaAgente.parse({ ...base, fuentes: ['ig'], metricas: { likes: 3 }, evidencia: ['https://x.com/p'] })
     expect(conExtras.fuentes).toEqual(['ig'])
     expect(conExtras.metricas?.likes).toBe(3)
+  })
+
+  it('evidencia admite referencias textuales, no solo URLs; rechaza cadenas vacías', () => {
+    const textual = EntradaAgente.parse({ ...base, evidencia: ['post del 3/11 en el feed', 'https://x.com/p'] })
+    expect(textual.evidencia).toEqual(['post del 3/11 en el feed', 'https://x.com/p'])
+    expect(EntradaAgente.safeParse({ ...base, evidencia: [''] }).success).toBe(false)
+    expect(EntradaAgente.safeParse({ ...base, evidencia: 'no-lista' }).success).toBe(false)
+  })
+
+  it('ApifyCorrida tolera motivo/runId null o ausentes; SesionIg incluye no-usado y error', () => {
+    expect(ApifyCorrida.parse({ resultados: 0, costeEstimadoUsd: 0, motivo: null, runId: null })).toMatchObject({ motivo: null, runId: null })
+    expect(ApifyCorrida.parse({})).toEqual({ resultados: 0, costeEstimadoUsd: 0 })
+    expect(SesionIg.options).toEqual(['ok', 'no-disponible', 'no-usado', 'error', 'desconocido'])
+    expect(ResultadoWorkflow.safeParse({ entradas: [], verificado: true, ig: { sesion: 'otra' } }).success).toBe(false)
   })
 
   it('rechaza señal fuera del enum y fecha no ISO', () => {

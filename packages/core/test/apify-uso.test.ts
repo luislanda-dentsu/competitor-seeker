@@ -42,6 +42,18 @@ describe('apify-uso', () => {
     expect(decidirApify(calcularUso(limites(0), cfg, [], ahora), { ...cfg, habilitado: false }).motivo).toBe('deshabilitado en config')
   })
 
+  it('presupuesto 0 en cualquier ventana deshabilita Apify aunque no haya gasto', () => {
+    expect(decidirApify(calcularUso(limites(0, 0), cfg, [], ahora), cfg)).toEqual({ habilitado: false, motivo: 'presupuesto 0', resultsLimit: 12 })
+    const cfgMensual0 = { ...cfg, presupuesto: { mensualUsd: 0, diarioUsd: null, semanalUsd: null } }
+    expect(decidirApify(calcularUso(limites(0), cfgMensual0, [], ahora), cfgMensual0).motivo).toBe('presupuesto 0')
+    const cfgDiario0 = { ...cfg, presupuesto: { mensualUsd: null, diarioUsd: 0, semanalUsd: null } }
+    expect(decidirApify(calcularUso(limites(0), cfgDiario0, [], ahora), cfgDiario0).motivo).toBe('presupuesto 0')
+    const cfgSemanal0 = { ...cfg, presupuesto: { mensualUsd: null, diarioUsd: null, semanalUsd: 0 } }
+    expect(decidirApify(calcularUso(limites(0), cfgSemanal0, [], ahora), cfgSemanal0).motivo).toBe('presupuesto 0')
+    // `deshabilitado en config` sigue teniendo prioridad.
+    expect(decidirApify(calcularUso(limites(0, 0), cfg, [], ahora), { ...cfg, habilitado: false }).motivo).toBe('deshabilitado en config')
+  })
+
   it('ventanas diaria y semanal suman el coste de las corridas en ventana', () => {
     const corridas = [
       corrida(new Date(2026, 10, 3, 9), 1.0), // hoy
