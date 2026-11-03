@@ -25,6 +25,8 @@ export interface OpcionesClaude {
   /** Objeto o string JSON para `--json-schema`. */
   jsonSchema?: Record<string, unknown> | string
   name?: string
+  /** Añade `--chrome` (Claude in Chrome). Por defecto true; el asistente lo desactiva. */
+  chrome?: boolean
   /** Ruta donde volcar cada línea cruda (append). Al terminar se crea `<ruta>.fin`. */
   volcarA?: string
   signal?: AbortSignal

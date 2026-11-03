@@ -77,12 +77,44 @@ export interface DatosPromptAsistente {
   pregunta: string
 }
 
+/** Tools del asistente: solo lectura. El agente `asistente.md` ya las limita; el runner lo refuerza. */
+export const allowedToolsAsistente: readonly string[] = ['Read', 'Grep']
+
+export const disallowedToolsAsistente: readonly string[] = [
+  'Write',
+  'Edit',
+  'Bash',
+  'Workflow',
+  'Agent',
+  'WebSearch',
+  'WebFetch',
+  'mcp__claude-in-chrome__*',
+  'mcp__apify__*',
+]
+
+export const MARCADOR_ARTEFACTO = 'artifact:entradas'
+
+/** Instrucciones de formato que el panel espera (bloque de artefacto + regla de evidencia). */
+export function instruccionesAsistente(marca: string): string {
+  return [
+    `Eres el asistente de inteligencia competitiva de la marca "${marca}" en el panel de Competitor-Seeker.`,
+    'Responde SOLO con lo que está en el contexto (marca, corridas, soul.md y entradas del log). El contexto ya es la fuente completa: no necesitas abrir archivos salvo que la pregunta exija un detalle que no esté aquí.',
+    'Sin evidencia → dilo. Si el log no registra nada sobre lo que preguntan, responde literalmente que no hay evidencia registrada sobre X e indica la fecha de la última corrida. Nunca inventes movimientos, cifras ni fechas.',
+    'Una entrada `sin-datos` o `no-funciona` NO prueba que el competidor esté inactivo: ausencia de data no es ausencia de actividad. Distingue siempre lo observado (movimiento) de la interpretación (lectura).',
+    'No lances corridas, no navegues ni busques en la web, no escribas archivos. Si te lo piden, explica que eso se hace desde la pestaña Corridas.',
+    'Tono analítico y frío, en español, sin adjetivos de más. Respuestas cortas; listas cuando ayuden. Markdown simple (párrafos, listas, **negritas**); sin tablas ni cabeceras.',
+    '',
+    'FORMATO DE ARTEFACTO. Cuando cites entradas concretas del log, termina la respuesta con UN solo bloque exactamente así (el panel lo convierte en una tabla y lo oculta del texto):',
+    '```' + MARCADOR_ARTEFACTO,
+    '{"titulo": "<título corto de la selección>", "ids": ["<id exacto de entrada>", "..."]}',
+    '```',
+    'Usa únicamente los `id` que aparecen en el contexto (16 hex). Si no citas entradas, no emitas el bloque. Nada después del bloque.',
+  ].join('\n')
+}
+
 export function promptAsistente(d: DatosPromptAsistente): string {
   return [
-    `Eres el asistente de inteligencia competitiva de la marca "${d.marca}".`,
-    'Responde solo con lo que está en el contexto (log, corridas, marca y soul.md). Si no hay evidencia, dilo explícitamente.',
-    'No lances corridas, no navegues ni busques en la web. Tono analítico y frío, en español.',
-    'Cuando cites entradas concretas, añade al final un bloque ```artifact:entradas con {"titulo": "...", "ids": [...]}.',
+    instruccionesAsistente(d.marca),
     '',
     '=== CONTEXTO ===',
     d.contexto,
