@@ -15,9 +15,9 @@ import { RunConsoleView } from "@/components/app/runs/RunConsole";
 import { SignalBadge } from "@/components/app/signals/SignalBadge";
 import { fmtDur, fmtFecha } from "@/lib/format";
 import { reducirTodo } from "@/lib/runs/consola";
-import { buscarCorrida, eventosGrabados, marcaActiva } from "@/lib/runs/consulta";
+import { buscarCorrida, eventosGrabados } from "@/lib/runs/consulta";
 import { resumenDeCorrida } from "@/lib/runs/resumen";
-import { esIdCorridaValido } from "@/lib/runs/rutas";
+import { esIdCorridaValido, esSlugMarcaValido } from "@/lib/runs/rutas";
 
 export const metadata = { title: "Corrida" };
 
@@ -38,7 +38,7 @@ function Meta({ c }: { c: Corrida }): React.ReactElement {
         <EstadoBadge estado={c.estado} />
         {c.estado === "pendiente-confirmacion" && (
           <span className="ms-auto">
-            <ConfirmActions corridaId={c.id} intentos={c.intentos} objeciones={c.objeciones} />
+            <ConfirmActions corridaId={c.id} intentos={c.intentos} marca={c.marca} objeciones={c.objeciones} />
           </span>
         )}
       </CardHeader>
@@ -147,13 +147,12 @@ function Entradas({ c }: { c: Corrida }): React.ReactElement {
   );
 }
 
-async function Detalle({ id }: { id: string }): Promise<React.ReactElement> {
+async function Detalle({ marca, id }: { marca: string; id: string }): Promise<React.ReactElement> {
   await connection();
-  if (!esIdCorridaValido(id)) notFound();
-  const preferida = await marcaActiva();
-  const corrida = buscarCorrida(id, preferida?.slug);
+  if (!esSlugMarcaValido(marca) || !esIdCorridaValido(id)) notFound();
+  const corrida = buscarCorrida(marca, id);
   if (!corrida) notFound();
-  const eventos = eventosGrabados(id);
+  const eventos = eventosGrabados(marca, id);
   const consola = eventos ? reducirTodo(eventos, corrida.estado === "en-curso" ? null : resumenDeCorrida(corrida)) : null;
 
   return (
@@ -177,8 +176,8 @@ async function Detalle({ id }: { id: string }): Promise<React.ReactElement> {
   );
 }
 
-export default async function CorridaPage({ params }: { params: Promise<{ id: string }> }): Promise<React.ReactElement> {
-  const { id } = await params;
+export default async function CorridaPage({ params }: { params: Promise<{ marca: string; id: string }> }): Promise<React.ReactElement> {
+  const { marca, id } = await params;
   return (
     <Suspense
       fallback={
@@ -189,7 +188,7 @@ export default async function CorridaPage({ params }: { params: Promise<{ id: st
         </div>
       }
     >
-      <Detalle id={id} />
+      <Detalle id={id} marca={marca} />
     </Suspense>
   );
 }

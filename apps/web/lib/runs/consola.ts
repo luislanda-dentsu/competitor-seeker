@@ -19,6 +19,7 @@ export interface LineaConsola {
 
 export interface ResumenFin {
   corridaId?: string;
+  marca?: string;
   estado?: string;
   verificado?: boolean;
   intentos?: number;
@@ -128,11 +129,14 @@ export function reducirConsola(estado: EstadoConsola, ev: EventoCorrida): Estado
   }
 
   if (ev.tipo === "fase" && esFase(ev.fase)) {
+    // Activar la fase i deja las anteriores en ok y las posteriores en pendiente:
+    // si el flujo vuelve atrás (reintento del analista tras una verificación), lo refleja.
     const idx = FASES.indexOf(ev.fase);
     const nuevas = { ...fases };
     FASES.forEach((f, i) => {
       if (i < idx) nuevas[f] = "ok";
       else if (i === idx) nuevas[f] = "activo";
+      else nuevas[f] = "pendiente";
     });
     fases = nuevas;
     if (ev.fase === "Verificación") {
@@ -144,15 +148,23 @@ export function reducirConsola(estado: EstadoConsola, ev: EventoCorrida): Estado
   return { lineas, fases, intentosVerificacion, fin: estado.fin, ultimoTexto };
 }
 
-/** Cierra el estado con el resumen final: fases en ok, o la activa en error. */
+/**
+ * Cierra el estado con el resumen final: fases en ok; la activa en error si la
+ * corrida falló; Verificación en error si quedó `pendiente-confirmacion`
+ * (el verificador no la dio por buena: no es una fase completada).
+ */
 export function cerrarConsola(estado: EstadoConsola, fin: ResumenFin): EstadoConsola {
   const fallo = fin.estado === "error";
+  const sinVerificar = fin.estado === "pendiente-confirmacion";
   const fases = { ...estado.fases };
   for (const f of FASES) {
-    if (fallo && fases[f] === "activo") fases[f] = "error";
-    else if (!fallo && fases[f] !== "pendiente") fases[f] = "ok";
-    else if (!fallo && fases[f] === "pendiente" && fin.estado && fin.estado !== "en-curso") fases[f] = "ok";
+    if (fallo) {
+      if (fases[f] === "activo") fases[f] = "error";
+    } else if (fases[f] !== "pendiente" || (fin.estado && fin.estado !== "en-curso")) {
+      fases[f] = "ok";
+    }
   }
+  if (sinVerificar) fases["Verificación"] = "error";
   const intentos = typeof fin.intentos === "number" && fin.intentos > estado.intentosVerificacion ? fin.intentos : estado.intentosVerificacion;
   return { ...estado, fases, intentosVerificacion: intentos, fin };
 }

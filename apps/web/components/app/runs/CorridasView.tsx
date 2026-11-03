@@ -11,7 +11,7 @@ import { RunConsoleView, useCronometro } from "@/components/app/runs/RunConsole"
 import { RunLauncher } from "@/components/app/runs/RunLauncher";
 import { RunSummary } from "@/components/app/runs/RunSummary";
 import type { ResumenFin } from "@/lib/runs/consola";
-import type { ApifyUi, CorridaActiva, MarcaUi } from "@/lib/runs/tipos";
+import { rutaApiCorrida, type ApifyUi, type CorridaActiva, type MarcaUi } from "@/lib/runs/tipos";
 import { useCorridaStream } from "@/lib/use-sse";
 
 export interface CorridasViewProps {
@@ -34,7 +34,7 @@ function ConsolaActiva({
   activa: CorridaActiva;
   onCerrada: (fin: ResumenFin) => void;
 }): React.ReactElement {
-  const { consola, conexion } = useCorridaStream(activa.corridaId);
+  const { consola, conexion, error: errorStream } = useCorridaStream(activa.marca, activa.corridaId);
   const fin = consola.fin;
   const tiempo = useCronometro(activa.inicio, fin?.duracionMs, fin === null);
   const [cancelando, setCancelando] = useState(false);
@@ -52,7 +52,7 @@ function ConsolaActiva({
     setCancelando(true);
     setErrorCancelar(null);
     try {
-      const res = await fetch(`/api/corridas/${encodeURIComponent(activa.corridaId)}`, { method: "DELETE" });
+      const res = await fetch(rutaApiCorrida(activa.marca, activa.corridaId), { method: "DELETE" });
       if (!res.ok) {
         const cuerpo = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(cuerpo.error ?? `Error ${res.status}`);
@@ -75,6 +75,11 @@ function ConsolaActiva({
         onCancelar={() => void cancelar()}
         tiempo={tiempo}
       />
+      {errorStream && (
+        <p className="text-sm text-s-no-funciona" role="alert">
+          {errorStream}
+        </p>
+      )}
       {errorCancelar && (
         <p className="text-sm text-s-no-funciona" role="alert">
           No se pudo cancelar: {errorCancelar}
@@ -174,6 +179,7 @@ export function CorridasView({ marcas, marcaInicial, apify, enCurso }: CorridasV
         <ConfirmDialog
           corridaId={activa.corridaId}
           intentos={fin.intentos ?? 0}
+          marca={activa.marca}
           objeciones={fin.objeciones ?? []}
           onOpenChange={setDialogo}
           onResuelto={alResolver}

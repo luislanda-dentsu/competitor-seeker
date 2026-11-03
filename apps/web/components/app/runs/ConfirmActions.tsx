@@ -7,10 +7,12 @@ import { ConfirmDialog, type ObjecionUi } from "@/components/app/runs/ConfirmDia
 
 /** Botón "Resolver" del detalle de una corrida pendiente: abre el diálogo de confirmación. */
 export function ConfirmActions({
+  marca,
   corridaId,
   intentos,
   objeciones,
 }: {
+  marca: string;
   corridaId: string;
   intentos: number;
   objeciones: readonly ObjecionUi[];
@@ -25,6 +27,7 @@ export function ConfirmActions({
       <ConfirmDialog
         corridaId={corridaId}
         intentos={intentos}
+        marca={marca}
         objeciones={objeciones}
         onOpenChange={setOpen}
         onResuelto={() => router.refresh()}

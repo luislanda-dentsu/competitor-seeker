@@ -23,3 +23,12 @@ export interface CorridaActiva {
   /** ISO. */
   inicio: string;
 }
+
+/** Rutas de la UI y la API de una corrida (siempre namespaceadas por marca). */
+export function rutaUiCorrida(marca: string, corridaId: string): `/corridas/${string}/${string}` {
+  return `/corridas/${encodeURIComponent(marca)}/${encodeURIComponent(corridaId)}`;
+}
+
+export function rutaApiCorrida(marca: string, corridaId: string): string {
+  return `/api/corridas/${encodeURIComponent(marca)}/${encodeURIComponent(corridaId)}`;
+}

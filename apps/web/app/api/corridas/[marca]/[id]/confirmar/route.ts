@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { confirmarCorrida } from "@/lib/runs/confirmar";
 import { buscarCorrida } from "@/lib/runs/consulta";
-import { esIdCorridaValido } from "@/lib/runs/rutas";
+import { esIdCorridaValido, esSlugMarcaValido } from "@/lib/runs/rutas";
 
-type Ctx = { params: Promise<{ id: string }> };
+type Ctx = { params: Promise<{ marca: string; id: string }> };
 
-/** POST /api/corridas/[id]/confirmar `{ accion: 'registrar' | 'descartar' }` → vía `scripts/cs confirmar`. */
+/** POST /api/corridas/[marca]/[id]/confirmar `{ accion: 'registrar' | 'descartar' }` → vía `scripts/cs confirmar`. */
 export async function POST(request: Request, { params }: Ctx): Promise<Response> {
-  const { id } = await params;
+  const { marca, id } = await params;
+  if (!esSlugMarcaValido(marca)) return NextResponse.json({ error: "Marca inválida" }, { status: 400 });
   if (!esIdCorridaValido(id)) return NextResponse.json({ error: "Id inválido" }, { status: 400 });
   let cuerpo: { accion?: unknown };
   try {
@@ -19,15 +20,17 @@ export async function POST(request: Request, { params }: Ctx): Promise<Response>
   if (accion !== "registrar" && accion !== "descartar") {
     return NextResponse.json({ error: "accion debe ser registrar|descartar" }, { status: 400 });
   }
-  const corrida = buscarCorrida(id);
-  if (!corrida) return NextResponse.json({ error: `No existe la corrida ${id}` }, { status: 404 });
+  const corrida = buscarCorrida(marca, id);
+  if (!corrida) return NextResponse.json({ error: `No existe la corrida ${id} de ${marca}` }, { status: 404 });
   if (corrida.estado !== "pendiente-confirmacion") {
     return NextResponse.json({ error: `La corrida está en estado "${corrida.estado}", no pendiente-confirmacion` }, { status: 409 });
   }
   try {
-    const r = await confirmarCorrida(corrida.marca, id, accion);
+    const r = await confirmarCorrida(marca, id, accion);
     return NextResponse.json(r);
   } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+    // El CLI responde con CorridaBloqueada si otra confirmación va a la vez: 409, no 500.
+    const mensaje = (e as Error).message;
+    return NextResponse.json({ error: mensaje }, { status: /Otra operación/.test(mensaje) ? 409 : 500 });
   }
 }

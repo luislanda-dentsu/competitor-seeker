@@ -1,6 +1,8 @@
 // Solo servidor (Node): nunca importar desde componentes cliente.
 
+import fs from "node:fs";
 import os from "node:os";
+import path from "node:path";
 import {
   adquirirLock,
   allowedToolsCorrida,
@@ -14,7 +16,10 @@ import {
   leerLock,
   leerMarca,
   liberarLock,
+  listarCorridas,
+  listarMarcas,
   LockOcupado,
+  matarGrupo,
   nuevoIdCorrida,
   procesoVivo,
   promptCorrida,
@@ -25,7 +30,7 @@ import {
 } from "@competitor-seeker/core";
 import { decidirApifyParaCorrida } from "@/lib/runs/apify";
 import { obtenerViva, quitarViva, registrarViva, vivas, type CorridaViva } from "@/lib/runs/registro";
-import { rutaStream } from "@/lib/runs/rutas";
+import { rutaFinStream, rutaStream, rutaStreamsMarca } from "@/lib/runs/rutas";
 
 export class CorridaEnCurso extends Error {
   readonly lock: ContenidoLock;
@@ -47,7 +52,13 @@ export interface ResultadoLanzar {
   inicio: string;
 }
 
-/** Id único aunque se lance dos veces en el mismo minuto. */
+/** Espera máxima tras SIGTERM antes de escalar a SIGKILL (y tras SIGKILL antes de rendirse). */
+const ESPERA_CANCELAR_MS = 5000;
+/** Streams más viejos que esto se podan al arrancar el runner. */
+export const MAX_EDAD_STREAMS_DIAS = 14;
+const ERROR_SERVIDOR_REINICIADO = "servidor reiniciado";
+
+/** Id único aunque se lance dos veces en el mismo minuto para la misma marca (el id ya lleva el slug). */
 function idLibre(slug: string): string {
   const base = nuevoIdCorrida(slug);
   if (!existeCorrida(slug, base)) return base;
@@ -58,6 +69,17 @@ function idLibre(slug: string): string {
   throw new Error("No se pudo generar un id de corrida libre");
 }
 
+/** Borra el stream y el marcador `.fin` previos de (marca, id): un stream nunca empieza con restos. */
+function limpiarStream(marca: string, corridaId: string): void {
+  for (const ruta of [rutaStream(marca, corridaId), rutaFinStream(marca, corridaId)]) {
+    try {
+      fs.rmSync(ruta, { force: true });
+    } catch {
+      /* si no se puede borrar, el volcado appendea: preferible a no lanzar */
+    }
+  }
+}
+
 /** Último texto útil del stream (para el mensaje de error de una corrida truncada). */
 function ultimoTextoDe(ev: EventoStream, actual: string): string {
   if (ev.type === "result" && typeof ev.result === "string" && ev.result.trim() !== "") return ev.result.trim().slice(0, 500);
@@ -66,11 +88,132 @@ function ultimoTextoDe(ev: EventoStream, actual: string): string {
   return actual;
 }
 
+function log(mensaje: string, e?: unknown): void {
+  const detalle = e instanceof Error ? ` ${e.message}` : e !== undefined ? ` ${String(e)}` : "";
+  console.error(`[runner] ${mensaje}${detalle}`);
+}
+
+/**
+ * Si `corridas/<id>.json` sigue `en-curso`, lo cierra como `error` con el
+ * mensaje. Devuelve la corrida resultante (o null si no existe / no se puede leer).
+ */
+function cerrarComoError(marca: string, corridaId: string, error: string, ahora: Date = new Date()): Corrida | null {
+  let corrida: Corrida;
+  try {
+    corrida = leerCorrida(marca, corridaId);
+  } catch {
+    return null;
+  }
+  if (corrida.estado !== "en-curso") return corrida;
+  return guardarCorrida({
+    ...corrida,
+    estado: "error",
+    error,
+    fin: ahora.toISOString(),
+    duracionMs: Math.max(0, ahora.getTime() - Date.parse(corrida.inicio)),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Arranque del runner: una vez por proceso de Next (el flag vive en globalThis
+// porque `next dev` recarga los módulos).
+// ---------------------------------------------------------------------------
+
+type GlobalRunner = typeof globalThis & { __csRunnerArrancado?: boolean };
+
+/** SIGTERM (o la señal dada) al grupo de procesos de cada corrida viva. */
+function matarVivas(senal: NodeJS.Signals = "SIGTERM"): void {
+  for (const viva of vivas()) {
+    viva.cancelada = true;
+    if (viva.proceso?.pid) matarGrupo(viva.proceso.pid, senal);
+    else viva.controller.abort();
+  }
+}
+
+/**
+ * Al morir el proceso de Next, las corridas vivas no deben quedar huérfanas
+ * gastando tokens: SIGTERM a sus grupos. `exit` es síncrono (sirve para
+ * `process.exit` de Next); SIGTERM/SIGINT cubren el cierre por señal y, si
+ * nadie más los atiende, conservan el comportamiento por defecto (salir).
+ */
+function instalarSalida(): void {
+  process.once("exit", () => matarVivas("SIGTERM"));
+  for (const senal of ["SIGTERM", "SIGINT"] as const) {
+    process.once(senal, () => {
+      matarVivas("SIGTERM");
+      if (process.listenerCount(senal) === 0) process.exit(senal === "SIGINT" ? 130 : 143);
+    });
+  }
+}
+
+/**
+ * Borra streams (`.stream.jsonl` y `.fin`) con más de `maxEdadDias` días en
+ * `data/corridas-vivas/` (tanto los namespaceados por marca como los planos
+ * antiguos) y las carpetas de marca que queden vacías. Devuelve cuántos borró.
+ */
+export function podarStreams(maxEdadDias: number = MAX_EDAD_STREAMS_DIAS, ahora: number = Date.now()): number {
+  const raiz = path.dirname(rutaStreamsMarca("x"));
+  const limite = ahora - maxEdadDias * 24 * 60 * 60 * 1000;
+  let borrados = 0;
+  const podarCarpeta = (carpeta: string, recursivo: boolean) => {
+    let entradas: fs.Dirent[];
+    try {
+      entradas = fs.readdirSync(carpeta, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const d of entradas) {
+      const ruta = path.join(carpeta, d.name);
+      if (d.isDirectory()) {
+        if (recursivo) {
+          podarCarpeta(ruta, false);
+          try {
+            if (fs.readdirSync(ruta).length === 0) fs.rmdirSync(ruta);
+          } catch {
+            /* la carpeta se queda */
+          }
+        }
+        continue;
+      }
+      if (!/\.stream\.jsonl(\.fin)?$/.test(d.name)) continue;
+      try {
+        if (fs.statSync(ruta).mtimeMs < limite) {
+          fs.rmSync(ruta, { force: true });
+          borrados += 1;
+        }
+      } catch {
+        /* desapareció entre medias */
+      }
+    }
+  };
+  podarCarpeta(raiz, true);
+  return borrados;
+}
+
+/** Poda streams viejos e instala los handlers de salida. Idempotente por proceso. */
+export function arrancarRunner(): void {
+  const g = globalThis as GlobalRunner;
+  if (g.__csRunnerArrancado) return;
+  g.__csRunnerArrancado = true;
+  try {
+    const n = podarStreams();
+    if (n > 0) log(`podados ${n} streams con más de ${MAX_EDAD_STREAMS_DIAS} días`);
+  } catch (e) {
+    log("no se pudieron podar los streams:", e);
+  }
+  instalarSalida();
+}
+
+// ---------------------------------------------------------------------------
+// Lanzar
+// ---------------------------------------------------------------------------
+
 /**
  * Lanza una corrida headless para la marca. Devuelve en cuanto el proceso
  * arranca; el cierre (corrida, lock) ocurre en segundo plano.
  */
 export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar> {
+  arrancarRunner();
   const marca = leerMarca(o.marca);
   const competidores = competidoresActivos(marca);
   if (competidores.length === 0) throw new Error(`La marca "${marca.slug}" no tiene competidores activos`);
@@ -106,13 +249,14 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
       maquina: os.hostname(),
     });
 
+    limpiarStream(marca.slug, corridaId);
     const controller = new AbortController();
     const proceso = lanzarClaude({
       prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, corridaId, apify }),
       allowedTools: allowedToolsCorrida,
       jsonSchema: esquemaSalidaCorrida,
       name: `corrida-${corridaId}`,
-      volcarA: rutaStream(corridaId),
+      volcarA: rutaStream(marca.slug, corridaId),
       signal: controller.signal,
     });
 
@@ -125,47 +269,58 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
       cancelada: false,
       terminada: Promise.resolve(),
     };
-    viva.terminada = vigilar(viva, proceso.eventos, proceso.salida);
     registrarViva(viva);
+    viva.terminada = vigilar(viva, proceso.eventos, proceso.salida);
     return { corridaId, marca: marca.slug, inicio };
   } catch (e) {
     liberarLock(corridaId);
+    // Si `corridas/<id>.json` quedó en-curso (falló al lanzar el proceso), no puede quedar colgada.
+    try {
+      cerrarComoError(marca.slug, corridaId, `no se pudo lanzar la corrida: ${(e as Error).message}`);
+    } catch (e2) {
+      log(`no se pudo cerrar la corrida ${corridaId} tras fallar el lanzamiento:`, e2);
+    }
     throw e;
   }
 }
 
-async function vigilar(
-  viva: CorridaViva,
-  eventos: AsyncIterable<EventoStream>,
-  salida: Promise<{ code: number | null; sessionId?: string; resultado?: string; isError?: boolean }>,
-): Promise<void> {
+type FinProceso = { code: number | null; sessionId?: string; resultado?: string; isError?: boolean };
+
+/** Sigue el proceso hasta el final y cierra la corrida. Nunca rechaza (nada de unhandled rejections). */
+async function vigilar(viva: CorridaViva, eventos: AsyncIterable<EventoStream>, salida: Promise<FinProceso>): Promise<void> {
   let ultimoTexto = "";
+  let fin: FinProceso = { code: null };
   try {
-    for await (const ev of eventos) ultimoTexto = ultimoTextoDe(ev, ultimoTexto);
-  } catch {
-    /* la cola se cierra sola al terminar el proceso */
-  }
-  let fin: { code: number | null; sessionId?: string; resultado?: string; isError?: boolean };
-  try {
-    fin = await salida;
+    try {
+      for await (const ev of eventos) ultimoTexto = ultimoTextoDe(ev, ultimoTexto);
+    } catch (e) {
+      log(`stream de la corrida ${viva.corridaId} interrumpido:`, e);
+    }
+    try {
+      fin = await salida;
+    } catch (e) {
+      fin = { code: null, resultado: (e as Error).message, isError: true };
+      ultimoTexto = (e as Error).message;
+    }
+    try {
+      cerrarCorrida(viva, fin, ultimoTexto);
+    } catch (e) {
+      log(`no se pudo cerrar la corrida ${viva.corridaId}:`, e);
+    }
   } catch (e) {
-    fin = { code: null, resultado: (e as Error).message, isError: true };
-    ultimoTexto = (e as Error).message;
-  }
-  try {
-    cerrarCorrida(viva, fin, ultimoTexto);
+    log(`fallo inesperado vigilando la corrida ${viva.corridaId}:`, e);
   } finally {
-    liberarLock(viva.corridaId);
+    try {
+      liberarLock(viva.corridaId);
+    } catch (e) {
+      log(`no se pudo liberar el lock de ${viva.corridaId}:`, e);
+    }
     quitarViva(viva.corridaId);
   }
 }
 
 /** Relee la corrida (el orquestador la pudo registrar vía `cs registrar`) y la completa. */
-function cerrarCorrida(
-  viva: CorridaViva,
-  fin: { code: number | null; sessionId?: string; resultado?: string; isError?: boolean },
-  ultimoTexto: string,
-): void {
+function cerrarCorrida(viva: CorridaViva, fin: FinProceso, ultimoTexto: string): void {
   let corrida: Corrida;
   try {
     corrida = leerCorrida(viva.marca, viva.corridaId);
@@ -192,54 +347,129 @@ function cerrarCorrida(
   guardarCorrida(actualizada);
 }
 
+// ---------------------------------------------------------------------------
+// Cancelar
+// ---------------------------------------------------------------------------
+
 export interface ResultadoCancelar {
   corridaId: string;
-  /** `proceso`: se mandó SIGTERM; `lock`: solo se liberó el lock (proceso ajeno). */
-  via: "proceso" | "lock";
+  /**
+   * `proceso`: se mató el grupo de procesos (SIGTERM, SIGKILL si hizo falta) y la corrida cerró;
+   * `lock`: solo se liberó el lock (proceso ajeno); `huerfana`: en-curso sin proceso, cerrada a mano.
+   */
+  via: "proceso" | "lock" | "huerfana";
 }
 
-/** Cancela una corrida: SIGTERM al proceso y la corrida queda `error: cancelada`. */
-export async function cancelarCorrida(corridaId: string): Promise<ResultadoCancelar | null> {
+function esperar(p: Promise<unknown>, ms: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const t = setTimeout(() => resolve(false), ms);
+    p.then(
+      () => {
+        clearTimeout(t);
+        resolve(true);
+      },
+      () => {
+        clearTimeout(t);
+        resolve(true);
+      },
+    );
+  });
+}
+
+/**
+ * Cancela una corrida. Viva en este proceso: SIGTERM al grupo, SIGKILL si no
+ * termina en 5 s, y solo cuando el runner la cerró se declara cancelada.
+ * Sin proceso (lock ajeno o `en-curso` huérfana): se cierra el archivo como `error: cancelada`.
+ */
+export async function cancelarCorrida(marca: string, corridaId: string): Promise<ResultadoCancelar | null> {
   const viva = obtenerViva(corridaId);
-  if (viva) {
+  if (viva && viva.marca === marca) {
     viva.cancelada = true;
-    viva.controller.abort();
-    await Promise.race([viva.terminada, new Promise((r) => setTimeout(r, 5000))]);
+    viva.controller.abort(); // → SIGTERM al grupo (runner real) o corta la reproducción (mock)
+    let terminada = await esperar(viva.terminada, ESPERA_CANCELAR_MS);
+    if (!terminada) {
+      log(`la corrida ${corridaId} no terminó tras SIGTERM: SIGKILL al grupo`);
+      if (viva.proceso?.pid) matarGrupo(viva.proceso.pid, "SIGKILL");
+      terminada = await esperar(viva.terminada, ESPERA_CANCELAR_MS);
+    }
+    if (!terminada) throw new Error(`La corrida ${corridaId} no terminó ni con SIGKILL; sigue en curso`);
     return { corridaId, via: "proceso" };
   }
+
   const lock = leerLock();
-  if (!lock || lock.corridaId !== corridaId) return null;
-  // Lock de otro proceso (p. ej. otra instancia de Next): no podemos matar su hijo,
-  // pero sí cerrar la corrida y liberar el lock.
-  try {
-    const corrida = leerCorrida(lock.marca, corridaId);
-    if (corrida.estado === "en-curso") {
-      const ahora = new Date();
-      guardarCorrida({
-        ...corrida,
-        estado: "error",
-        error: "cancelada",
-        fin: ahora.toISOString(),
-        duracionMs: Math.max(0, ahora.getTime() - Date.parse(corrida.inicio)),
-      });
-    }
-  } catch {
-    /* sin archivo de corrida: solo liberamos el lock */
+  if (lock && lock.corridaId === corridaId && lock.marca === marca) {
+    // Lock de otro proceso (p. ej. otra instancia de Next): no podemos matar su hijo,
+    // pero sí cerrar la corrida y liberar el lock.
+    cerrarComoError(marca, corridaId, "cancelada");
+    liberarLock(corridaId);
+    return { corridaId, via: "lock" };
   }
-  liberarLock(corridaId);
-  return { corridaId, via: "lock" };
+
+  // `en-curso` sin proceso ni lock (servidor reiniciado antes de reconciliar): se cierra a mano.
+  let corrida: Corrida;
+  try {
+    corrida = leerCorrida(marca, corridaId);
+  } catch {
+    return null;
+  }
+  if (corrida.estado !== "en-curso") return null;
+  cerrarComoError(marca, corridaId, "cancelada");
+  return { corridaId, via: "huerfana" };
 }
+
+// ---------------------------------------------------------------------------
+// Estado y reconciliación
+// ---------------------------------------------------------------------------
 
 export interface EstadoRunner {
   lock: ContenidoLock | null;
   enCurso: { corridaId: string; marca: string; inicio: string } | null;
+  /** Corridas `en-curso` huérfanas cerradas en esta llamada como `error: servidor reiniciado`. */
+  reconciliadas: { marca: string; corridaId: string }[];
 }
 
-/** Lock actual y corrida en curso (viva en este proceso o con lock de un pid vivo). */
+/**
+ * Toda corrida `modo: ui` en `en-curso` sin proceso vivo en el registro y sin
+ * lock vivo es huérfana (el servidor se reinició con ella a medias): pasa a
+ * `error: servidor reiniciado` con `fin`. Si el lock apuntaba a ella y su pid
+ * murió, se libera. Devuelve las cerradas.
+ */
+export function reconciliarHuerfanas(): { marca: string; corridaId: string }[] {
+  const cerradas: { marca: string; corridaId: string }[] = [];
+  let marcas: { slug: string }[];
+  try {
+    marcas = listarMarcas();
+  } catch (e) {
+    log("no se pudieron listar las marcas al reconciliar:", e);
+    return cerradas;
+  }
+  for (const m of marcas) {
+    for (const c of listarCorridas(m.slug).corridas) {
+      if (c.estado !== "en-curso" || c.modo !== "ui") continue;
+      if (obtenerViva(c.id)) continue;
+      const lock = leerLock();
+      const lockVivo = lock !== null && lock.corridaId === c.id && procesoVivo(lock.pid);
+      if (lockVivo) continue;
+      try {
+        cerrarComoError(m.slug, c.id, ERROR_SERVIDOR_REINICIADO);
+        if (lock && lock.corridaId === c.id) liberarLock(c.id);
+        cerradas.push({ marca: m.slug, corridaId: c.id });
+      } catch (e) {
+        log(`no se pudo reconciliar la corrida ${c.id} (${m.slug}):`, e);
+      }
+    }
+  }
+  if (cerradas.length) log(`reconciliadas ${cerradas.length} corridas huérfanas: ${cerradas.map((c) => c.corridaId).join(", ")}`);
+  return cerradas;
+}
+
+/** Lock actual y corrida en curso (viva en este proceso o con lock de un pid vivo). Reconcilia huérfanas antes. */
 export function estadoRunner(): EstadoRunner {
+  arrancarRunner();
+  const reconciliadas = reconciliarHuerfanas();
   const lock = leerLock();
   const viva = vivas()[0];
-  if (viva) return { lock, enCurso: { corridaId: viva.corridaId, marca: viva.marca, inicio: viva.inicio } };
-  if (lock && procesoVivo(lock.pid)) return { lock, enCurso: { corridaId: lock.corridaId, marca: lock.marca, inicio: lock.inicio } };
-  return { lock, enCurso: null };
+  if (viva) return { lock, enCurso: { corridaId: viva.corridaId, marca: viva.marca, inicio: viva.inicio }, reconciliadas };
+  if (lock && procesoVivo(lock.pid)) return { lock, enCurso: { corridaId: lock.corridaId, marca: lock.marca, inicio: lock.inicio }, reconciliadas };
+  return { lock, enCurso: null, reconciliadas };
 }

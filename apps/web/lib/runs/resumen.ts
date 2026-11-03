@@ -5,6 +5,7 @@ import type { ResumenFin } from "@/lib/runs/consola";
 export function resumenDeCorrida(c: Corrida): ResumenFin {
   return {
     corridaId: c.id,
+    marca: c.marca,
     estado: c.estado,
     verificado: c.verificado,
     intentos: c.intentos,

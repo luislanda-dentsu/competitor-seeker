@@ -7,6 +7,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { EstadoBadge } from "@/components/app/runs/EstadoBadge";
 import { fmtDur, fmtFecha } from "@/lib/format";
+import { rutaUiCorrida } from "@/lib/runs/tipos";
 
 function horaDe(iso: string): string {
   const t = Date.parse(iso);
@@ -75,7 +76,7 @@ export function RunHistoryTable({ corridas, invalidas = 0 }: { corridas: readonl
                   {corridas.map((c) => (
                     <TableRow key={c.id}>
                       <TableCell>
-                        <Link className="font-medium text-fg underline-offset-4 hover:underline" href={`/corridas/${c.id}`}>
+                        <Link className="font-medium text-fg underline-offset-4 hover:underline" href={rutaUiCorrida(c.marca, c.id)}>
                           {fmtFecha(c.fecha)}
                         </Link>
                         <span className="ms-2 font-mono text-xs text-fg-muted">{horaDe(c.inicio)}</span>
@@ -103,7 +104,7 @@ export function RunHistoryTable({ corridas, invalidas = 0 }: { corridas: readonl
               {corridas.map((c) => (
                 <li className="flex flex-col gap-2 px-4 py-3" key={c.id}>
                   <div className="flex items-center justify-between gap-2">
-                    <Link className="font-medium text-fg underline-offset-4 hover:underline" href={`/corridas/${c.id}`}>
+                    <Link className="font-medium text-fg underline-offset-4 hover:underline" href={rutaUiCorrida(c.marca, c.id)}>
                       {fmtFecha(c.fecha)} <span className="font-mono text-xs text-fg-muted">{horaDe(c.inicio)}</span>
                     </Link>
                     <EstadoBadge estado={c.estado} />

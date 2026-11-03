@@ -23,24 +23,19 @@ export async function marcaActiva(marcas: readonly Marca[] = listarMarcas()): Pr
   return marcas.find((m) => m.slug === slug) ?? marcas[0] ?? null;
 }
 
-/** Busca la corrida por id en todas las marcas (primero en `preferida`). */
-export function buscarCorrida(id: string, preferida?: string | null): Corrida | null {
-  const slugs = listarMarcas().map((m) => m.slug);
-  const orden = preferida && slugs.includes(preferida) ? [preferida, ...slugs.filter((s) => s !== preferida)] : slugs;
-  for (const slug of orden) {
-    if (!existeCorrida(slug, id)) continue;
-    try {
-      return leerCorrida(slug, id);
-    } catch {
-      return null;
-    }
+/** Corrida por (marca, id); null si no existe o no se puede leer. */
+export function buscarCorrida(marca: string, id: string): Corrida | null {
+  if (!existeCorrida(marca, id)) return null;
+  try {
+    return leerCorrida(marca, id);
+  } catch {
+    return null;
   }
-  return null;
 }
 
 /** Eventos resumidos de la consola grabada, o null si no hay stream. */
-export function eventosGrabados(id: string, maxLineas: number = 5000): EventoCorrida[] | null {
-  const ruta = rutaStream(id);
+export function eventosGrabados(marca: string, id: string, maxLineas: number = 5000): EventoCorrida[] | null {
+  const ruta = rutaStream(marca, id);
   if (!fs.existsSync(ruta)) return null;
   const texto = fs.readFileSync(ruta, "utf8");
   const { eventos } = parsearLineasStream(texto.endsWith("\n") ? texto : `${texto}\n`);

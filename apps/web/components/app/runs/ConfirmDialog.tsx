@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { rutaApiCorrida } from "@/lib/runs/tipos";
 
 export interface ObjecionUi {
   marca: string;
@@ -38,8 +39,8 @@ export function agruparObjeciones(objeciones: readonly ObjecionUi[]): { marca: s
   return [...grupos].map(([marca, problemas]) => ({ marca, problemas }));
 }
 
-export async function confirmarEnApi(corridaId: string, accion: AccionConfirmar): Promise<ResultadoConfirmacion> {
-  const res = await fetch(`/api/corridas/${encodeURIComponent(corridaId)}/confirmar`, {
+export async function confirmarEnApi(marca: string, corridaId: string, accion: AccionConfirmar): Promise<ResultadoConfirmacion> {
+  const res = await fetch(`${rutaApiCorrida(marca, corridaId)}/confirmar`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ accion }),
@@ -51,11 +52,12 @@ export async function confirmarEnApi(corridaId: string, accion: AccionConfirmar)
 
 /**
  * "La verificación no pasó": objeciones por competidor (Accordion) y
- * Descartar / Registrar de todos modos → POST /api/corridas/[id]/confirmar.
+ * Descartar / Registrar de todos modos → POST /api/corridas/[marca]/[id]/confirmar.
  */
 export function ConfirmDialog({
   open,
   onOpenChange,
+  marca,
   corridaId,
   intentos,
   objeciones,
@@ -63,6 +65,7 @@ export function ConfirmDialog({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  marca: string;
   corridaId: string;
   intentos: number;
   objeciones: readonly ObjecionUi[];
@@ -76,7 +79,7 @@ export function ConfirmDialog({
     setEnCurso(accion);
     setError(null);
     try {
-      const r = await confirmarEnApi(corridaId, accion);
+      const r = await confirmarEnApi(marca, corridaId, accion);
       onResuelto(r);
       onOpenChange(false);
     } catch (e) {

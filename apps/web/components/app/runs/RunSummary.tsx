@@ -6,6 +6,7 @@ import { Card, CardPanel } from "@/components/ui/card";
 import { EstadoBadge } from "@/components/app/runs/EstadoBadge";
 import { fmtDur } from "@/lib/format";
 import type { ResumenFin } from "@/lib/runs/consola";
+import { rutaUiCorrida } from "@/lib/runs/tipos";
 
 function textoResumen(fin: ResumenFin): string {
   const partes: string[] = [];
@@ -43,8 +44,8 @@ export function RunSummary({
               Revisar objeciones
             </Button>
           )}
-          {fin.corridaId && (
-            <Button render={<Link href={`/corridas/${fin.corridaId}`} />} size="sm" variant="ghost">
+          {fin.corridaId && fin.marca && (
+            <Button render={<Link href={rutaUiCorrida(fin.marca, fin.corridaId)} />} size="sm" variant="ghost">
               Ver detalle
             </Button>
           )}

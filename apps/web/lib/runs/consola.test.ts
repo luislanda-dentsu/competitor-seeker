@@ -37,4 +37,24 @@ describe("consola", () => {
     expect(err.fin?.error).toBe("cancelada");
     expect(reducirTodo([], { estado: "pendiente-confirmacion", intentos: 3 }).intentosVerificacion).toBe(3);
   });
+
+  it("al activar una fase, las posteriores vuelven a pendiente (reintento del analista)", () => {
+    let e = reducirTodo([fase("Rastreo", "rastreo-ig:todos"), fase("Análisis", "analista:intento-1"), fase("Verificación", "verificacion:intento-1")]);
+    expect(e.fases).toEqual({ Rastreo: "ok", Análisis: "ok", Verificación: "activo" });
+    e = reducirConsola(e, fase("Análisis", "analista:intento-2"));
+    expect(e.fases).toEqual({ Rastreo: "ok", Análisis: "activo", Verificación: "pendiente" });
+    expect(e.intentosVerificacion).toBe(1);
+    e = reducirConsola(e, fase("Rastreo", "rastreo-web:X"));
+    expect(e.fases).toEqual({ Rastreo: "activo", Análisis: "pendiente", Verificación: "pendiente" });
+  });
+
+  it("pendiente-confirmacion al cerrar deja Verificación en error, no en ok", () => {
+    const base = reducirTodo([fase("Rastreo", "rastreo-ig:todos"), fase("Análisis", "analista:intento-3"), fase("Verificación", "verificacion:intento-3")]);
+    const fin = cerrarConsola(base, { estado: "pendiente-confirmacion", intentos: 3, verificado: false });
+    expect(fin.fases).toEqual({ Rastreo: "ok", Análisis: "ok", Verificación: "error" });
+    expect(fin.intentosVerificacion).toBe(3);
+    // Sin eventos de fase (p. ej. consola grabada incompleta) el cierre sigue siendo coherente.
+    expect(reducirTodo([], { estado: "pendiente-confirmacion", intentos: 3 }).fases).toEqual({ Rastreo: "ok", Análisis: "ok", Verificación: "error" });
+    expect(reducirTodo([], { estado: "registrada", intentos: 1 }).fases).toEqual({ Rastreo: "ok", Análisis: "ok", Verificación: "ok" });
+  });
 });

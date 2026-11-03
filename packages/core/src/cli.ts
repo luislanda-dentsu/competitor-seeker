@@ -1,14 +1,16 @@
 // CLI `scripts/cs`: único escritor de log.jsonl y corridas/*.json desde el
 // orquestador. Salida JSON por stdout; errores por stderr con exit 1.
+import fs from 'node:fs'
 import os from 'node:os'
-import { consultarLimites } from './apify/limites.ts'
-import { calcularUso, decidirApify } from './apify/uso.ts'
-import { leerConfig, leerSecrets } from './config.ts'
-import { existeCorrida, fechaLocal, guardarCorrida, leerCorrida, listarCorridas, nuevoIdCorrida, ultimaCorridaRegistrada } from './corridas.ts'
+import path from 'node:path'
+import { decidirApifyDesdeEstado } from './apify/limites.ts'
+import { leerConfig } from './config.ts'
+import { existeCorrida, fechaLocal, guardarCorrida, leerCorrida, nuevoIdCorrida, ultimaCorridaRegistrada } from './corridas.ts'
 import { describirErrorZod } from './jsonl.ts'
 import { conId, registrarEntradas } from './log.ts'
 import { competidoresActivos, crearMarca, existeMarca, leerMarca, listarMarcas } from './marcas.ts'
 import { migrarMarca } from './migracion.ts'
+import { rutaCorrida } from './rutas.ts'
 import { Corrida, ResultadoWorkflow, type EstadoCorrida } from './schemas/corrida.ts'
 import type { Fuente } from './schemas/entrada.ts'
 
@@ -79,6 +81,54 @@ async function leerStdin(): Promise<string> {
   return Buffer.concat(trozos).toString('utf8')
 }
 
+/** JSON del workflow: `--json-b64 <base64>` (evita las comillas del shell) o, si no, stdin. */
+async function leerJsonEntrada(a: ArgsCli): Promise<string> {
+  const b64 = a.opciones['json-b64']
+  if (b64 !== undefined) {
+    if (typeof b64 !== 'string' || b64.trim() === '') throw new Error('--json-b64 requiere el JSON del workflow codificado en base64')
+    const limpio = b64.replace(/\s+/g, '')
+    if (!/^[A-Za-z0-9+/_-]*={0,2}$/.test(limpio)) throw new Error('--json-b64 no es base64 válido')
+    return Buffer.from(limpio, 'base64').toString('utf8')
+  }
+  return leerStdin()
+}
+
+export class CorridaBloqueada extends Error {
+  constructor(corridaId: string) {
+    super(`Otra operación está escribiendo la corrida ${corridaId} (lock ${corridaId}.json.lock); reintenta en unos segundos`)
+    this.name = 'CorridaBloqueada'
+  }
+}
+
+/** Ruta del lock por corrida: `corridas/<id>.json.lock`. */
+export function rutaLockCorrida(marca: string, corridaId: string): string {
+  return `${rutaCorrida(marca, corridaId)}.lock`
+}
+
+/**
+ * Ejecuta `fn` con un lock exclusivo (`wx`) sobre `corridas/<id>.json.lock`,
+ * para que dos `registrar`/`confirmar` concurrentes no escriban el log dos veces.
+ * Se libera siempre en `finally`.
+ */
+export async function conLockCorrida<T>(marca: string, corridaId: string, fn: () => T | Promise<T>): Promise<T> {
+  const ruta = rutaLockCorrida(marca, corridaId)
+  fs.mkdirSync(path.dirname(ruta), { recursive: true })
+  let fd: number
+  try {
+    fd = fs.openSync(ruta, 'wx')
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === 'EEXIST') throw new CorridaBloqueada(corridaId)
+    throw e
+  }
+  try {
+    fs.writeSync(fd, `${process.pid} ${new Date().toISOString()}\n`)
+    return await fn()
+  } finally {
+    fs.closeSync(fd)
+    fs.rmSync(ruta, { force: true })
+  }
+}
+
 function fuentesDe(r: ResultadoWorkflow): Fuente[] {
   if (r.fuentes?.length) return [...new Set(r.fuentes)]
   const f: Fuente[] = ['web']
@@ -108,12 +158,28 @@ async function cmdRegistrar(a: ArgsCli, op: OpcionesEjecucion): Promise<unknown>
     throw new Error(`La marca "${marca}" no existe (falta marcas/${marca}/marca.json); créala con \`cs marca crear\` o migra con \`cs migrar\``)
   }
 
-  const texto = op.entrada ?? (await leerStdin())
-  if (texto.trim() === '') throw new Error('Se esperaba por stdin el JSON {entradas, verificado, intentos, ...} del workflow')
-  const parse = ResultadoWorkflow.safeParse(JSON.parse(texto))
-  if (!parse.success) throw new Error(`JSON de stdin inválido: ${describirErrorZod(parse.error)}`)
+  const texto = op.entrada ?? (await leerJsonEntrada(a))
+  if (texto.trim() === '') throw new Error('Se esperaba por stdin (o en --json-b64) el JSON {entradas, verificado, intentos, ...} del workflow')
+  let crudo: unknown
+  try {
+    crudo = JSON.parse(texto)
+  } catch (e) {
+    throw new Error(`JSON del workflow ilegible: ${(e as Error).message}`)
+  }
+  const parse = ResultadoWorkflow.safeParse(crudo)
+  if (!parse.success) throw new Error(`JSON del workflow inválido: ${describirErrorZod(parse.error)}`)
   const r = parse.data
 
+  return conLockCorrida(marca, corridaId, () => registrarConLock(marca, corridaId, r, { pendiente, forzar, modo }))
+}
+
+function registrarConLock(
+  marca: string,
+  corridaId: string,
+  r: ResultadoWorkflow,
+  o: { pendiente: boolean; forzar: boolean; modo: 'ui' | 'terminal' },
+): unknown {
+  const { pendiente, forzar, modo } = o
   const previa = existeCorrida(marca, corridaId) ? leerCorrida(marca, corridaId) : null
   if (previa && !ESTADOS_REGISTRABLES.includes(previa.estado)) {
     const pista = previa.estado === 'pendiente-confirmacion'
@@ -170,33 +236,31 @@ async function cmdRegistrar(a: ArgsCli, op: OpcionesEjecucion): Promise<unknown>
   return { corridaId, estado, registradas: res.registradas, duplicadas: res.duplicadas, entradas: r.entradas.length }
 }
 
-function cmdConfirmar(a: ArgsCli): unknown {
+function cmdConfirmar(a: ArgsCli): Promise<unknown> {
   const marca = requerir(a.opciones, 'marca')
   const corridaId = requerir(a.opciones, 'corrida-id')
   const accion = requerir(a.opciones, 'accion')
   if (accion !== 'registrar' && accion !== 'descartar') throw new Error('--accion debe ser registrar|descartar')
-  const corrida = leerCorrida(marca, corridaId)
-  if (corrida.estado !== 'pendiente-confirmacion') {
-    throw new Error(`La corrida ${corridaId} está en estado "${corrida.estado}", no pendiente-confirmacion`)
-  }
-  if (accion === 'descartar') {
-    guardarCorrida({ ...corrida, estado: 'descartada' })
-    return { corridaId, estado: 'descartada', registradas: 0, duplicadas: [] }
-  }
-  const res = registrarEntradas(marca, corridaId, corrida.entradas)
-  guardarCorrida({ ...corrida, estado: 'registrada' })
-  return { corridaId, estado: 'registrada', registradas: res.registradas, duplicadas: res.duplicadas }
+  return conLockCorrida(marca, corridaId, () => {
+    // Se relee DENTRO del lock: una confirmación concurrente ya pudo cambiar el estado.
+    const corrida = leerCorrida(marca, corridaId)
+    if (corrida.estado !== 'pendiente-confirmacion') {
+      throw new Error(`La corrida ${corridaId} está en estado "${corrida.estado}", no pendiente-confirmacion`)
+    }
+    if (accion === 'descartar') {
+      guardarCorrida({ ...corrida, estado: 'descartada' })
+      return { corridaId, estado: 'descartada', registradas: 0, duplicadas: [] }
+    }
+    const res = registrarEntradas(marca, corridaId, corrida.entradas)
+    guardarCorrida({ ...corrida, estado: 'registrada' })
+    return { corridaId, estado: 'registrada', registradas: res.registradas, duplicadas: res.duplicadas }
+  })
 }
 
+/** Misma decisión que toma la UI al lanzar (`decidirApifyDesdeEstado`). */
 async function cmdApifyUso(): Promise<unknown> {
-  const cfg = leerConfig().apify
-  const token = leerSecrets().apifyToken
-  if (!token) return { configurado: false, habilitado: false, motivo: 'sin token', resultsLimit: cfg.resultsLimitPorPerfil }
-  const limites = await consultarLimites(token)
-  const corridas = listarMarcas().flatMap((m) => listarCorridas(m.slug).corridas)
-  const uso = calcularUso(limites, cfg, corridas)
-  const decision = decidirApify(uso, cfg)
-  return { configurado: true, ...uso, ...decision }
+  const { uso, ...decision } = await decidirApifyDesdeEstado()
+  return { ...decision, ...(uso ?? {}) }
 }
 
 function cmdMarca(a: ArgsCli): unknown {
@@ -216,8 +280,11 @@ function cmdMarca(a: ArgsCli): unknown {
 }
 
 const AYUDA = `Uso: scripts/cs <comando>
-  registrar --marca <slug> --corrida-id <id> [--pendiente] [--forzar] [--modo ui|terminal]   (JSON del workflow por stdin)
+  registrar --marca <slug> --corrida-id <id> [--pendiente] [--forzar] [--modo ui|terminal] [--json-b64 <base64>]
+      JSON del workflow por stdin (here-string: escribe los apóstrofos del JSON como \\u0027)
+      o en --json-b64 (el JSON codificado en base64; evita las comillas del shell)
   confirmar --marca <slug> --corrida-id <id> --accion registrar|descartar
+      (registrar y confirmar toman un lock corridas/<id>.json.lock: dos a la vez fallan)
   migrar <slug>
   ultima-corrida <slug>
   nuevo-id <slug>
