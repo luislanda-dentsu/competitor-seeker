@@ -61,7 +61,7 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 ```
 1. lee marcas/<slug>/marca.json → competidores activos  (no existe → avisa y detente)
 2. ultimaCorrida = scripts/cs ultima-corrida <slug>      (null → primera corrida: últimas ~4 semanas)
-2b. apify = scripts/cs apify-uso --json                  (decide si Apify entra en esta corrida y con qué resultsLimit)
+2b. apify = el que te dieron en el prompt (la app ya lo decidió con la usuaria) o, si no, scripts/cs apify-uso --json
 3. corridaId = el que te dieron o scripts/cs nuevo-id <slug>
 4. Workflow scriptPath .claude/workflows/corrida.js — SIEMPRE por scriptPath (por nombre puede resolver un snapshot viejo)
    args: { marca, fechaCorrida (hoy), ultimaCorrida, corridaId, apify: {habilitado, resultsLimit, motivo?},
@@ -81,7 +81,7 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 Si el workflow no está disponible, ejecuta el grafo a mano: rastreadores en paralelo (varias llamadas Agent en un solo mensaje), analista y verificador con el mismo bucle acotado, y registra igual con `scripts/cs registrar`.
 
 ## Modo headless
-Si el prompt dice **MODO HEADLESS** (la app web lanzó la corrida con `claude -p`): nadie puede responder preguntas → nunca uses AskUserQuestion; no uses Write/Edit; registra siempre con `scripts/cs registrar` (`--pendiente` si el verificador no aprobó tras 3 intentos); si Instagram reporta `SESIÓN NO DISPONIBLE`, sigue con web (+Apify) y déjalo en el JSON (`ig.sesion: "no-disponible"`); termina devolviendo el JSON pedido.
+Si el prompt dice **MODO HEADLESS** (la app web lanzó la corrida con `claude -p`): nadie puede responder preguntas → nunca uses AskUserQuestion; no uses Write/Edit; registra siempre con `scripts/cs registrar` en UNA línea (here-string `<<< '…'` o `--json-b64 <base64>` si el JSON lleva comillas simples; `--pendiente` si el verificador no aprobó tras 3 intentos); no re-decidas Apify: viene decidido en el prompt; si Instagram reporta `SESIÓN NO DISPONIBLE`, sigue con web (+Apify) y déjalo en el JSON (`ig.sesion: "no-disponible"`); termina devolviendo el JSON pedido.
 
 ## Sesión de Instagram (Claude in Chrome)
 El rastreador-ig usa **Claude in Chrome** (`mcp__claude-in-chrome__*`) sobre el Chrome del usuario, en el perfil donde está instalada la extensión y la cuenta IG dedicada de la agencia ya tiene sesión. No hay perfil de Chrome aparte ni MCP chrome-devtools. En headless el runner pasa `--chrome`. Solo lectura: jamás like/follow/comentario; el agente trabaja en una pestaña propia y la cierra.
