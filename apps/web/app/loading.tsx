@@ -1,9 +1,24 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** Skeleton del Resumen: 4 KPI + 2 cards. */
-export default function Loading() {
+function CardSkeleton({
+  className,
+  alto = "h-56",
+}: {
+  className?: string;
+  alto?: string;
+}): React.ReactElement {
   return (
-    <div aria-busy="true" aria-label="Cargando" className="flex flex-col gap-4">
+    <div className={`flex flex-col gap-4 rounded-lg border border-border bg-card p-5 ${className ?? ""}`}>
+      <Skeleton className="h-3 w-32" />
+      <Skeleton className={`${alto} w-full`} />
+    </div>
+  );
+}
+
+/** Skeleton del Resumen: 4 KPI + tendencia/distribución + embudo/lista + corridas. */
+export default function Loading(): React.ReactElement {
+  return (
+    <div aria-busy="true" aria-label="Cargando resumen" className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }, (_, i) => (
           <div
@@ -20,15 +35,14 @@ export default function Loading() {
         ))}
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5 lg:col-span-8">
-          <Skeleton className="h-3 w-32" />
-          <Skeleton className="h-56 w-full" />
-        </div>
-        <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5 lg:col-span-4">
-          <Skeleton className="h-3 w-28" />
-          <Skeleton className="h-56 w-full" />
-        </div>
+        <CardSkeleton className="lg:col-span-8" />
+        <CardSkeleton className="lg:col-span-4" />
       </div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <CardSkeleton alto="h-40" className="lg:col-span-4" />
+        <CardSkeleton alto="h-40" className="lg:col-span-8" />
+      </div>
+      <CardSkeleton alto="h-16" />
     </div>
   );
 }
