@@ -14,6 +14,9 @@ export interface DatosPromptCorrida {
   apify: ApifyPrompt
 }
 
+// Verificado (Fase 3, Claude Code 2.1.317): en `--permission-mode dontAsk` la
+// sintaxis `Bash(<prefijo> *)` con espacio se respeta y Bash NO se deniega
+// (`permission_denials: []`). Ver docs/spike-claude-p.md → "Bash en headless".
 export const allowedToolsCorrida: readonly string[] = [
   'Workflow',
   'Agent',
@@ -28,6 +31,20 @@ export const allowedToolsCorrida: readonly string[] = [
   'Bash(./scripts/cs *)',
 ]
 
+/** `--json-schema` del JSON final que devuelve el orquestador en una corrida headless. */
+export const esquemaSalidaCorrida: Record<string, unknown> = {
+  type: 'object',
+  properties: {
+    corridaId: { type: 'string' },
+    estado: { type: 'string' },
+    verificado: { type: 'boolean' },
+    intentos: { type: 'integer' },
+    entradas: { type: 'integer' },
+    igSesion: { type: 'string' },
+  },
+  required: ['corridaId', 'estado', 'verificado', 'intentos', 'entradas'],
+}
+
 export function promptCorrida(d: DatosPromptCorrida): string {
   const estadoApify = d.apify.habilitado
     ? `Apify HABILITADO (resultsLimit ${d.apify.resultsLimit} por perfil).`
@@ -40,7 +57,8 @@ export function promptCorrida(d: DatosPromptCorrida): string {
     'MODO HEADLESS: nadie puede responder preguntas; no uses AskUserQuestion ni esperes confirmación.',
     `Sigue el grafo de CLAUDE.md lanzando el workflow .claude/workflows/corrida.js por scriptPath con args ` +
       `{ marca, fechaCorrida, ultimaCorrida, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, competidores }.`,
-    `Registra SIEMPRE con \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui\` pasando por stdin el JSON que devuelve el workflow; ` +
+    `Registra SIEMPRE con \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui <<< '<JSON del workflow>'\` ` +
+      '(here-string en UNA sola línea, con el JSON compacto entre comillas simples; los heredoc multilínea `<<EOF` se deniegan en headless); ' +
       'nunca escribas log.jsonl ni corridas/*.json a mano.',
     'Si el verificador rechaza 3 veces, registra igual con `--pendiente` y termina: la persona decidirá en la UI.',
     'Si Instagram reporta SESIÓN NO DISPONIBLE (Chrome cerrado, extensión desconectada o IG deslogueado) sigue con web (+Apify) y anótalo en `ig.sesion`.',
