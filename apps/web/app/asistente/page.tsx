@@ -1,13 +1,21 @@
-import { UnderConstruction } from "@/components/app/states/UnderConstruction";
+import { Suspense } from "react";
+import { CargandoChat, SinMarcas } from "@/components/app/chat/ChatPageStates";
+import { ChatView } from "@/components/app/chat/ChatView";
+import { cargarDatosAsistente } from "@/lib/chat/pagina";
 
 export const metadata = { title: "Asistente" };
 
-export default function AsistentePage() {
+/** Lee cookie (marca activa) y disco: va dentro de Suspense (cacheComponents). */
+async function AsistenteContenido(): Promise<React.ReactElement> {
+  const datos = await cargarDatosAsistente();
+  if (!datos) return <SinMarcas />;
+  return <ChatView chat={null} key={datos.marca} marca={datos.marca} marcaNombre={datos.marcaNombre} sinEntradas={datos.sinEntradas} sugerencias={datos.sugerencias} />;
+}
+
+export default function AsistentePage(): React.ReactElement {
   return (
-    <UnderConstruction
-      detalle="Chat con el asistente sobre el log de la marca: historial, tarjetas de sugerencia, Composer y panel de artefactos."
-      fase={6}
-      titulo="Asistente"
-    />
+    <Suspense fallback={<CargandoChat />}>
+      <AsistenteContenido />
+    </Suspense>
   );
 }

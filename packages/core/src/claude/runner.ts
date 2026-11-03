@@ -20,6 +20,8 @@ export interface OpcionesClaude {
   /** Objeto o string JSON para `--json-schema`. */
   jsonSchema?: Record<string, unknown> | string
   name?: string
+  /** Añade `--chrome` (Claude in Chrome). Por defecto true; el asistente lo desactiva. */
+  chrome?: boolean
   /** Ruta donde volcar cada línea cruda (append). Al terminar se crea `<ruta>.fin`. */
   volcarA?: string
   signal?: AbortSignal
@@ -62,8 +64,8 @@ export function argsClaude(o: OpcionesClaude): string[] {
     'none',
     '--settings',
     '.claude/settings.headless.json',
-    '--chrome',
   ]
+  if (o.chrome !== false) args.push('--chrome')
   if (o.allowedTools?.length) args.push('--allowedTools', ...o.allowedTools)
   if (o.disallowedTools?.length) args.push('--disallowedTools', ...o.disallowedTools)
   if (o.sessionId && o.resume) throw new Error('sessionId y resume son excluyentes')
