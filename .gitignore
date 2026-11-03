@@ -22,3 +22,4 @@ graphify-out/
 .DS_Store
 docs/spike/salida.jsonl
 apps/web/AGENTS.md
+.claude/worktrees/
