@@ -65,7 +65,7 @@ describe("runner (mock)", () => {
     const cb = leerCorrida("zz-tmp", b.corridaId);
     expect(cb.estado).toBe("error");
     expect(cb.error).toMatch(/sin registrar/);
-    expect(cb.sessionId).toBe("9bb59c5d-b02a-4bb8-b2fe-631fef7e3b66");
+    expect(cb.sessionId).toBe("00000000-0000-4000-8000-000000000001");
     expect(leerLock()).toBeNull();
   }, 30_000);
 

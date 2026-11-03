@@ -40,7 +40,7 @@ describe('runner (mock)', () => {
     const grabadas = fs.readFileSync(MOCK_STREAM, 'utf8').split('\n').filter((l) => l.trim() !== '').length
     expect(eventos.length).toBe(grabadas)
     expect(salida.code).toBe(0)
-    expect(salida.sessionId).toBe('9bb59c5d-b02a-4bb8-b2fe-631fef7e3b66')
+    expect(salida.sessionId).toBe('00000000-0000-4000-8000-000000000001')
     expect(fs.readFileSync(volcado, 'utf8').split('\n').filter((l) => l !== '').length).toBe(grabadas)
     expect(fs.existsSync(`${volcado}.fin`)).toBe(true)
 

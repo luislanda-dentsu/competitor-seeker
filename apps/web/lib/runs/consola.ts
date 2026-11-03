@@ -26,7 +26,7 @@ export interface ResumenFin {
   entradas?: number;
   objeciones?: { marca: string; problema: string }[];
   duracionMs?: number;
-  apify?: { resultados?: number; costeEstimadoUsd?: number; motivo?: string };
+  apify?: { resultados?: number; costeEstimadoUsd?: number; motivo?: string | null };
   error?: string;
   ig?: { sesion?: string };
   resultado?: string;
