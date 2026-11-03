@@ -32,11 +32,13 @@ const listarMarcasCached = cache((): Marca[] => listarMarcas());
 /**
  * Slug de la marca activa: cookie `cs-marca` si existe y es válida; si no,
  * la primera de `listarMarcas()`; si no hay marcas, null.
- * Lee `cookies()`: dato de runtime → llamar solo dentro de un Suspense.
+ * Lee `cookies()` SIEMPRE antes de decidir (también cuando no hay marcas):
+ * es dato de runtime y así el resultado nunca se hornea en el shell
+ * estático. Llamar solo dentro de un Suspense.
  */
 export async function getMarcaActiva(): Promise<string | null> {
-  if (listarMarcasCached().length === 0) return null;
   const jar = await cookies();
+  if (listarMarcasCached().length === 0) return null;
   return resolverMarcaActiva(jar.get(MARCA_COOKIE)?.value);
 }
 

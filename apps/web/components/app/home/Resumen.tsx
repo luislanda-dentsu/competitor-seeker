@@ -98,7 +98,11 @@ export async function Resumen(): Promise<React.ReactElement> {
   const { entradas, kpis, conteo, serie, competidores, lineasInvalidas } = datos;
 
   const alerta = (
-    <LogAlert corridasInvalidas={datos.corridasInvalidas.length} lineas={lineasInvalidas} />
+    <LogAlert
+      corridasInvalidas={datos.corridasInvalidas.length}
+      entradasSinCorrida={datos.entradasSinCorrida}
+      lineas={lineasInvalidas}
+    />
   );
 
   if (entradas.length === 0) {

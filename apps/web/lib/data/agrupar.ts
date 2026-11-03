@@ -5,7 +5,7 @@
  * Importa solo tipos del core: este módulo lo usan también componentes
  * cliente, que no pueden cargar `node:fs`.
  */
-import type { Corrida, Entrada, Senal } from "@competitor-seeker/core";
+import type { Corrida, Entrada, PuntoSerie, Senal } from "@competitor-seeker/core";
 
 export const SENALES_ORDEN: readonly Senal[] = [
   "nuevo",
@@ -41,7 +41,7 @@ export function pctConEvidencia(
 export function slugify(texto: string): string {
   return texto
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
@@ -113,7 +113,7 @@ export interface FiltroEntradas {
 function normalizarTexto(s: string): string {
   return s
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
 }
@@ -150,13 +150,17 @@ export interface PuntoEvolucion {
   pctConEvidencia: number;
 }
 
+function ordenarGruposAsc<T extends Entrada>(grupos: readonly GrupoCorrida<T>[]): GrupoCorrida<T>[] {
+  return grupos
+    .slice()
+    .sort((a, b) => (a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : a.corridaId.localeCompare(b.corridaId)));
+}
+
 /** Una fila por corrida (cronológico ascendente) con la señal de cada entrada. */
 export function evolucionPorCorrida<T extends Entrada>(
   grupos: readonly GrupoCorrida<T>[],
 ): PuntoEvolucion[] {
-  return grupos
-    .slice()
-    .sort((a, b) => (a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : a.corridaId.localeCompare(b.corridaId)))
+  return ordenarGruposAsc(grupos)
     .map((g) => ({
       corridaId: g.corridaId,
       fecha: g.fecha,
@@ -164,6 +168,35 @@ export function evolucionPorCorrida<T extends Entrada>(
       conteo: contarSenales(g.entradas),
       pctConEvidencia: pctConEvidencia(g.entradas),
     }));
+}
+
+/**
+ * Serie para la tendencia y la línea de corridas de la Home (cronológico
+ * ascendente), construida desde los grupos: incluye corridas no registradas
+ * y corridas sin archivo (su fecha es la mayor de sus entradas), de modo que
+ * cada entrada del log cuenta en algún punto.
+ */
+export function serieDesdeGrupos<T extends Entrada>(
+  grupos: readonly GrupoCorrida<T>[],
+): PuntoSerie[] {
+  return ordenarGruposAsc(grupos).map((g) => {
+    const c = contarSenales(g.entradas);
+    return {
+      corridaId: g.corridaId,
+      fecha: g.fecha,
+      nuevo: c.nuevo,
+      confuso: c.confuso,
+      sinDatos: c["sin-datos"],
+      noFunciona: c["no-funciona"],
+    };
+  });
+}
+
+/** Entradas cuya corrida no tiene archivo en `corridas/`. */
+export function contarEntradasSinCorrida<T extends Entrada>(
+  grupos: readonly GrupoCorrida<T>[],
+): number {
+  return grupos.reduce((acc, g) => (g.corrida === null ? acc + g.entradas.length : acc), 0);
 }
 
 /** URLs de evidencia únicas, conservando el orden de aparición. */
@@ -183,10 +216,64 @@ export function enlacesEvidencia(entradas: readonly Pick<Entrada, "evidencia">[]
 /**
  * Resuelve el slug de un competidor a partir de su nombre (campo `marca` de
  * la entrada): primero la lista de vigilancia, si no `slugify(nombre)`.
+ * No desambigua colisiones: para eso está `resolverSlugsCompetidores`.
  */
 export function slugDeCompetidor(
   nombre: string,
   lista: readonly { slug: string; nombre: string }[],
 ): string {
   return lista.find((c) => c.nombre === nombre)?.slug ?? slugify(nombre);
+}
+
+export interface CompetidorSlug {
+  /** Nombre exacto (campo `marca` de las entradas). */
+  nombre: string;
+  /** Slug único dentro de la marca. */
+  slug: string;
+  /** true si figura en la lista de vigilancia (`marca.json`). */
+  enLista: boolean;
+}
+
+/**
+ * Competidores visibles de una marca con un slug ÚNICO por nombre exacto.
+ * Es la única fuente de verdad para `resumirCompetidores` (ficha, listas,
+ * sidebar) y para el proxy (`slugsDeCompetidores`): ambos ven el mismo
+ * conjunto.
+ *
+ * Orden (determinista, también el de asignación de slugs):
+ *   1. los de `marca.json` en su orden — reservan su slug aunque estén
+ *      inactivos; solo son visibles si están activos o aparecen en el log;
+ *   2. los que solo aparecen en el log, en orden alfabético (puntos de
+*      código), con `slugify(nombre)`.
+ * Un slug repetido ("Coca Cola RD" vs "Coca-Cola RD") recibe sufijo
+ * `-2`, `-3`… según ese orden.
+ */
+export function resolverSlugsCompetidores(
+  lista: readonly { slug: string; nombre: string; activo?: boolean }[],
+  nombresLog: Iterable<string>,
+): CompetidorSlug[] {
+  const enLog = new Set(nombresLog);
+  const usados = new Set<string>();
+  const vistos = new Set<string>();
+  const unico = (base: string): string => {
+    const raiz = base === "" ? "competidor" : base;
+    let slug = raiz;
+    for (let n = 2; usados.has(slug); n += 1) slug = `${raiz}-${n}`;
+    usados.add(slug);
+    return slug;
+  };
+  const salida: CompetidorSlug[] = [];
+  for (const c of lista) {
+    if (vistos.has(c.nombre)) continue;
+    vistos.add(c.nombre);
+    const slug = unico(c.slug);
+    if (c.activo === false && !enLog.has(c.nombre)) continue;
+    salida.push({ nombre: c.nombre, slug, enLista: true });
+  }
+  // Orden por puntos de código (no localeCompare): igual en cualquier máquina.
+  const soloLog = [...enLog].filter((n) => !vistos.has(n)).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  for (const nombre of soloLog) {
+    salida.push({ nombre, slug: unico(slugify(nombre)), enLista: false });
+  }
+  return salida;
 }

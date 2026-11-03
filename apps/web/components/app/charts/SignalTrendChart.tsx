@@ -83,8 +83,8 @@ export function SignalTrendChart({ serie }: { serie: PuntoSerie[] }): React.Reac
   const unaSola = serie.length < 2;
   const datos = serie.map((p) => ({ ...p }));
   return (
-    <div className="flex flex-col gap-3">
-      <div className="h-56 w-full" role="img" aria-label="Tendencia de señales por corrida">
+    <figure aria-label="Tendencia de señales por corrida" className="flex flex-col gap-3">
+      <div className="h-56 w-full">
         <ResponsiveContainer height="100%" width="100%">
           <AreaChart
             accessibilityLayer
@@ -181,6 +181,6 @@ export function SignalTrendChart({ serie }: { serie: PuntoSerie[] }): React.Reac
         columnas={["Corrida", "Nuevo", "Confuso", "Sin datos", "No funciona"]}
         filas={serie.map((p) => [fmtFecha(p.fecha), p.nuevo, p.confuso, p.sinDatos, p.noFunciona])}
       />
-    </div>
+    </figure>
   );
 }

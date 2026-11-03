@@ -17,9 +17,15 @@ export function NotFoundGenerico(): React.ReactElement {
   );
 }
 
+/** true solo para `/competidores/<slug>` (exactamente dos segmentos). */
+export function esRutaDeCompetidor(pathname: string): boolean {
+  const segmentos = pathname.split("/").filter(Boolean);
+  return segmentos.length === 2 && segmentos[0] === "competidores";
+}
+
 function NotFoundPorRuta(): React.ReactElement {
   const pathname = usePathname() ?? "";
-  if (pathname.startsWith("/competidores/")) return <NotFoundCompetidor />;
+  if (esRutaDeCompetidor(pathname)) return <NotFoundCompetidor />;
   return <NotFoundGenerico />;
 }
 

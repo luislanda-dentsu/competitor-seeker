@@ -25,13 +25,14 @@ export function CompetitorTabs({ datos }: { datos: DatosCompetidor }): React.Rea
               )}
             </TabsTab>
           </TabsList>
-          <TabsPanel value="historico">
+          {/* keepMounted: los filtros del Histórico sobreviven al cambio de pestaña. */}
+          <TabsPanel keepMounted value="historico">
             <HistoricoTab conteo={datos.conteo} grupos={datos.grupos} />
           </TabsPanel>
-          <TabsPanel value="evolucion">
+          <TabsPanel keepMounted value="evolucion">
             <SignalStrip evolucion={datos.evolucion} />
           </TabsPanel>
-          <TabsPanel value="metricas">
+          <TabsPanel keepMounted value="metricas">
             {datos.conMetricas.length > 0 ? (
               <PostMetricsTable entradas={datos.conMetricas} />
             ) : (

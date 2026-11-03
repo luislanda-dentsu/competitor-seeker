@@ -1,41 +1,12 @@
-"use client";
-
 import type { Entrada } from "@competitor-seeker/core";
 import { ExternalLink } from "lucide-react";
 import type { CSSProperties } from "react";
-import AnimatedList, { type AnimatedListEntry } from "@/components/bits/AnimatedList";
 import { SignalBadge } from "@/components/app/signals/SignalBadge";
 import { SignalDot } from "@/components/app/signals/SignalDot";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import type { GrupoCorrida } from "@/lib/data/agrupar";
 import { fmtFecha } from "@/lib/format";
 
-/* AnimatedList pinta "tiles" con sus propias variables; aquí se mapean a los
-   tokens del panel para que parezcan filas planas sobre la card. */
-const TOKENS = {
-  "--al-tile": "transparent",
-  "--al-tile-edge": "transparent",
-  "--al-tile-highlight": "transparent",
-  "--al-tile-shadow": "none",
-  "--al-frame": "transparent",
-  "--al-ink": "var(--fg)",
-  "--al-muted": "var(--fg-muted)",
-  "--al-well": "var(--card-2)",
-  "--al-ring": "var(--border-strong)",
-  "--al-ring-fill": "transparent",
-  "--al-hover": "none",
-  "--al-press": "none",
-  "--al-active": "none",
-  "--al-thumb": "var(--border-strong)",
-} as CSSProperties;
-
-interface Item extends AnimatedListEntry {
-  id: string;
-  entrada: Entrada;
-  ultima: boolean;
-}
-
-function Fila({ entrada: e, ultima }: Pick<Item, "entrada" | "ultima">): React.ReactElement {
+function Fila({ entrada: e, ultima }: { entrada: Entrada; ultima: boolean }): React.ReactElement {
   return (
     <article className="relative flex w-full gap-3 ps-1">
       {/* raíl: línea punteada + punto de señal */}
@@ -86,13 +57,7 @@ function Fila({ entrada: e, ultima }: Pick<Item, "entrada" | "ultima">): React.R
   );
 }
 
-function Grupo({ grupo, reducido }: { grupo: GrupoCorrida; reducido: boolean }): React.ReactElement {
-  const items: Item[] = grupo.entradas.map((e, i) => ({
-    id: e.id,
-    title: e.movimiento,
-    entrada: e,
-    ultima: i === grupo.entradas.length - 1,
-  }));
+function Grupo({ grupo }: { grupo: GrupoCorrida }): React.ReactElement {
   const c = grupo.corrida;
   const estado = c
     ? c.modo === "migrada"
@@ -112,46 +77,32 @@ function Grupo({ grupo, reducido }: { grupo: GrupoCorrida; reducido: boolean }):
           {estado} · {grupo.entradas.length} {grupo.entradas.length === 1 ? "entrada" : "entradas"}
         </span>
       </header>
-      <AnimatedList
-        animation={reducido ? "none" : "fade"}
-        animateOnce
-        displayScrollbar={false}
-        enableArrowNavigation={false}
-        frame={false}
-        gap={6}
-        initialSelectedIndex={-1}
-        itemClassName="cursor-default!"
-        items={items}
-        maxHeight="none"
-        radius={8}
-        renderItem={(item) => {
-          const it = item as Item;
-          return <Fila entrada={it.entrada} ultima={it.ultima} />;
-        }}
-        selectOnHover={false}
-        showGradients={false}
-        stagger={0.04}
-        style={TOKENS}
-        width="100%"
-      />
+      <ol className="cs-escalonado flex flex-col gap-1.5">
+        {grupo.entradas.map((e, i) => (
+          <li key={e.id} style={{ "--i": i } as CSSProperties}>
+            <Fila entrada={e} ultima={i === grupo.entradas.length - 1} />
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
 
 /**
- * Histórico vertical agrupado por corrida. Cada grupo es un AnimatedList
- * (React Bits) con las variables mapeadas a nuestros tokens; con
- * prefers-reduced-motion la animación de entrada se desactiva.
+ * Histórico vertical agrupado por corrida. Cada grupo es una lista `<ol>`
+ * semántica (los artículos con enlaces quedan accesibles) con entrada
+ * escalonada en CSS puro (`.cs-escalonado` en globals.css): la animación va
+ * de 0 a 1 y termina visible aunque no corra JS, y se desactiva con
+ * prefers-reduced-motion.
  */
 export function EntryTimeline({ grupos }: { grupos: GrupoCorrida[] }): React.ReactElement {
-  const reducido = useMediaQuery("(prefers-reduced-motion: reduce)");
   if (grupos.length === 0) {
     return <p className="py-6 text-center text-sm text-fg-muted">Ninguna entrada coincide con el filtro.</p>;
   }
   return (
     <div className="flex flex-col gap-6">
       {grupos.map((g) => (
-        <Grupo grupo={g} key={g.corridaId} reducido={reducido} />
+        <Grupo grupo={g} key={g.corridaId} />
       ))}
     </div>
   );

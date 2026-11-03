@@ -35,7 +35,11 @@ async function Indice(): Promise<React.ReactElement> {
   }
   return (
     <div className="flex flex-col gap-4">
-      <LogAlert corridasInvalidas={datos.corridasInvalidas.length} lineas={datos.lineasInvalidas} />
+      <LogAlert
+        corridasInvalidas={datos.corridasInvalidas.length}
+        entradasSinCorrida={datos.entradasSinCorrida}
+        lineas={datos.lineasInvalidas}
+      />
       <Card>
         <CardHeader className="p-5 pb-3">
           <CardTitle className="t-label">

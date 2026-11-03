@@ -8,7 +8,6 @@ import {
   leerMarca,
   listarCorridas,
   semaforoPorCompetidor,
-  seriePorCorrida,
   type ConteoSenales,
   type Corrida,
   type CorridaInvalida,
@@ -20,7 +19,13 @@ import {
   type Senal,
 } from "@competitor-seeker/core";
 import { cache } from "react";
-import { contarSenales, slugDeCompetidor } from "./agrupar";
+import {
+  agruparPorCorrida,
+  contarEntradasSinCorrida,
+  contarSenales,
+  resolverSlugsCompetidores,
+  serieDesdeGrupos,
+} from "./agrupar";
 
 /** Resumen por competidor para listas, tablas y sidebar (serializable). */
 export interface CompetidorResumen {
@@ -47,7 +52,13 @@ export interface DatosMarca {
   /** Nombre de competidor → entrada más reciente (empate → señal más grave). */
   semaforo: Map<string, Entrada>;
   conteo: ConteoSenales;
+  /**
+   * Un punto por corrida con entradas (cronológico), incluidas las corridas
+   * no registradas y las que no tienen archivo: toda entrada del log cuenta.
+   */
   serie: PuntoSerie[];
+  /** Entradas cuya corrida no tiene archivo en `corridas/`. */
+  entradasSinCorrida: number;
   competidores: CompetidorResumen[];
 }
 
@@ -62,40 +73,26 @@ function resumirCompetidores(
     if (lista) lista.push(e);
     else porNombre.set(e.marca, [e]);
   }
-  const salida: CompetidorResumen[] = [];
-  const vistos = new Set<string>();
-  const construir = (
-    nombre: string,
-    base: Partial<Pick<CompetidorResumen, "slug" | "url" | "instagram" | "activo">>,
-  ): CompetidorResumen => {
+  const enLista = new Map(marca.competidores.map((c) => [c.nombre, c] as const));
+  // Slugs únicos y orden: activos de la lista, luego los que solo aparecen en
+  // el log (o están inactivos), marcados como inactivos.
+  return resolverSlugsCompetidores(marca.competidores, porNombre.keys()).map(({ nombre, slug }) => {
+    const base = enLista.get(nombre);
     const propias = porNombre.get(nombre) ?? [];
     const sem = semaforo.get(nombre) ?? null;
     return {
-      slug: base.slug ?? slugDeCompetidor(nombre, marca.competidores),
+      slug,
       nombre,
-      ...(base.url ? { url: base.url } : {}),
-      ...(base.instagram ? { instagram: base.instagram } : {}),
-      activo: base.activo ?? false,
+      ...(base?.url ? { url: base.url } : {}),
+      ...(base?.instagram ? { instagram: base.instagram } : {}),
+      activo: base?.activo ?? false,
       semaforo: sem,
       senal: sem?.senal ?? null,
       total: propias.length,
       conteo: contarSenales(propias),
       ultimaFecha: sem?.fecha ?? null,
     };
-  };
-  for (const c of competidoresActivos(marca)) {
-    vistos.add(c.nombre);
-    salida.push(construir(c.nombre, c));
-  }
-  // Competidores que aparecen en el log pero ya no están (o están inactivos)
-  // en la lista: se muestran igual, marcados como inactivos.
-  for (const nombre of porNombre.keys()) {
-    if (vistos.has(nombre)) continue;
-    vistos.add(nombre);
-    const enLista = marca.competidores.find((c) => c.nombre === nombre);
-    salida.push(construir(nombre, { ...enLista, activo: false }));
-  }
-  return salida;
+  });
 }
 
 /**
@@ -108,6 +105,7 @@ export const cargarDatosMarca = cache((slug: string): DatosMarca => {
   const { items: entradas, lineasInvalidas } = leerLog(slug);
   const { corridas, invalidas: corridasInvalidas } = listarCorridas(slug);
   const semaforo = semaforoPorCompetidor(entradas);
+  const grupos = agruparPorCorrida(entradas, corridas);
   const kpis = kpisMarca({
     entradas,
     corridas,
@@ -122,7 +120,8 @@ export const cargarDatosMarca = cache((slug: string): DatosMarca => {
     kpis,
     semaforo,
     conteo: conteoPorSenal(entradas),
-    serie: seriePorCorrida(entradas, corridas),
+    serie: serieDesdeGrupos(grupos),
+    entradasSinCorrida: contarEntradasSinCorrida(grupos),
     competidores: resumirCompetidores(marca, entradas, semaforo),
   };
 });

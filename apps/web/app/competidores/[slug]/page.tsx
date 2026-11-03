@@ -25,7 +25,7 @@ async function Ficha({ slug }: { slug: string }): Promise<React.ReactElement> {
   if (!marca) notFound();
   const datos = cargarCompetidor(marca, slug);
   if (!datos) notFound();
-  const { lineasInvalidas, corridasInvalidas } = cargarDatosMarca(marca);
+  const { lineasInvalidas, corridasInvalidas, entradasSinCorrida } = cargarDatosMarca(marca);
   return (
     <div className="flex flex-col gap-4">
       <PageTitle title={datos.competidor.nombre} />
@@ -44,7 +44,11 @@ async function Ficha({ slug }: { slug: string }): Promise<React.ReactElement> {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <LogAlert corridasInvalidas={corridasInvalidas.length} lineas={lineasInvalidas} />
+      <LogAlert
+        corridasInvalidas={corridasInvalidas.length}
+        entradasSinCorrida={entradasSinCorrida}
+        lineas={lineasInvalidas}
+      />
       <CompetitorHeader datos={datos} />
       <CompetitorTabs datos={datos} />
     </div>

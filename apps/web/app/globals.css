@@ -322,6 +322,33 @@
 }
 
 /* ============================================================
+   Entrada escalonada (EntryTimeline): CSS puro, sin JS. Cada hijo
+   declara --i (índice); la animación va de 0 a 1 y TERMINA visible, así
+   que nada queda oculto si el script no corre. Con reduced-motion se anula.
+   ============================================================ */
+@keyframes cs-entrada {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@layer components {
+  .cs-escalonado > * {
+    animation: cs-entrada 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(min(var(--i, 0), 12) * 40ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-escalonado > * {
+      animation: none;
+    }
+  }
+}
+
+/* ============================================================
    Utilidades tipográficas
    ============================================================ */
 @utility t-page {
