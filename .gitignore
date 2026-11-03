@@ -1,0 +1,22 @@
+# deps / build
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+# env & secrets
+.env
+.env.*
+!.env.example
+# estado local (no sincronizado)
+data/
+# claude local
+.claude/settings.local.json
+# knowledge layer generado
+graphify-out/
+.obsidian/workspace*
+# worktrees
+*-wt/
+.worktrees/
+# os
+.DS_Store

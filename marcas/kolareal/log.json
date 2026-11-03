@@ -1,0 +1,114 @@
+[
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-07-08",
+    "movimiento": "Coca-Cola RD (Bepensa Dominicana) se convirtió en refresco oficial de los XXV Juegos Centroamericanos y del Caribe Santo Domingo 2026, con donación de producto para la operación del evento (24-jul al 8-ago-2026).",
+    "senal": "nuevo",
+    "lectura": "Refuerza presencia institucional vía patrocinio deportivo masivo, no vía contenido propio de marca."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "La plataforma local 'Euphoria' (Copa Mundial FIFA 2026) no registra piezas audiovisuales nuevas entre el 23-jul y el 20-ago-2026; las tres piezas identificadas ('Bubbling Up', 'Uncanned Emotions', 'No Better Feeling') corresponden a lanzamientos previos a la ventana.",
+    "senal": "sin-datos",
+    "lectura": "Sin evidencia de renovación de contenido Mundial en la ventana revisada."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "La promoción 'Viaja a la Copa Mundial de la FIFA 2026 con Coca-Cola' (mecánica tipo Panini: coleccionable de fotos exclusivas, álbum físico y virtual, premio de viajes dobles) cerró su fase Panini, según la página legal de la marca ('la experiencia de Panini terminó, pero la pasión sigue con Coca-Cola'), sin fecha exacta de cierre visible ni métricas de participación o alcance en el contenido accedido.",
+    "senal": "confuso",
+    "lectura": "Se confirma el cierre de una mecánica promocional activa ligada al Mundial, pero sin fecha exacta ni datos de participación no es legible si tuvo tracción o si el cierre responde a agotamiento del ciclo o bajo desempeño."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Intento de inspección de canales propios: Instagram (@cocacolard) devolvió datos inconsistentes entre intentos de consulta (seguidores y conteo de posts distintos, texto de caption corrupto) y X/Twitter (@cocacolard) devolvió error HTTP 402 al fetch.",
+    "senal": "sin-datos",
+    "lectura": "Canales propios no verificables por esta vía; no se puede evaluar frecuencia ni tracción real."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "No se encontró evidencia de contenido o comunicación de marca vinculada al cierre de los Juegos Centroamericanos (8-ago-2026) ni a su medallero, en el sub-tramo hasta el 20-ago-2026.",
+    "senal": "sin-datos",
+    "lectura": "Sin capitalización visible del cierre del evento patrocinado en el periodo revisado."
+  },
+  {
+    "marca": "Country Club RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Inspección de canales propios: Instagram (@countryclubrd) devolvió el mismo snapshot en dos intentos, con publicaciones fechadas entre junio y noviembre de 2025, sin captions ni métricas, fuera de la ventana revisada; Facebook oficial bloqueado para scraping sin login.",
+    "senal": "sin-datos",
+    "lectura": "Canales propios no verificables para el periodo; no se puede evaluar actividad reciente."
+  },
+  {
+    "marca": "Country Club RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Sin notas de prensa, campañas ni lanzamientos de sabor de Country Club fechados en julio-agosto 2026; sin mención de la marca en el patrocinio de Coca-Cola a los Juegos Centroamericanos; sin resultados relevantes en búsquedas de TikTok.",
+    "senal": "sin-datos",
+    "lectura": "Sin evidencia de actividad de marca en el periodo, incluyendo ausencia de vínculo con el evento patrocinado por la compañía."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Se intentó revisar el perfil de Instagram @cocacolard para el periodo, pero el rastreador-ig no tuvo acceso a la herramienta de navegador (chrome-devtools MCP) en esta ejecución; no se realizó ninguna navegación ni observación del perfil.",
+    "senal": "sin-datos",
+    "lectura": "No hay evidencia de Instagram para este periodo; falla de configuración del rastreador, no bloqueo de sesión."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-07-24",
+    "movimiento": "Coca-Cola/Bepensa Dominicana fue refresco oficial de los XXV Juegos Centroamericanos y del Caribe Santo Domingo 2026, ejecutados del 24 de julio al 8 de agosto de 2026, con donación de producto para atletas, voluntarios, delegaciones y visitantes; confirmado por Diario Libre, Listín Diario, ohmagazinerd, El Pregonero y El Día.",
+    "senal": "nuevo",
+    "lectura": "Patrocinio institucional confirmado durante el evento; no se puede evaluar el impacto ni la ejecución en piso por falta de evidencia de activaciones o métricas."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Se revisaron el sitio oficial coca-cola.com/do, TikTok y YouTube buscando promociones nuevas, activaciones físicas del patrocinio de los Juegos y contenido propio de RD dentro del periodo; las promociones vigentes localizadas cerraron el 15 de julio (antes del periodo) y no se halló contenido ni activación adicional fechada dentro de la ventana.",
+    "senal": "sin-datos",
+    "lectura": "Fuera del patrocinio del evento, no hay movimiento adicional detectable de la marca en el periodo."
+  },
+  {
+    "marca": "Country Club RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Se intentó revisar el perfil de Instagram @countryclubrd para el periodo, pero el rastreador-ig no tuvo acceso a la herramienta de navegador (chrome-devtools MCP) en esta ejecución; no se realizó ninguna navegación ni observación del perfil.",
+    "senal": "sin-datos",
+    "lectura": "No hay evidencia de Instagram para este periodo; falla de configuración del rastreador, no bloqueo de sesión."
+  },
+  {
+    "marca": "Country Club RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Se revisaron prensa dominicana, sitio oficial de la marca, Bepensa corporativo, Facebook, TikTok y YouTube buscando campañas o lanzamientos de Country Club RD; no se encontró ninguna pieza fechada dentro del periodo 20 jul-20 ago 2026, solo campañas históricas anteriores ('Hechos de Sabor', 'Mi Country es rico en alegría', 'Conquistadores').",
+    "senal": "sin-datos",
+    "lectura": "No hay movimiento detectable de la marca en el periodo."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-19",
+    "movimiento": "Publicó 9 piezas en 32 días (5 reels, 4 fotos, ninguna carrusel); 8 de 9 ancladas a patrocinios deportivos de los Juegos Centroamericanos y del Caribe Santo Domingo 2026 (atletismo, voleibol, baloncesto, béisbol, eSports); la más reciente (≈19-ago) rompe el patrón con un ángulo de unión familiar/mesa sin mención deportiva.",
+    "senal": "nuevo",
+    "lectura": "El pilar dominante sigue siendo el patrocinio deportivo, pero la pieza más reciente introduce una variación de ángulo narrativo que antes no aparecía en el periodo."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-08-20",
+    "movimiento": "El engagement por publicación (20 a 283 likes) es bajo frente a los 106 mil seguidores de la cuenta e Instagram no expone reproducciones de los reels; en la mayoría de las piezas del periodo aparecen comentarios con el hashtag #cocacolaboicot y quejas de sabor del producto en RD.",
+    "senal": "no-funciona",
+    "lectura": "El volumen de publicación no se traduce en tracción y además arrastra fricción de marca no resuelta en comentarios."
+  },
+  {
+    "marca": "Coca Cola RD",
+    "fecha": "2026-07-25",
+    "movimiento": "El reel DbOMLglQV4m sobre los Juegos Centroamericanos y del Caribe acumuló comentarios de usuarios cuestionando si el clip fue generado con IA (\"es ia mi gente\", \"0 necesidad de usar ia\").",
+    "senal": "confuso",
+    "lectura": "La autenticidad del contenido audiovisual queda en duda para parte de la audiencia, lo que enturbia el ángulo creativo del post."
+  },
+  {
+    "marca": "Country Club RD",
+    "fecha": "2026-08-20",
+    "movimiento": "Se inspeccionó el perfil, con recarga forzada sin caché para confirmar ausencia de publicaciones recientes, y no se encontró ninguna pieza entre 2026-07-20 y 2026-08-20; la última publicación data del 2 de noviembre de 2025 (reel de Comic Con RD).",
+    "senal": "sin-datos",
+    "lectura": "La cuenta lleva aproximadamente 9,5 meses sin publicar; no hay actividad reciente que evaluar."
+  }
+]

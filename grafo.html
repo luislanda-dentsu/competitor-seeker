@@ -1,0 +1,448 @@
+<title>El grafo de Competitor-Seeker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #F2F4F7;
+    --surface: #FFFFFF;
+    --ink: #1B222C;
+    --muted: #5C6875;
+    --line: #C7CFDA;
+    --accent: #2B66C2;
+    --accent-soft: rgba(43, 102, 194, 0.07);
+    --ok: #2E7D4F;
+    --bad: #B3413A;
+    --warn: #A9791F;
+    --neutral-dot: #8A94A0;
+    --code-bg: #E9EDF2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12161C;
+      --surface: #1B222C;
+      --ink: #E5EAF1;
+      --muted: #9AA6B4;
+      --line: #3A4450;
+      --accent: #6FA3E8;
+      --accent-soft: rgba(111, 163, 232, 0.09);
+      --ok: #5CBF8A;
+      --bad: #E07E75;
+      --warn: #D9A94F;
+      --neutral-dot: #7E8894;
+      --code-bg: #232B37;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12161C;
+    --surface: #1B222C;
+    --ink: #E5EAF1;
+    --muted: #9AA6B4;
+    --line: #3A4450;
+    --accent: #6FA3E8;
+    --accent-soft: rgba(111, 163, 232, 0.09);
+    --ok: #5CBF8A;
+    --bad: #E07E75;
+    --warn: #D9A94F;
+    --neutral-dot: #7E8894;
+    --code-bg: #232B37;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  h1, h2 {
+    font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  h1 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 56px 0 12px;
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  .lede {
+    color: var(--muted);
+    max-width: 62ch;
+    margin: 0 0 8px;
+  }
+  p { max-width: 68ch; }
+  code, .mono {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.85em;
+  }
+  p code, li code, td code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  figure {
+    margin: 28px 0 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 20px 8px 8px;
+    overflow-x: auto;
+  }
+  figure svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    min-width: 640px;
+  }
+  figcaption {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 12px 16px 10px;
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+  }
+
+  /* SVG vocabulary */
+  .nodo { fill: var(--surface); stroke: var(--line); stroke-width: 1.4; }
+  .nodo-fail { fill: var(--surface); stroke: var(--bad); stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .nodo-ok { fill: var(--surface); stroke: var(--ok); stroke-width: 1.6; }
+  .nodo-bad { fill: var(--surface); stroke: var(--bad); stroke-width: 1.6; }
+  .contenedor { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4; }
+  .gate { fill: var(--surface); stroke: var(--ink); stroke-width: 1.6; }
+  .flecha { stroke: var(--ink); stroke-width: 1.4; fill: none; }
+  .flecha-ok { stroke: var(--ok); stroke-width: 1.6; fill: none; }
+  .flecha-bad { stroke: var(--bad); stroke-width: 1.6; fill: none; }
+  .flecha-retry { stroke: var(--warn); stroke-width: 1.5; fill: none; stroke-dasharray: 6 5; }
+  .flecha-dash { stroke: var(--muted); stroke-width: 1.2; fill: none; stroke-dasharray: 4 4; }
+  svg text {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 13px;
+    fill: var(--ink);
+  }
+  svg .t-titulo { font-weight: 600; }
+  svg .t-sub { font-size: 11.5px; fill: var(--muted); }
+  svg .t-mono { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; fill: var(--muted); }
+  svg .t-rol {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    fill: var(--accent);
+  }
+  svg .t-ok { fill: var(--ok); font-weight: 600; font-size: 12px; }
+  svg .t-bad { fill: var(--bad); font-weight: 600; font-size: 12px; }
+  svg .t-warn { fill: var(--warn); font-size: 11px; }
+  svg .t-fail { fill: var(--bad); font-size: 11.5px; }
+
+  /* señales */
+  .senales {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .senales li {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 12px 14px;
+    font-size: 0.88rem;
+  }
+  .senales .chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot-nuevo { background: var(--ok); }
+  .dot-confuso { background: var(--warn); }
+  .dot-sindatos { background: var(--neutral-dot); }
+  .dot-nofunciona { background: var(--bad); }
+  .senales p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  th {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .escribe { color: var(--ok); font-weight: 600; }
+  .no-escribe { color: var(--muted); }
+
+  pre.arbol {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.84rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 16px 0 0;
+  }
+  pre.arbol .nota { color: var(--muted); }
+
+  ul.guardas {
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    max-width: 70ch;
+  }
+  ul.guardas li {
+    border-left: 3px solid var(--accent);
+    padding: 2px 0 2px 14px;
+    font-size: 0.92rem;
+  }
+</style>
+
+<main>
+  <p class="eyebrow">competitor-seeker · una corrida, una marca</p>
+  <h1>El grafo de Competitor-Seeker</h1>
+  <p class="lede">Cómo se reparte el trabajo en cada corrida: el orquestador resuelve la marca y custodia el log; el workflow rastrea, analiza y verifica; nada se registra sin evidencia que lo sustente.</p>
+
+  <figure>
+    <svg viewBox="0 0 880 1260" role="img" aria-label="Grafo de una corrida: el orquestador lee la lista de vigilancia y la fecha de última corrida, lanza el workflow corrida (rastreadores en paralelo, analista, verificador con reintentos), y solo si el resultado está verificado appendea al log y lanza al panelista.">
+      <defs>
+        <marker id="m-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" style="fill: var(--ink)"/>
+        </marker>
+        <marker id="m-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" style="fill: var(--ok)"/>
+        </marker>
+        <marker id="m-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" style="fill: var(--bad)"/>
+        </marker>
+        <marker id="m-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" style="fill: var(--warn)"/>
+        </marker>
+        <marker id="m-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" style="fill: var(--muted)"/>
+        </marker>
+      </defs>
+
+      <!-- Paso 1 -->
+      <text x="210" y="14" class="t-rol">ORQUESTADOR · PASOS 1–2</text>
+      <rect x="210" y="24" width="340" height="60" rx="8" class="nodo"/>
+      <text x="380" y="48" text-anchor="middle" class="t-titulo">1 · Lista de vigilancia</text>
+      <text x="380" y="68" text-anchor="middle" class="t-mono">marcas/&lt;marca&gt;/competidores.txt</text>
+
+      <line x1="550" y1="54" x2="614" y2="54" class="flecha-bad" stroke-dasharray="5 4" marker-end="url(#m-bad)"/>
+      <rect x="620" y="30" width="196" height="48" rx="8" class="nodo-fail"/>
+      <text x="718" y="50" text-anchor="middle" class="t-fail">no existe →</text>
+      <text x="718" y="66" text-anchor="middle" class="t-fail">avisa y se detiene</text>
+
+      <line x1="380" y1="84" x2="380" y2="114" class="flecha" marker-end="url(#m-ink)"/>
+
+      <!-- Paso 2 -->
+      <rect x="210" y="120" width="340" height="60" rx="8" class="nodo"/>
+      <text x="380" y="144" text-anchor="middle" class="t-titulo">2 · Fecha de última corrida</text>
+      <text x="380" y="164" text-anchor="middle" class="t-mono">bloque &lt;script id="datos"&gt; del index.html</text>
+
+      <line x1="550" y1="150" x2="612" y2="150" class="flecha-dash"/>
+      <text x="620" y="146" class="t-mono">"demo": true → primera corrida;</text>
+      <text x="620" y="162" class="t-mono">los datos de ejemplo se descartan</text>
+
+      <line x1="380" y1="180" x2="380" y2="242" class="flecha" marker-end="url(#m-ink)"/>
+      <text x="395" y="205" class="t-mono">args: marca, fechaCorrida,</text>
+      <text x="395" y="220" class="t-mono">ultimaCorrida, competidores[]</text>
+
+      <!-- Workflow -->
+      <rect x="60" y="248" width="640" height="440" rx="12" class="contenedor"/>
+      <text x="82" y="276" class="t-rol" style="letter-spacing: 0.14em;">WORKFLOW CORRIDA · PASOS 3–4</text>
+      <text x="82" y="294" class="t-mono">.claude/workflows/corrida.js</text>
+
+      <text x="380" y="330" text-anchor="middle" class="t-sub">N rastreadores en paralelo · uno por competidor</text>
+      <rect x="115" y="342" width="150" height="56" rx="8" class="nodo"/>
+      <text x="190" y="366" text-anchor="middle" class="t-titulo">rastreador</text>
+      <text x="190" y="384" text-anchor="middle" class="t-sub">competidor 1</text>
+      <rect x="305" y="342" width="150" height="56" rx="8" class="nodo"/>
+      <text x="380" y="366" text-anchor="middle" class="t-titulo">rastreador</text>
+      <text x="380" y="384" text-anchor="middle" class="t-sub">competidor 2</text>
+      <rect x="495" y="342" width="150" height="56" rx="8" class="nodo"/>
+      <text x="570" y="366" text-anchor="middle" class="t-titulo">rastreador</text>
+      <text x="570" y="384" text-anchor="middle" class="t-sub">competidor N</text>
+
+      <line x1="190" y1="398" x2="330" y2="448" class="flecha" marker-end="url(#m-ink)"/>
+      <line x1="380" y1="398" x2="380" y2="448" class="flecha" marker-end="url(#m-ink)"/>
+      <line x1="570" y1="398" x2="430" y2="448" class="flecha" marker-end="url(#m-ink)"/>
+      <text x="395" y="428" class="t-sub">hallazgos crudos</text>
+
+      <rect x="240" y="452" width="280" height="58" rx="8" class="nodo"/>
+      <text x="380" y="476" text-anchor="middle" class="t-titulo">analista</text>
+      <text x="380" y="494" text-anchor="middle" class="t-sub">consolida en entradas de log</text>
+
+      <line x1="380" y1="510" x2="380" y2="576" class="flecha" marker-end="url(#m-ink)"/>
+      <text x="395" y="548" class="t-mono">entradas · JSON validado (schema)</text>
+
+      <rect x="240" y="580" width="280" height="58" rx="8" class="nodo"/>
+      <text x="380" y="604" text-anchor="middle" class="t-titulo">verificador</text>
+      <text x="380" y="622" text-anchor="middle" class="t-sub">refuta contra la evidencia · soul.md</text>
+
+      <path d="M520,609 C578,609 612,585 612,545 C612,505 578,481 528,481" class="flecha-retry" marker-end="url(#m-warn)"/>
+      <text x="566" y="533" text-anchor="middle" class="t-warn">rechaza →</text>
+      <text x="566" y="548" text-anchor="middle" class="t-warn">reintenta</text>
+      <text x="566" y="563" text-anchor="middle" class="t-warn">(máx. 3)</text>
+
+      <line x1="380" y1="638" x2="380" y2="794" class="flecha" marker-end="url(#m-ink)"/>
+      <text x="395" y="738" class="t-mono">{ entradas, verificado, objeciones? }</text>
+
+      <!-- Compuerta -->
+      <polygon points="380,798 470,840 380,882 290,840" class="gate"/>
+      <text x="380" y="845" text-anchor="middle" class="t-titulo">¿verificado?</text>
+
+      <polyline points="290,840 220,840 220,924" class="flecha-ok" marker-end="url(#m-ok)"/>
+      <text x="245" y="830" text-anchor="end" class="t-ok">true</text>
+      <polyline points="470,840 635,840 635,924" class="flecha-bad" marker-end="url(#m-bad)"/>
+      <text x="545" y="830" class="t-bad">false</text>
+
+      <!-- Paso 5 -->
+      <rect x="70" y="930" width="300" height="86" rx="8" class="nodo-ok"/>
+      <text x="220" y="952" text-anchor="middle" class="t-rol">ORQUESTADOR · PASO 5</text>
+      <text x="220" y="974" text-anchor="middle" class="t-titulo">appendea al log de la marca</text>
+      <text x="220" y="992" text-anchor="middle" class="t-mono">marcas/&lt;marca&gt;/log.json</text>
+      <text x="220" y="1008" text-anchor="middle" class="t-sub">append-only · nunca reescribe ni borra</text>
+
+      <rect x="480" y="930" width="310" height="86" rx="8" class="nodo-bad"/>
+      <text x="635" y="958" text-anchor="middle" class="t-titulo">muestra las objeciones</text>
+      <text x="635" y="978" text-anchor="middle" class="t-sub">no registra ni actualiza el panel</text>
+      <text x="635" y="996" text-anchor="middle" class="t-sub">sin confirmación del usuario</text>
+
+      <line x1="478" y1="973" x2="376" y2="973" class="flecha-dash" marker-end="url(#m-muted)"/>
+      <text x="427" y="992" text-anchor="middle" class="t-sub" style="font-size: 10.5px;">solo si el usuario</text>
+      <text x="427" y="1006" text-anchor="middle" class="t-sub" style="font-size: 10.5px;">confirma</text>
+
+      <line x1="220" y1="1016" x2="220" y2="1054" class="flecha" marker-end="url(#m-ink)"/>
+
+      <!-- Paso 6 -->
+      <rect x="70" y="1060" width="300" height="76" rx="8" class="nodo"/>
+      <text x="220" y="1082" text-anchor="middle" class="t-rol">PANELISTA · PASO 6</text>
+      <text x="220" y="1104" text-anchor="middle" class="t-titulo">regenera el bloque DATOS</text>
+      <text x="220" y="1122" text-anchor="middle" class="t-sub">solo entre INICIO DATOS y FIN DATOS del index.html</text>
+
+      <line x1="220" y1="1136" x2="220" y2="1174" class="flecha" marker-end="url(#m-ink)"/>
+
+      <rect x="70" y="1180" width="300" height="60" rx="8" class="nodo"/>
+      <text x="220" y="1204" text-anchor="middle" class="t-titulo">cierre · resumen al usuario</text>
+      <text x="220" y="1222" text-anchor="middle" class="t-sub">qué hicieron y qué significa · tono analítico</text>
+    </svg>
+    <figcaption>Una corrida siempre es para una marca. El azul delimita lo que corre dentro del workflow <code>corrida</code>; la compuerta <em>¿verificado?</em> decide si las entradas llegan al log. Si el workflow no está disponible, el orquestador ejecuta el mismo grafo a mano con llamadas Agent.</figcaption>
+  </figure>
+
+  <h2>Las cuatro señales</h2>
+  <p class="lede">Cada entrada del log lleva una señal exacta, según el criterio anti-alucinación de <code>soul.md</code>. Si no hay data, el competidor se registra igual — no se omite.</p>
+  <ul class="senales">
+    <li>
+      <span class="chip"><span class="dot dot-nuevo"></span>nuevo</span>
+      <p>Movimiento nuevo detectado desde la última corrida.</p>
+    </li>
+    <li>
+      <span class="chip"><span class="dot dot-confuso"></span>confuso</span>
+      <p>El ángulo del contenido no es legible.</p>
+    </li>
+    <li>
+      <span class="chip"><span class="dot dot-sindatos"></span>sin-datos</span>
+      <p>No se encontró data al inspeccionar. Se registra igual.</p>
+    </li>
+    <li>
+      <span class="chip"><span class="dot dot-nofunciona"></span>no-funciona</span>
+      <p>Hay contenido, pero no está rindiendo.</p>
+    </li>
+  </ul>
+
+  <h2>Quién escribe qué</h2>
+  <p class="lede">La separación de permisos es el invariante central: el histórico solo lo toca el orquestador, y el panel solo lo toca el panelista.</p>
+  <table>
+    <thead>
+      <tr><th>Agente</th><th>Hace</th><th>Escribe</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>orquestador</strong></td>
+        <td>Resuelve la marca, lanza el grafo, custodia el histórico.</td>
+        <td class="escribe">único que appendea a <code>log.json</code></td>
+      </tr>
+      <tr>
+        <td><strong>rastreador</strong> ×N</td>
+        <td>Investiga un competidor (redes, sitio, campañas) desde la última corrida. Devuelve hallazgos crudos, sin juicio.</td>
+        <td class="no-escribe">nada — solo lee y busca</td>
+      </tr>
+      <tr>
+        <td><strong>analista</strong></td>
+        <td>Convierte hallazgos crudos en entradas con señal y lectura estratégica.</td>
+        <td class="no-escribe">nada — devuelve JSON al workflow</td>
+      </tr>
+      <tr>
+        <td><strong>verificador</strong></td>
+        <td>Refuta adversarialmente cada entrada contra la evidencia cruda. Devuelve veredicto con objeciones concretas.</td>
+        <td class="no-escribe">nada — devuelve veredicto</td>
+      </tr>
+      <tr>
+        <td><strong>panelista</strong></td>
+        <td>Regenera los datos del panel tras registrar la corrida.</td>
+        <td class="escribe">solo el bloque DATOS del <code>index.html</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Estructura por marca</h2>
+  <pre class="arbol">marcas/&lt;marca&gt;/
+  competidores.txt   <span class="nota">← lista de vigilancia · «Nombre | URL» por línea</span>
+  log.json           <span class="nota">← histórico append-only · solo el orquestador</span>
+  index.html         <span class="nota">← panel de la marca · solo el panelista, solo bloque DATOS</span>
+plantilla.html       <span class="nota">← molde: se copia al dar de alta una marca; jamás se edita</span></pre>
+
+  <h2>Invariantes</h2>
+  <ul class="guardas">
+    <li>Todo el trabajo ocurre dentro de la carpeta del proyecto; nada fuera.</li>
+    <li>Cada <code>log.json</code> es append-only: nunca se reescriben ni se borran entradas anteriores, y esa escritura no se delega a ningún subagente ni al workflow.</li>
+    <li>Sin <code>competidores.txt</code> no hay corrida: se avisa y se detiene.</li>
+    <li>Con <code>verificado: false</code> no se registra ni se actualiza el panel sin confirmación explícita del usuario.</li>
+    <li>Los <code>index.html</code> de marca no se rediseñan: solo el panelista reemplaza su bloque DATOS. <code>plantilla.html</code> solo se copia en el alta.</li>
+  </ul>
+</main>

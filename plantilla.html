@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competitor-Seeker</title>
+<style>
+  :root {
+    --bg: #f6f7f8;
+    --panel: #ffffff;
+    --border: #e2e5e9;
+    --text: #14171c;
+    --muted: #5c636d;
+    --dim: #8b929c;
+    --s-nuevo: #1a7f37;
+    --s-confuso: #9a6700;
+    --s-sin-datos: #848d97;
+    --s-no-funciona: #cf222e;
+    --s-invalida: #8250df;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d0f12;
+      --panel: #14171c;
+      --border: #23272e;
+      --text: #e6e8eb;
+      --muted: #8b929c;
+      --dim: #5c636d;
+      --s-nuevo: #3fb950;
+      --s-confuso: #d29922;
+      --s-sin-datos: #6e7681;
+      --s-no-funciona: #f85149;
+      --s-invalida: #a371f7;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .envoltura { max-width: 1100px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  /* Cabecera */
+  header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; }
+  h1 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .resumen {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .resumen span { color: var(--text); font-weight: 600; }
+
+  /* Controles */
+  .controles { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
+  #buscador {
+    flex: 1 1 240px;
+    min-width: 0;
+    padding: 9px 12px;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+  }
+  #buscador::placeholder { color: var(--dim); }
+  #buscador:focus { outline: none; border-color: var(--muted); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .chip:hover { color: var(--text); }
+  .chip[aria-pressed="true"] { background: var(--panel); color: var(--text); border-color: var(--muted); }
+  .chip .n { color: var(--dim); font-variant-numeric: tabular-nums; }
+
+  /* Semáforo */
+  .punto { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--dim); }
+  .s-nuevo        { background: var(--s-nuevo); }
+  .s-confuso      { background: var(--s-confuso); }
+  .s-sin-datos    { background: var(--s-sin-datos); }
+  .s-no-funciona  { background: var(--s-no-funciona); }
+  .s-invalida     { background: var(--s-invalida); }
+
+  /* Alerta de integridad de datos */
+  .alerta {
+    display: none;
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--s-no-funciona);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .alerta.visible { display: block; }
+  .alerta b { display: block; margin-bottom: 4px; color: var(--s-no-funciona); }
+  .alerta code { font-size: 12px; color: var(--muted); }
+
+  /* Aviso de datos de ejemplo: desaparece solo cuando el agente reemplaza
+     el bloque DATOS con hallazgos reales (el campo "demo" deja de existir). */
+  .demo {
+    display: none;
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border: 1px dashed var(--s-confuso);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .demo.visible { display: block; }
+  .demo b { display: block; margin-bottom: 4px; color: var(--s-confuso); }
+
+  /* Grid de tarjetas */
+  #grid {
+    display: grid;
+    /* min(280px, 100%) evita que el track fuerce 280px cuando el contenedor
+       es más angosto (viewports de ~320px), lo que descuadraba los márgenes. */
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: 16px;
+  }
+  .tarjeta {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .tarjeta-cab { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+  .marca { font-size: 14px; font-weight: 600; letter-spacing: .04em; }
+  .senal-txt { margin-left: auto; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .fecha { font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; margin-bottom: 14px; }
+  .movimiento { font-size: 14px; margin: 0 0 14px; }
+  .lectura {
+    margin: 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .lectura b { color: var(--text); font-weight: 600; }
+  .registros { margin-top: 14px; font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
+
+  /* Estado vacío */
+  .vacio {
+    grid-column: 1 / -1;
+    padding: 56px 20px;
+    text-align: center;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="envoltura">
+
+  <header>
+    <h1>Competitor-Seeker</h1>
+    <p class="resumen" id="resumen"></p>
+  </header>
+
+  <div class="demo" id="demo"></div>
+  <div class="alerta" id="alerta" role="alert"></div>
+
+  <div class="controles">
+    <input id="buscador" type="search" placeholder="Buscar marca…" autocomplete="off" aria-label="Buscar marca">
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <main id="grid"></main>
+
+</div>
+
+<!-- INICIO DATOS · reemplazar este bloque completo en cada corrida -->
+<script type="application/json" id="datos">
+{
+  "demo": true,
+  "corrida": "2026-08-13",
+  "entradas": [
+    {
+      "marca": "Marca A",
+      "fecha": "2026-08-12",
+      "movimiento": "Reels de producto con demo de 15s, 4 piezas en la semana.",
+      "senal": "nuevo",
+      "lectura": "Empuja conversión directa; abandona el branding puro."
+    },
+    {
+      "marca": "Marca A",
+      "fecha": "2026-08-05",
+      "movimiento": "Carrusel comparativo de precios.",
+      "senal": "nuevo",
+      "lectura": "Compite por precio, no por atributo."
+    },
+    {
+      "marca": "Marca B",
+      "fecha": "2026-08-09",
+      "movimiento": "Sin publicaciones nuevas detectadas; perfil sin cambios.",
+      "senal": "sin-datos",
+      "lectura": "No hay data suficiente para concluir si pausaron o si falló la inspección."
+    },
+    {
+      "marca": "Marca C",
+      "fecha": "2026-08-11",
+      "movimiento": "Serie de testimonios UGC sin identificación de marca en los primeros 3s.",
+      "senal": "confuso",
+      "lectura": "El ángulo no es legible: no se distingue si venden producto o categoría."
+    },
+    {
+      "marca": "Marca D",
+      "fecha": "2026-08-10",
+      "movimiento": "6 posts estáticos de catálogo, engagement por debajo de su propia media.",
+      "senal": "no-funciona",
+      "lectura": "Volumen alto sin retorno; el formato estático dejó de rendirles."
+    }
+  ]
+}
+</script>
+<!-- FIN DATOS -->
+
+<script>
+(function () {
+  "use strict";
+
+  var SENALES = {
+    "nuevo":        { etiqueta: "Nuevo",        clase: "s-nuevo" },
+    "confuso":      { etiqueta: "Confuso",      clase: "s-confuso" },
+    "sin-datos":    { etiqueta: "Sin datos",    clase: "s-sin-datos" },
+    "no-funciona":  { etiqueta: "No funciona",  clase: "s-no-funciona" },
+    // Estado interno: no es un valor válido de log.json. Marca entradas con `senal`
+    // fuera del enum para que la anomalía sea visible en vez de pasar por normal.
+    "invalida":     { etiqueta: "Señal inválida", clase: "s-invalida" }
+  };
+  var MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+
+  function el(tag, cls, texto) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (texto != null) n.textContent = texto;
+    return n;
+  }
+
+  // "2026-08-12" -> "12 ago 2026". Se parsea a mano para evitar corrimientos de zona horaria.
+  function fmtFecha(iso) {
+    var p = String(iso || "").split("-");
+    if (p.length !== 3) return iso || "—";
+    return Number(p[2]) + " " + (MESES[Number(p[1]) - 1] || "?") + " " + p[0];
+  }
+
+  // Cualquier señal fuera del enum de agent.md cae en el bucket "invalida".
+  function normSenal(s) {
+    return Object.prototype.hasOwnProperty.call(SENALES, s) && s !== "invalida" ? s : "invalida";
+  }
+
+  // --- Datos ---
+  // `error` distingue "el bloque de datos está roto" de "el log está vacío".
+  // Confundirlos haría que el panel afirme que no hay movimientos cuando en
+  // realidad no pudo leerlos — exactamente lo que soul.md prohíbe.
+  var datos = { corrida: null, entradas: [] }, error = null;
+  try {
+    var crudo = JSON.parse(document.getElementById("datos").textContent);
+    if (!crudo || typeof crudo !== "object") throw new Error("el bloque no contiene un objeto");
+    if (!Array.isArray(crudo.entradas)) throw new Error("falta el array “entradas”");
+    datos = crudo;
+  } catch (e) {
+    error = e.message;
+    console.error("Bloque DATOS inválido:", e);
+  }
+  var entradas = datos.entradas || [];
+
+  // Agrupar por marca: se conserva el movimiento más reciente y el total de registros.
+  var mapa = new Map();
+  entradas.forEach(function (e) {
+    var g = mapa.get(e.marca);
+    if (!g) { g = { marca: e.marca, registros: 0, ultima: null }; mapa.set(e.marca, g); }
+    g.registros++;
+    if (!g.ultima || String(e.fecha) >= String(g.ultima.fecha)) g.ultima = e;
+  });
+  var competidores = Array.from(mapa.values()).sort(function (a, b) {
+    return String(b.ultima.fecha).localeCompare(String(a.ultima.fecha));
+  });
+  competidores.forEach(function (c) { c.senal = normSenal(c.ultima.senal); });
+
+  // --- Aviso de datos de ejemplo ---
+  // Sin esto, el panel presentaría marcas ficticias como si fueran hallazgos
+  // reales al abrirlo por primera vez. soul.md lo prohíbe explícitamente.
+  if (!error && datos.demo) {
+    var demo = document.getElementById("demo");
+    demo.className = "demo visible";
+    demo.appendChild(el("b", null, "Datos de ejemplo: ningún competidor de esta pantalla es real."));
+    demo.appendChild(document.createTextNode(
+      "El panel viene con marcas ficticias para poder evaluar el diseño antes de la primera corrida. " +
+      "Cuando el agente corra, reemplaza el bloque DATOS por los hallazgos reales y este aviso desaparece solo."));
+  }
+
+  // --- Alerta de integridad ---
+  var alerta = document.getElementById("alerta");
+  var invalidas = competidores.filter(function (c) { return c.senal === "invalida"; });
+  if (error) {
+    alerta.className = "alerta visible";
+    alerta.appendChild(el("b", null, "El bloque de datos del panel no se pudo leer."));
+    alerta.appendChild(document.createTextNode(
+      "Esto NO significa que no haya movimientos registrados: significa que el panel no puede mostrarlos. " +
+      "El histórico sigue intacto en log.json. Corregí el bloque DATOS de index.html y volvé a cargar. Detalle: "));
+    alerta.appendChild(el("code", null, error));
+  } else if (invalidas.length) {
+    alerta.className = "alerta visible";
+    alerta.appendChild(el("b", null, invalidas.length === 1
+      ? "1 competidor tiene una señal fuera del enum."
+      : invalidas.length + " competidores tienen una señal fuera del enum."));
+    alerta.appendChild(document.createTextNode(
+      "Valores admitidos: nuevo, confuso, sin-datos, no-funciona. Revisá log.json: "));
+    alerta.appendChild(el("code", null, invalidas.map(function (c) {
+      return c.marca + " → “" + c.ultima.senal + "”";
+    }).join(" · ")));
+  }
+
+  // --- Cabecera ---
+  var resumen = document.getElementById("resumen");
+  if (competidores.length) {
+    resumen.appendChild(el("span", null, String(competidores.length)));
+    resumen.appendChild(document.createTextNode(competidores.length === 1 ? " competidor · " : " competidores · "));
+    resumen.appendChild(el("span", null, String(entradas.length)));
+    resumen.appendChild(document.createTextNode(entradas.length === 1 ? " movimiento registrado" : " movimientos registrados"));
+    if (datos.corrida) resumen.appendChild(document.createTextNode(" · última corrida " + fmtFecha(datos.corrida)));
+  } else {
+    resumen.textContent = error ? "Datos no legibles." : "Sin corridas registradas.";
+  }
+
+  // --- Filtros ---
+  var q = "", filtro = "todos";
+
+  function pasa(c) {
+    var okTexto = !q || c.marca.toLowerCase().indexOf(q) !== -1;
+    var okSenal = filtro === "todos" || c.senal === filtro;
+    return okTexto && okSenal;
+  }
+
+  // --- Chips ---
+  var chips = document.getElementById("chips");
+  if (competidores.length) {
+    var defs = [{ id: "todos", etiqueta: "Todos", clase: "" }];
+    Object.keys(SENALES).forEach(function (k) {
+      defs.push({ id: k, etiqueta: SENALES[k].etiqueta, clase: SENALES[k].clase });
+    });
+    defs.forEach(function (d) {
+      var n = competidores.filter(function (c) { return d.id === "todos" || c.senal === d.id; }).length;
+      if (!n && d.id !== "todos") return; // no mostrar estados sin competidores
+      var b = el("button", "chip");
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(d.id === filtro));
+      b.dataset.id = d.id;
+      if (d.clase) b.appendChild(el("span", "punto " + d.clase));
+      b.appendChild(document.createTextNode(d.etiqueta));
+      b.appendChild(el("span", "n", String(n)));
+      b.addEventListener("click", function () {
+        filtro = (filtro === d.id) ? "todos" : d.id;
+        Array.prototype.forEach.call(chips.children, function (o) {
+          o.setAttribute("aria-pressed", String(o.dataset.id === filtro));
+        });
+        pintar();
+      });
+      chips.appendChild(b);
+    });
+  }
+
+  // --- Render ---
+  var grid = document.getElementById("grid");
+
+  function tarjeta(c) {
+    var u = c.ultima, s = SENALES[c.senal];
+    var t = el("article", "tarjeta");
+
+    var cab = el("div", "tarjeta-cab");
+    cab.appendChild(el("span", "punto " + s.clase));
+    cab.appendChild(el("span", "marca", c.marca));
+    var txt = el("span", "senal-txt", s.etiqueta);
+    // Mostrar el valor crudo para poder corregir log.json sin adivinar.
+    if (c.senal === "invalida") txt.title = "Valor en log.json: " + String(u.senal);
+    cab.appendChild(txt);
+    t.appendChild(cab);
+
+    t.appendChild(el("div", "fecha", fmtFecha(u.fecha)));
+    t.appendChild(el("p", "movimiento", u.movimiento || "Sin movimiento descrito."));
+
+    var lec = el("p", "lectura");
+    lec.appendChild(el("b", null, "Lectura: "));
+    lec.appendChild(document.createTextNode(u.lectura || "Sin lectura estratégica."));
+    t.appendChild(lec);
+
+    t.appendChild(el("div", "registros", c.registros === 1 ? "1 registro" : c.registros + " registros"));
+    return t;
+  }
+
+  function pintar() {
+    grid.textContent = "";
+    if (error) {
+      grid.appendChild(el("div", "vacio", "Panel no renderizado: el bloque de datos está mal formado. Ver el aviso de arriba."));
+      return;
+    }
+    if (!competidores.length) {
+      grid.appendChild(el("div", "vacio", "Aún no hay movimientos registrados. Corre el agente para generar el primer panel."));
+      return;
+    }
+    var visibles = competidores.filter(pasa);
+    if (!visibles.length) {
+      grid.appendChild(el("div", "vacio", "Ningún competidor coincide con el filtro."));
+      return;
+    }
+    visibles.forEach(function (c) { grid.appendChild(tarjeta(c)); });
+  }
+
+  document.getElementById("buscador").addEventListener("input", function (ev) {
+    q = ev.target.value.trim().toLowerCase();
+    pintar();
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>
