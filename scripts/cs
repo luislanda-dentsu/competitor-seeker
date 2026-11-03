@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper del CLI de Competitor-Seeker (packages/core/src/cli.ts).
+exec npx tsx "$(dirname "$0")/../packages/core/src/cli.ts" "$@"

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Workflow(corrida)",
+      "Workflow",
+      "Agent",
+      "Read",
+      "Grep",
+      "Glob",
+      "WebSearch",
+      "WebFetch",
+      "mcp__claude-in-chrome__*",
+      "mcp__apify__*",
+      "Bash(scripts/cs *)",
+      "Bash(./scripts/cs *)",
+      "Bash(npx tsx packages/core/src/cli.ts *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(rm -rf *)"
+    ]
+  }
+}

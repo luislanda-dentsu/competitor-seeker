@@ -1,0 +1,17 @@
+{
+  "name": "@competitor-seeker/core",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "simple-git": "^4.0.2",
+    "zod": "^4.6.7"
+  }
+}

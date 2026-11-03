@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "NotebookEdit",
+      "AskUserQuestion",
+      "EnterPlanMode"
+    ]
+  }
+}

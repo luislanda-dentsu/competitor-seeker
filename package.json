@@ -1,0 +1,29 @@
+{
+  "name": "competitor-seeker",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Inteligencia competitiva por marca: agentes de Claude Code + panel web local",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "start": "npm run start -w apps/web",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npm run lint -w apps/web",
+    "typecheck": "tsc -p packages/core/tsconfig.json --noEmit && npm run typecheck -w apps/web",
+    "cs": "tsx packages/core/src/cli.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0"
+  }
+}
