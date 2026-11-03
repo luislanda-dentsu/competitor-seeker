@@ -1,13 +1,9 @@
 // Solo servidor (Node): nunca importar desde componentes cliente.
 
 import {
-  calcularUso,
-  consultarLimites,
-  decidirApify,
   leerConfig,
   leerSecrets,
-  listarCorridas,
-  listarMarcas,
+  obtenerUsoActual,
   USD_POR_RESULTADO,
   type ApifyPrompt,
   type Marca,
@@ -35,19 +31,15 @@ export function estimarApifyUsd(marca: Marca, resultsLimit: number, usdPorResult
 }
 
 /**
- * Decide si Apify entra en esta corrida (equivale a `cs apify-uso`).
+ * Decide si Apify entra en esta corrida (equivale a `cs apify-uso`): delega en
+ * `obtenerUsoActual` (caché de 10 min + corridas de todas las marcas).
  * Nunca lanza: cualquier fallo deja Apify fuera con motivo.
  */
 export async function decidirApifyParaCorrida(incluir: boolean): Promise<ApifyPrompt> {
-  const cfg = leerConfig().apify;
-  const resultsLimit = cfg.resultsLimitPorPerfil;
+  const resultsLimit = leerConfig().apify.resultsLimitPorPerfil;
   if (!incluir) return { habilitado: false, resultsLimit, motivo: "desactivado por la usuaria" };
-  const token = leerSecrets().apifyToken;
-  if (!token) return { habilitado: false, resultsLimit, motivo: "sin token" };
   try {
-    const limites = await consultarLimites(token);
-    const corridas = listarMarcas().flatMap((m) => listarCorridas(m.slug).corridas);
-    const decision = decidirApify(calcularUso(limites, cfg, corridas), cfg);
+    const { decision } = await obtenerUsoActual();
     return { habilitado: decision.habilitado, resultsLimit: decision.resultsLimit, ...(decision.motivo ? { motivo: decision.motivo } : {}) };
   } catch (e) {
     return { habilitado: false, resultsLimit, motivo: `no se pudo consultar Apify: ${(e as Error).message}` };

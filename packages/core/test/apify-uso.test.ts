@@ -1,9 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { guardarCacheUso, invalidarCacheUso, leerCacheUso, obtenerUsoActual } from '../src/apify/actual.ts'
 import { estimarCosteUsd } from '../src/apify/coste.ts'
 import { parsearLimites } from '../src/apify/limites.ts'
 import { calcularUso, decidirApify, umbralAlcanzado } from '../src/apify/uso.ts'
+import { guardarSecrets } from '../src/config.ts'
+import { guardarCorrida } from '../src/corridas.ts'
+import { crearMarca } from '../src/marcas.ts'
 import { ConfigApify } from '../src/schemas/config.ts'
 import type { Corrida } from '../src/schemas/corrida.ts'
+import { crearRepoTemporal, type RepoTemporal } from './helpers.ts'
 
 const cfg = ConfigApify.parse({})
 const limites = (usado: number, limite = 100) => ({
@@ -81,5 +86,92 @@ describe('apify-uso', () => {
     expect(l.mensual).toEqual({ usadoUsd: 1.25, limiteUsd: 5 })
     expect(estimarCosteUsd(12)).toBeCloseTo(0.0324, 4)
     expect(estimarCosteUsd(0)).toBe(0)
+  })
+})
+
+describe('obtenerUsoActual (caché en data/apify-uso.json)', () => {
+  let repo: RepoTemporal
+  beforeEach(() => {
+    repo = crearRepoTemporal()
+  })
+  afterEach(() => repo.limpiar())
+
+  const respuesta = (usado: number) =>
+    ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: {
+          monthlyUsageCycle: { startAt: '2026-11-01T00:00:00.000Z', endAt: '2026-12-01T00:00:00.000Z' },
+          limits: { maxMonthlyUsageUsd: 100 },
+          current: { monthlyUsageUsd: usado },
+        },
+      }),
+    }) as unknown as Response
+
+  it('sin token → configurado:false y Apify fuera', async () => {
+    const r = await obtenerUsoActual({ ahora })
+    expect(r).toEqual({ configurado: false, decision: { habilitado: false, motivo: 'sin token', resultsLimit: 12 } })
+  })
+
+  it('consulta la API una vez y luego sirve de caché 10 min; forzar la salta', async () => {
+    guardarSecrets({ apifyToken: 'apify_api_TEST1234' })
+    let llamadas = 0
+    const fetchImpl = (async () => {
+      llamadas += 1
+      return respuesta(75)
+    }) as unknown as typeof fetch
+    const r1 = await obtenerUsoActual({ ahora, fetchImpl })
+    expect(r1.configurado).toBe(true)
+    expect(r1.uso?.mensual.pct).toBe(75)
+    expect(r1.decision.habilitado).toBe(true)
+    expect(r1.muestreadoEn).toBe(ahora.toISOString())
+    expect(leerCacheUso()?.tokenHuella).toBe('1234')
+    const r2 = await obtenerUsoActual({ ahora: new Date(ahora.getTime() + 9 * 60 * 1000), fetchImpl })
+    expect(llamadas).toBe(1)
+    expect(r2.muestreadoEn).toBe(ahora.toISOString())
+    await obtenerUsoActual({ ahora: new Date(ahora.getTime() + 11 * 60 * 1000), fetchImpl })
+    expect(llamadas).toBe(2)
+    await obtenerUsoActual({ ahora: new Date(ahora.getTime() + 12 * 60 * 1000), fetchImpl, forzar: true })
+    expect(llamadas).toBe(3)
+  })
+
+  it('cambiar el token invalida la caché; la API caída usa la caché vencida con error', async () => {
+    guardarSecrets({ apifyToken: 'apify_api_AAAA' })
+    guardarCacheUso({ muestreadoEn: ahora.toISOString(), tokenHuella: 'AAAA', limites: limites(50) })
+    let llamadas = 0
+    const fetchImpl = (async () => {
+      llamadas += 1
+      return respuesta(10)
+    }) as unknown as typeof fetch
+    const r1 = await obtenerUsoActual({ ahora, fetchImpl })
+    expect(llamadas).toBe(0)
+    expect(r1.uso?.mensual.pct).toBe(50)
+    guardarSecrets({ apifyToken: 'apify_api_BBBB' })
+    const r2 = await obtenerUsoActual({ ahora, fetchImpl })
+    expect(llamadas).toBe(1)
+    expect(r2.uso?.mensual.pct).toBe(10)
+
+    const roto = (async () => ({ ok: false, status: 401 })) as unknown as typeof fetch
+    const r3 = await obtenerUsoActual({ ahora: new Date(ahora.getTime() + 60 * 60 * 1000), fetchImpl: roto })
+    expect(r3.error).toMatch(/401/)
+    expect(r3.uso?.mensual.pct).toBe(10)
+    invalidarCacheUso()
+    const r4 = await obtenerUsoActual({ ahora, fetchImpl: roto })
+    expect(r4.uso).toBeUndefined()
+    expect(r4.decision.habilitado).toBe(false)
+    expect(r4.decision.motivo).toMatch(/no se pudo consultar Apify/)
+  })
+
+  it('las corridas de todas las marcas entran en las ventanas diaria y semanal', async () => {
+    guardarSecrets({ apifyToken: 'apify_api_TEST' })
+    guardarCacheUso({ muestreadoEn: ahora.toISOString(), limites: limites(0) })
+    crearMarca({ nombre: 'Uno' })
+    crearMarca({ nombre: 'Dos' })
+    guardarCorrida({ ...corrida(new Date(2026, 10, 3, 9), 1.0), marca: 'uno' })
+    guardarCorrida({ ...corrida(new Date(2026, 10, 2, 9), 2.0), marca: 'dos' })
+    const r = await obtenerUsoActual({ ahora })
+    expect(r.uso?.diario.usadoUsd).toBe(1)
+    expect(r.uso?.semanal.usadoUsd).toBe(3)
   })
 })
