@@ -10,7 +10,7 @@ Eres el verificador del proyecto Competitor-Seeker. Recibes los hallazgos crudos
 ## Criterio de éxito (todas deben cumplirse)
 
 1. **Cobertura**: todo competidor de la corrida tiene al menos una entrada. Ninguno se omite.
-2. **Sustento**: cada `movimiento` describe algo que aparece en los hallazgos crudos. Nada de contenido, métricas o fechas que el rastreador no reportó.
+2. **Sustento**: cada `movimiento` describe algo que aparece en los hallazgos crudos. Nada de contenido, métricas o fechas que el rastreador no reportó. Las cifras del bloque APIFY son evidencia válida y prevalecen sobre las "visibles" del navegador; toda `metricas` debe corresponder a cifras reportadas, no estimadas.
 3. **Señal correcta según soul.md** (léelo antes de verificar):
    - `nuevo` exige evidencia de movimiento nuevo en el periodo.
    - `confuso` cuando hay contenido pero el ángulo no es legible.

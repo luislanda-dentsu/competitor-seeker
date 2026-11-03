@@ -1,9 +1,9 @@
 export const meta = {
   name: 'corrida',
   description: 'Corrida de Competitor-Seeker: rastrea competidores en paralelo, consolida el análisis y lo verifica contra la evidencia hasta 3 intentos',
-  whenToUse: 'Pasos 3 y 4 de una corrida para UNA marca. args: { marca, fechaCorrida, ultimaCorrida, competidores: [{nombre, url}] }. Devuelve { entradas, verificado, objeciones }. El orquestador registra en log.json y lanza al panelista DESPUÉS, fuera del workflow; si verificado es false, no registra sin confirmación del usuario.',
+  whenToUse: 'Paso 4 de una corrida para UNA marca. args: { marca, fechaCorrida, ultimaCorrida, corridaId?, apify?: {habilitado, resultsLimit, motivo?}, competidores: [{nombre, url}] }. Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig? }. El orquestador registra DESPUÉS con `scripts/cs registrar`; si verificado es false, no registra sin confirmación (o --pendiente en headless).',
   phases: [
-    { title: 'Rastreo', detail: 'un rastreador-ig (todos los perfiles, secuencial) + un rastreador web por competidor, en paralelo' },
+    { title: 'Rastreo', detail: 'un rastreador-ig (todos los perfiles, secuencial) + un rastreador web por competidor + un rastreador-apify (si está habilitado), en paralelo' },
     { title: 'Análisis', detail: 'un analista consolida todos los hallazgos' },
     { title: 'Verificación', detail: 'un verificador refuta contra la evidencia; máx. 3 intentos' },
   ],
@@ -24,6 +24,16 @@ const ENTRADAS_SCHEMA = {
           movimiento: { type: 'string' },
           senal: { enum: ['nuevo', 'confuso', 'sin-datos', 'no-funciona'] },
           lectura: { type: 'string' },
+          fuentes: { type: 'array', items: { enum: ['ig', 'web', 'apify'] } },
+          metricas: {
+            type: 'object',
+            properties: {
+              likes: { type: 'integer' }, comentarios: { type: 'integer' },
+              vistas: { type: 'integer' }, posts: { type: 'integer' },
+            },
+            additionalProperties: false,
+          },
+          evidencia: { type: 'array', items: { type: 'string' } },
         },
         required: ['marca', 'fecha', 'movimiento', 'senal', 'lectura'],
         additionalProperties: false,
@@ -53,9 +63,22 @@ const VEREDICTO_SCHEMA = {
   required: ['valido', 'objeciones'],
 }
 
+const APIFY_SCHEMA = {
+  type: 'object',
+  properties: {
+    hallazgos: { type: 'string' },
+    resultados: { type: 'integer' },
+    runId: { type: 'string' },
+  },
+  required: ['hallazgos', 'resultados'],
+}
+
 if (!args || !args.marca || !args.fechaCorrida || !Array.isArray(args.competidores) || args.competidores.length === 0) {
   throw new Error('args requeridos: { marca, fechaCorrida (ISO), ultimaCorrida (ISO o null), competidores: [{nombre, url}] }')
 }
+
+const apifyCfg = args.apify || { habilitado: false, motivo: 'no indicado por el orquestador' }
+const corridaId = args.corridaId || `${args.fechaCorrida}-sin-id`
 
 phase('Rastreo')
 const periodo = args.ultimaCorrida
@@ -80,6 +103,27 @@ if (perfilesIG.length) {
   )
 }
 
+// Rastreador Apify (métricas numéricas de IG): solo si el orquestador lo habilitó tras consultar el uso.
+let apifyInfo = { incluido: false, resultados: 0, costeEstimadoUsd: 0, motivo: apifyCfg.motivo || null }
+if (perfilesIG.length && apifyCfg.habilitado) {
+  const resultsLimit = apifyCfg.resultsLimit || 12
+  tareas.push(() =>
+    agent(
+      `Perfiles de Instagram a consultar con Apify: ` +
+      perfilesIG.map(c => `${c.nombre} → ${c.url}`).join('; ') + `. ` +
+      `Periodo: ${periodo}, hasta hoy ${args.fechaCorrida}. ` +
+      `resultsLimit por perfil: ${resultsLimit}. onlyPostsNewerThan: ${args.ultimaCorrida || '30 days'}. ` +
+      `Haz UNA sola llamada al actor con todos los perfiles y devuelve hallazgos crudos con METRICAS por post, según tu formato de salida.`,
+      { label: 'rastreo-apify:todos', phase: 'Rastreo', agentType: 'rastreador-apify', schema: APIFY_SCHEMA }
+    ).then(r => {
+      apifyInfo = { incluido: true, resultados: r.resultados, costeEstimadoUsd: Math.round(r.resultados * 0.0027 * 10000) / 10000, runId: r.runId || null, motivo: null }
+      return { nombre: 'APIFY', hallazgos: r.hallazgos }
+    })
+  )
+} else if (perfilesIG.length) {
+  log(`Apify omitido: ${apifyCfg.motivo || 'deshabilitado'}`)
+}
+
 tareas.push(...args.competidores.map(c => () =>
   agent(
     `Competidor a investigar: ${c.nombre}${c.url ? ` (cuenta de referencia: ${c.url})` : ''}. ` +
@@ -102,6 +146,10 @@ if (caidos.length) log(`Rastreadores web sin respuesta: ${caidos.join(', ')} —
 const igCaido = perfilesIG.length > 0 && !completos.some(r => r.nombre === 'INSTAGRAM')
 if (igCaido) log('El rastreador de Instagram no respondió — la corrida sigue solo con rastreo web')
 
+const bloqueIG = completos.find(r => r.nombre === 'INSTAGRAM')
+const igSesion = igCaido ? 'error' : !bloqueIG ? 'no-usado' : /SESI[ÓO]N NO DISPONIBLE/i.test(bloqueIG.hallazgos) ? 'no-disponible' : 'ok'
+if (igSesion === 'no-disponible') log('Instagram: SESIÓN NO DISPONIBLE — la corrida sigue con web' + (apifyInfo.incluido ? ' + Apify' : ''))
+
 phase('Análisis')
 const crudos = completos
   .map(r => `=== ${r.nombre} ===\n${r.hallazgos}`)
@@ -111,9 +159,14 @@ let notaCaidos = caidos.length
   ? `\n\nEstos competidores no pudieron rastrearse en la web (falla técnica del rastreador): ${caidos.join(', ')}. ` +
     `Genera para cada uno su entrada con senal "sin-datos" y movimiento indicando que el rastreo falló.`
   : ''
-if (igCaido) {
-  notaCaidos += `\n\nEl rastreo de Instagram falló técnicamente para todos los perfiles: ` +
+if (igCaido || igSesion === 'no-disponible') {
+  notaCaidos += `\n\nEl rastreo de Instagram con navegador no pudo inspeccionar los perfiles (${igSesion === 'no-disponible' ? 'sesión no disponible' : 'falla técnica'}): ` +
     `al valorar los canales propios en Instagram, considera que no hubo inspección, no que no hubo actividad.`
+}
+if (apifyInfo.incluido) {
+  notaCaidos += `\n\nEl bloque APIFY trae métricas numéricas (likes, comentarios, vistas, fechas) de los mismos perfiles: ` +
+    `prevalecen sobre las cifras "visibles" del navegador. Si Apify y navegador discrepan de forma relevante, repórtalo como confuso. ` +
+    `Marca las entradas sustentadas en Apify con fuentes: ["apify"] (o combinadas) y rellena metricas cuando tengas cifras.`
 }
 
 // Bucle acotado analista → verificador: el reintento corrige el análisis, nunca
@@ -148,7 +201,7 @@ for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
 
   if (veredicto.valido) {
     log(`Verificación superada en el intento ${intento}`)
-    return { entradas: resultado.entradas, verificado: true, intentos: intento }
+    return { corridaId, entradas: resultado.entradas, verificado: true, intentos: intento, objeciones: [], apify: apifyInfo, ig: { sesion: igSesion } }
   }
   objeciones = veredicto.objeciones
   log(`Intento ${intento} rechazado: ${objeciones.length} objeción(es)`)
@@ -156,4 +209,4 @@ for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
 
 // Tras agotar los intentos, se devuelve igual: el orquestador decide con el usuario
 // si registrar o descartar, mostrando las objeciones pendientes.
-return { entradas: resultado.entradas, verificado: false, intentos: MAX_INTENTOS, objeciones }
+return { corridaId, entradas: resultado.entradas, verificado: false, intentos: MAX_INTENTOS, objeciones, apify: apifyInfo, ig: { sesion: igSesion } }

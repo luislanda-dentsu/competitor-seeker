@@ -1,0 +1,21 @@
+{
+  "slug": "kolareal",
+  "nombre": "Kolareal",
+  "creadaEn": "2026-11-03T16:10:08.897Z",
+  "competidores": [
+    {
+      "slug": "coca-cola-rd",
+      "nombre": "Coca Cola RD",
+      "url": "https://www.instagram.com/cocacolard/?hl=es",
+      "instagram": "cocacolard",
+      "activo": true
+    },
+    {
+      "slug": "country-club-rd",
+      "nombre": "Country Club RD",
+      "url": "https://www.instagram.com/countryclubrd/?hl=es",
+      "instagram": "countryclubrd",
+      "activo": true
+    }
+  ]
+}

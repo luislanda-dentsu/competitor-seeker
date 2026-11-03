@@ -1,0 +1,4 @@
+export * from './entrada.ts'
+export * from './corrida.ts'
+export * from './marca.ts'
+export * from './config.ts'

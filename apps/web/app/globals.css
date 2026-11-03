@@ -1,0 +1,351 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Tema por atributo (lo fija ThemeScript antes del primer paint). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* Sidebar colapsado (atributo en <html>, leído de la cookie cs-sidebar). */
+@custom-variant sb-collapsed {
+  /* 1024–1279px: siempre colapsado (plan §12) */
+  @media (width >= 64rem) and (width < 80rem) {
+    @slot;
+  }
+  &:where([data-sidebar="collapsed"], [data-sidebar="collapsed"] *) {
+    @slot;
+  }
+}
+
+/* ============================================================
+   TOKENS — claro (plan §12)
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --radius: 16px;
+
+  --canvas: #ecedef;
+  --surface: #fbfbfa;
+  --card: #ffffff;
+  --card-2: #f4f5f7;
+  --border: #e6e7ea;
+  --border-strong: #d2d4d9;
+  --fg: #141518;
+  --fg-muted: #6b7079;
+  --fg-dim: #9a9ea6;
+  --primary: #141518;
+  --primary-fg: #ffffff;
+  --ring: #9a9ea6;
+
+  /* señales: fuerte + soft */
+  --s-nuevo: #1a7f37;
+  --s-nuevo-soft: #dafbe1;
+  --s-confuso: #9a6700;
+  --s-confuso-soft: #fff8c5;
+  --s-sin-datos: #59636e;
+  --s-sin-datos-soft: #eff1f3;
+  --s-no-funciona: #cf222e;
+  --s-no-funciona-soft: #ffebe9;
+  --s-invalida: #8250df;
+  --s-invalida-soft: #fbefff;
+
+  /* acento de marca (en Tailwind: brand, para no pisar --accent de coss/ui) */
+  --brand: #2da44e;
+  --brand-soft: #dafbe1;
+  --brand-line: #4ade80;
+
+  --chart-1: #2da44e;
+  --chart-2: #9a9ea6;
+  --chart-3: #9a6700;
+  --chart-4: #cf222e;
+  --chart-5: #8250df;
+  --chart-6: #0969da;
+  --grid: #e6e7ea;
+
+  --sh-xs: 0 1px 2px rgb(20 21 24 / 0.04);
+  --sh-sm: 0 1px 3px rgb(20 21 24 / 0.06), 0 1px 2px rgb(20 21 24 / 0.04);
+  --sh-float: 0 8px 24px rgb(20 21 24 / 0.08), 0 2px 6px rgb(20 21 24 / 0.04);
+
+  /* ---- tokens que esperan los componentes de coss/ui, mapeados a los nuestros ---- */
+  --background: var(--surface);
+  --foreground: var(--fg);
+  --card-foreground: var(--fg);
+  --popover: var(--card);
+  --popover-foreground: var(--fg);
+  --primary-foreground: var(--primary-fg);
+  --secondary: var(--card-2);
+  --secondary-foreground: var(--fg);
+  --muted: var(--card-2);
+  --muted-foreground: var(--fg-muted);
+  --accent: var(--card-2);
+  --accent-foreground: var(--fg);
+  --input: var(--border-strong);
+  --destructive: var(--s-no-funciona);
+  --destructive-foreground: var(--s-no-funciona);
+  --success: var(--s-nuevo);
+  --success-foreground: var(--s-nuevo);
+  --warning: var(--s-confuso);
+  --warning-foreground: var(--s-confuso);
+  --info: var(--chart-6);
+  --info-foreground: var(--chart-6);
+  --code: var(--card);
+  --code-foreground: var(--fg);
+  --code-highlight: var(--card-2);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--fg-muted);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-fg);
+  --sidebar-accent: var(--card-2);
+  --sidebar-accent-foreground: var(--fg);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+/* ============================================================
+   TOKENS — oscuro (plan §12)
+   ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --canvas: #141517;
+  --surface: #1e1f22;
+  --card: #26272b;
+  --card-2: #2d2e33;
+  --border: #33353a;
+  --border-strong: #44474e;
+  --fg: #ecedef;
+  --fg-muted: #9a9ea6;
+  --fg-dim: #6b7079;
+  --primary: #ecedef;
+  --primary-fg: #141518;
+  --ring: #6b7079;
+
+  --s-nuevo: #3fb950;
+  --s-nuevo-soft: rgb(63 185 80 / 0.16);
+  --s-confuso: #d29922;
+  --s-confuso-soft: rgb(210 153 34 / 0.16);
+  --s-sin-datos: #8b949e;
+  --s-sin-datos-soft: rgb(139 148 158 / 0.16);
+  --s-no-funciona: #f85149;
+  --s-no-funciona-soft: rgb(248 81 73 / 0.16);
+  --s-invalida: #a371f7;
+  --s-invalida-soft: rgb(163 113 247 / 0.16);
+
+  --brand: #3fb950;
+  --brand-soft: rgb(63 185 80 / 0.16);
+  --brand-line: #4ade80;
+
+  --chart-1: #3fb950;
+  --chart-2: #8b949e;
+  --chart-3: #d29922;
+  --chart-4: #f85149;
+  --chart-5: #a371f7;
+  --chart-6: #58a6ff;
+  --grid: #33353a;
+
+  --sh-xs: 0 1px 2px rgb(0 0 0 / 0.24);
+  --sh-sm: 0 1px 3px rgb(0 0 0 / 0.32), 0 1px 2px rgb(0 0 0 / 0.2);
+  --sh-float: 0 8px 24px rgb(0 0 0 / 0.4), 0 2px 6px rgb(0 0 0 / 0.24);
+
+  --input: var(--border-strong);
+  --info: var(--chart-6);
+  --info-foreground: var(--chart-6);
+}
+
+/* ============================================================
+   @theme inline — expone los tokens como utilidades de Tailwind
+   ============================================================ */
+@theme inline {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-heading: var(--font-sans);
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-dim: var(--fg-dim);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-ring: var(--ring);
+
+  --color-s-nuevo: var(--s-nuevo);
+  --color-s-nuevo-soft: var(--s-nuevo-soft);
+  --color-s-confuso: var(--s-confuso);
+  --color-s-confuso-soft: var(--s-confuso-soft);
+  --color-s-sin-datos: var(--s-sin-datos);
+  --color-s-sin-datos-soft: var(--s-sin-datos-soft);
+  --color-s-no-funciona: var(--s-no-funciona);
+  --color-s-no-funciona-soft: var(--s-no-funciona-soft);
+  --color-s-invalida: var(--s-invalida);
+  --color-s-invalida-soft: var(--s-invalida-soft);
+
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-line: var(--brand-line);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-grid: var(--grid);
+
+  /* coss/ui */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-code: var(--code);
+  --code-foreground: var(--code-foreground);
+  --color-code-highlight: var(--code-highlight);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* radios: sm 8 / md 12 / lg 16 / xl 24 / pill */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+  --radius-4xl: 32px;
+  --radius-pill: 9999px;
+
+  /* sombras casi nulas */
+  --shadow-xs: var(--sh-xs);
+  --shadow-sm: var(--sh-sm);
+  --shadow-float: var(--sh-float);
+
+  /* animaciones de coss/ui */
+  --animate-skeleton: skeleton 2s -1s infinite linear;
+  --animate-caret-blink: 1s ease-out infinite caret-blink;
+  --animate-toast-success-odd: toast-success-odd 0.32s cubic-bezier(0.5, 1, 0.89, 1);
+  --animate-toast-success-even: toast-success-even 0.32s cubic-bezier(0.5, 1, 0.89, 1);
+  --animate-toast-error-odd: toast-error-odd 0.28s cubic-bezier(0.5, 1, 0.89, 1);
+  --animate-toast-error-even: toast-error-even 0.28s cubic-bezier(0.5, 1, 0.89, 1);
+
+  @keyframes skeleton {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes caret-blink {
+    0%, 70%, to {
+      opacity: 1;
+    }
+    20%, 50% {
+      opacity: 0;
+    }
+  }
+  @keyframes toast-success-odd {
+    0% { scale: 1; }
+    30% { scale: 1.025; }
+    60% { scale: 0.99; }
+    100% { scale: 1; }
+  }
+  @keyframes toast-error-odd {
+    0% { translate: 0 0; }
+    25% { translate: -3px 0; }
+    50% { translate: 3px 0; }
+    75% { translate: -3px 0; }
+    100% { translate: 0 0; }
+  }
+  @keyframes toast-success-even {
+    0% { scale: 1; }
+    30% { scale: 1.025; }
+    60% { scale: 0.99; }
+    100% { scale: 1; }
+  }
+  @keyframes toast-error-even {
+    0% { translate: 0 0; }
+    25% { translate: -3px 0; }
+    50% { translate: 3px 0; }
+    75% { translate: -3px 0; }
+    100% { translate: 0 0; }
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background: var(--canvas);
+    color: var(--fg);
+  }
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ============================================================
+   Utilidades tipográficas
+   ============================================================ */
+@utility t-page {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--fg);
+}
+
+@utility t-kpi {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--fg);
+}
+
+@utility t-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}

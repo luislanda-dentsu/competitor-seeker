@@ -1,0 +1,10 @@
+{
+  "apify": {
+    "habilitado": true,
+    "resultsLimitPorPerfil": 12,
+    "presupuesto": { "mensualUsd": null, "diarioUsd": null, "semanalUsd": null },
+    "umbrales": [70, 90, 100],
+    "saltarSiPctMensual": 90
+  },
+  "sync": { "auto": true, "rama": "main" }
+}
