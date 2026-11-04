@@ -75,3 +75,18 @@ export function fmtDur(ms: number | null | undefined): string {
   const min = totalMin % 60;
   return `${h} h ${String(min).padStart(2, "0")} min`;
 }
+
+const compactoFmt = new Intl.NumberFormat("es-ES", { notation: "compact", maximumFractionDigits: 1 });
+
+/** 12345 → '12 mil'; 1234567 → '1,2 M'. */
+export function fmtCompacto(n: number | null | undefined): string {
+  if (n === null || n === undefined || !Number.isFinite(n)) return "—";
+  return compactoFmt.format(n);
+}
+
+/** Delta con signo: 120 → '+120', -3 → '−3'. */
+export function fmtDelta(n: number | null | undefined): string {
+  if (n === null || n === undefined || !Number.isFinite(n)) return "—";
+  if (n === 0) return "0";
+  return `${n > 0 ? "+" : "−"}${fmtCompacto(Math.abs(n))}`;
+}
