@@ -94,10 +94,29 @@ describe('metricasCompetidor', () => {
     const m = metricasCompetidor([vieja], CC, { hoy: '2026-11-04' })
     expect(m.cobertura).toBe('parcial')
     expect(m.posts).toBe(4)
-    expect(m.likes.total).toBe(500)
-    expect(m.likes.promedio).toBe(100) // solo la entrada con recuento de posts: 400/4
+    expect(m.likes.total).toBe(400) // la entrada sin recuento de posts no se suma (duplicaría posts)
+    expect(m.likes.promedio).toBe(100)
     expect(m.er.promedio).toBeNull()
     expect(m.publicaciones).toEqual([])
+  })
+
+  it('una corrida posterior sin cifras no borra las cifras que trajo Apify antes', () => {
+    const soloIg = corrida({ id: '2026-11-10-c', fecha: '2026-11-10', publicaciones: [post('A', '2026-10-18', { fuente: 'ig', tema: 'Torneo' })] })
+    const m = metricasCompetidor([c1, soloIg], CC, { hoy: '2026-11-10' })
+    const a = m.publicaciones.find((p) => p.url.includes('/A/'))!
+    expect(a).toMatchObject({ likes: 90, vistas: 1000, tema: 'Torneo', corrida: '2026-10-20-a', er: 1 })
+  })
+
+  it('la cadencia no se diluye en días anteriores a la cobertura de la primera corrida', () => {
+    const unica = corrida({ id: '2026-11-03-u', fecha: '2026-11-03', ultimaCorrida: '2026-10-21', publicaciones: [post('U', '2026-11-01'), post('V', '2026-10-25')] })
+    // Periodo de 90 días, pero solo se rastrearon 14 (21/10 → 03/11): 2 posts / 14 días × 7 = 1
+    const m = metricasCompetidor([unica], CC, { periodo: { desde: '2026-08-06', hasta: '2026-11-03' } })
+    expect(m.cadenciaSemanal).toBe(1)
+  })
+
+  it('el delta de seguidores no mezcla fuentes (IG redondea, Apify es exacto)', () => {
+    const ig = corrida({ id: '2026-11-10-i', fecha: '2026-11-10', perfiles: [{ competidor: CC, seguidores: 11_000, fuente: 'ig' }] })
+    expect(metricasCompetidor([c1, c2, ig], CC, { hoy: '2026-11-10' }).seguidores).toEqual({ actual: 11_000, delta: null })
   })
 
   it('sin datos: cobertura sin-datos y cifras vacías', () => {

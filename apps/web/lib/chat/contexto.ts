@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  fechaLocal,
   leerLog,
   leerMarca,
   listarCorridas,
@@ -126,7 +127,7 @@ export function serializarContexto(p: PiezasContexto): Contexto {
     "",
     `# Rendimiento por competidor (últimos ${DIAS_RENDIMIENTO} días; cifras de corridas, no estimadas)`,
     ...(() => {
-      const r = serializarRendimiento(marca, corridas, p.hoy ?? new Date().toISOString().slice(0, 10));
+      const r = serializarRendimiento(marca, corridas, p.hoy ?? fechaLocal(new Date()));
       return r.length ? r : ["(sin datos por publicación todavía)"];
     })(),
     "",

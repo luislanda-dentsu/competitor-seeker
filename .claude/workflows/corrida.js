@@ -49,10 +49,10 @@ const PUBLICACION_SCHEMA = {
   type: 'object',
   properties: {
     competidor: { type: 'string' },
-    url: { type: 'string' },
+    url: { type: 'string', pattern: '^https?://' },
     fecha: { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' },
     formato: { enum: ['reel', 'carrusel', 'imagen', 'video', 'otro'] },
-    tema: { type: 'string' },
+    tema: { type: 'string', maxLength: 300 },
     likes: { type: 'integer', minimum: 0 },
     comentarios: { type: 'integer', minimum: 0 },
     vistas: { type: 'integer', minimum: 0 },
@@ -87,17 +87,17 @@ const LECTURAS_SCHEMA = {
   items: {
     type: 'object',
     properties: {
-      competidor: { type: 'string' },
-      resumen: { type: 'array', items: { type: 'string' }, maxItems: 6 },
+      competidor: { type: 'string', minLength: 1 },
+      resumen: { type: 'array', items: { type: 'string', minLength: 1 }, maxItems: 6 },
       estrategia: {
         type: 'object',
         properties: {
-          hipotesis: { type: 'array', items: { type: 'string' }, minItems: 1 },
-          pilares: { type: 'array', items: { type: 'string' } },
-          formatosYCadencia: { type: 'string' },
-          implicaciones: { type: 'array', items: { type: 'string' } },
+          hipotesis: { type: 'array', items: { type: 'string', minLength: 1 }, minItems: 1 },
+          pilares: { type: 'array', items: { type: 'string', minLength: 1 } },
+          formatosYCadencia: { type: 'string', minLength: 1 },
+          implicaciones: { type: 'array', items: { type: 'string', minLength: 1 } },
           confianza: { enum: ['alta', 'media', 'baja'] },
-          postsCitados: { type: 'array', items: { type: 'string' } },
+          postsCitados: { type: 'array', items: { type: 'string', minLength: 1 } },
         },
         required: ['hipotesis', 'pilares', 'formatosYCadencia', 'implicaciones', 'confianza', 'postsCitados'],
         additionalProperties: false,
@@ -153,6 +153,7 @@ function consolidarPublicaciones(ig, apify) {
   for (const [lista, fuente] of [[ig, 'ig'], [apify, 'apify']]) {
     for (const p of lista || []) {
       if (!p || !p.url || !p.competidor) continue
+      if (typeof p.tema === 'string') p.tema = p.tema.slice(0, 300)
       const k = clavePost(p.url)
       const previa = porClave.get(k)
       if (!previa) { porClave.set(k, { ...p, fuente }); continue }

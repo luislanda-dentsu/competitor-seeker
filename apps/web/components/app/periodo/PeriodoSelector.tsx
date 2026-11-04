@@ -42,7 +42,11 @@ export function PeriodoSelector({ periodo }: { periodo: PeriodoUi }): React.Reac
         items={items}
         onValueChange={(v) => {
           if (typeof v !== "string") return;
-          if (v === "custom") setAbierto(true);
+          if (v === "custom") {
+            setDesde(periodo.desde ?? "");
+            setHasta(periodo.hasta ?? "");
+            setAbierto(true);
+          }
           else aplicar({ p: v as ClavePeriodo });
         }}
         value={periodo.clave}
@@ -59,7 +63,17 @@ export function PeriodoSelector({ periodo }: { periodo: PeriodoUi }): React.Reac
           ))}
         </SelectPopup>
       </Select>
-      <Popover onOpenChange={setAbierto} open={abierto}>
+      <Popover
+        onOpenChange={(open) => {
+          // Al abrir, el rango refleja el periodo vigente (pudo cambiar con un preset).
+          if (open) {
+            setDesde(periodo.desde ?? "");
+            setHasta(periodo.hasta ?? "");
+          }
+          setAbierto(open);
+        }}
+        open={abierto}
+      >
         <PopoverTrigger render={<Button size="sm" variant="ghost" />}>
           <span className="font-mono text-xs tabular-nums text-fg-muted">
             {periodo.desde && periodo.hasta ? `${periodo.desde} → ${periodo.hasta}` : "sin límite"}
