@@ -6,6 +6,7 @@ import path from "node:path";
 import {
   adquirirLock,
   allowedToolsCorrida,
+  disallowedToolsCorrida,
   commitYPush,
   competidoresActivos,
   esquemaSalidaCorrida,
@@ -264,6 +265,7 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
     const proceso = lanzarClaude({
       prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, corridaId, apify }),
       allowedTools: allowedToolsCorrida,
+      disallowedTools: disallowedToolsCorrida,
       jsonSchema: esquemaSalidaCorrida,
       name: `corrida-${corridaId}`,
       volcarA: rutaStream(marca.slug, corridaId),
@@ -296,13 +298,40 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
 
 type FinProceso = { code: number | null; sessionId?: string; resultado?: string; isError?: boolean };
 
+/** Margen tras el `result` final antes de cerrar un proceso que sigue vivo. */
+export const GRACIA_TRAS_RESULTADO_MS = 15_000;
+
+/**
+ * Red de seguridad: si el orquestador ya devolvió su `result` y la corrida quedó registrada
+ * (o pendiente) pero el proceso sigue vivo (p. ej. un despertador programado), se cierra.
+ */
+function programarCierreTrasResultado(viva: CorridaViva): void {
+  const t = setTimeout(() => {
+    try {
+      const pid = viva.proceso?.pid;
+      if (!pid || viva.proceso?.exitCode !== null) return;
+      const c = existeCorrida(viva.marca, viva.corridaId) ? leerCorrida(viva.marca, viva.corridaId) : null;
+      if (c && c.estado !== "en-curso") {
+        log(`corrida ${viva.corridaId} ya ${c.estado}: cerrando el proceso que seguía vivo`);
+        matarGrupo(pid, "SIGTERM");
+      }
+    } catch (e) {
+      log("cierre tras resultado falló:", e);
+    }
+  }, GRACIA_TRAS_RESULTADO_MS);
+  t.unref?.();
+}
+
 /** Sigue el proceso hasta el final y cierra la corrida. Nunca rechaza (nada de unhandled rejections). */
 async function vigilar(viva: CorridaViva, eventos: AsyncIterable<EventoStream>, salida: Promise<FinProceso>): Promise<void> {
   let ultimoTexto = "";
   let fin: FinProceso = { code: null };
   try {
     try {
-      for await (const ev of eventos) ultimoTexto = ultimoTextoDe(ev, ultimoTexto);
+      for await (const ev of eventos) {
+        ultimoTexto = ultimoTextoDe(ev, ultimoTexto);
+        if ((ev as { type?: string }).type === "result") programarCierreTrasResultado(viva);
+      }
     } catch (e) {
       log(`stream de la corrida ${viva.corridaId} interrumpido:`, e);
     }

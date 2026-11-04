@@ -31,6 +31,22 @@ export const allowedToolsCorrida: readonly string[] = [
   'Bash(./scripts/cs *)',
 ]
 
+/**
+ * Tools que en headless dejan el proceso vivo tras terminar (despertadores, monitores,
+ * crons) o que no tienen sentido sin usuaria. Corrida del 2026-11-04: el orquestador
+ * programó un ScheduleWakeup de 30 min mientras esperaba al workflow y el proceso
+ * siguió vivo 17 min después de registrar.
+ */
+export const disallowedToolsCorrida: readonly string[] = [
+  'ScheduleWakeup',
+  'Monitor',
+  'CronCreate',
+  'CronDelete',
+  'RemoteTrigger',
+  'PushNotification',
+  'AskUserQuestion',
+]
+
 /** `--json-schema` del JSON final que devuelve el orquestador en una corrida headless. */
 export const esquemaSalidaCorrida: Record<string, unknown> = {
   type: 'object',
@@ -55,6 +71,7 @@ export function promptCorrida(d: DatosPromptCorrida): string {
     estadoApify,
     '',
     'MODO HEADLESS: nadie puede responder preguntas; no uses AskUserQuestion ni esperes confirmación.',
+    'El Workflow corre en segundo plano y te notifica al terminar: espera esa notificación sin programar despertadores ni monitores, y termina en cuanto registres y devuelvas el JSON.',
     `Sigue el grafo de CLAUDE.md lanzando el workflow .claude/workflows/corrida.js por scriptPath con args ` +
       `{ marca, fechaCorrida, ultimaCorrida, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, competidores }.`,
     `La decisión de Apify ya está tomada (${d.apify.habilitado ? 'habilitado' : 'omitido'}${d.apify.motivo ? `, motivo: ${d.apify.motivo}` : ''}): ` +
