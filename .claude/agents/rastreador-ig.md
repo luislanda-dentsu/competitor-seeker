@@ -30,7 +30,13 @@ Visita los perfiles UNO POR UNO, en el orden indicado (un solo navegador: nada e
 - Tono analítico y frío, en español.
 
 ## Formato de salida
-Un bloque por perfil, con el mismo contrato del rastreador web:
+Devuelves el JSON `{ "hallazgos": "<texto>", "publicaciones": [...], "perfiles": [...] }`:
+
+- `publicaciones`: un objeto por post visto: `{ "competidor": "<nombre EXACTO que te dio el orquestador>", "url": "https://www.instagram.com/p/<id>/", "fecha": "AAAA-MM-DD", "formato": "reel|carrusel|imagen|video|otro", "tema": "<caption resumido ≤140>", "likes": n, "comentarios": n, "vistas": n }`. Omite (no pongas 0 ni null) toda cifra que no sea visible. Sin URL o sin fecha visible, el post no va en la lista (sí en `hallazgos`).
+- `perfiles`: uno por perfil visitado: `{ "competidor": "<nombre>", "seguidores": n, "publicacionesTotales": n }`, omitiendo lo no visible. Convierte "12,3 mil"/"12.3K" a entero (12300) solo si la cifra es así de explícita.
+- Con sesión no disponible: `publicaciones: []`, `perfiles: []`.
+
+`hallazgos` es un bloque por perfil, con el mismo contrato del rastreador web:
 
 ```
 MARCA: <nombre>

@@ -68,7 +68,7 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
            competidores: [{nombre, url}] }
    └─ paralelo: rastreador-ig (todos los perfiles, navegador con sesión) + N rastreadores web + rastreador-apify (si habilitado)
       → analista (schema) → verificador (soul.md) → reintento con objeciones, máx. 3
-   Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig? }
+   Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig?, publicaciones, perfiles, lecturas }
 5. REGISTRO — únicamente con el CLI (nunca edites log.jsonl ni corridas/ a mano):
      scripts/cs registrar --marca <slug> --corrida-id <id> [--modo terminal|ui] [--pendiente|--forzar] --desde-workflow <output_file del Workflow>
    (lee el `.result` del archivo de salida del workflow; nunca pegues el JSON en la línea de comando: en headless el filtro de permisos lo rechaza)
