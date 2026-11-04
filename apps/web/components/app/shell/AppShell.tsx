@@ -22,7 +22,7 @@ export function AppShell({ children }: { children: ReactNode }): React.ReactElem
       <BrandProvider promise={contextoMarca}>
       <PageTitleProvider>
         <div className="min-h-dvh bg-canvas lg:p-4">
-          <div className="grid min-h-dvh grid-cols-1 overflow-clip bg-surface lg:min-h-[calc(100dvh-2rem)] lg:grid-cols-[64px_minmax(0,1fr)] lg:rounded-[24px] lg:border lg:border-border lg:shadow-xs xl:grid-cols-[240px_minmax(0,1fr)] xl:sb-collapsed:grid-cols-[64px_minmax(0,1fr)]">
+          <div className="grid min-h-dvh grid-cols-1 overflow-clip bg-surface lg:min-h-[calc(100dvh-2rem)] lg:grid-cols-[240px_minmax(0,1fr)] lg:rounded-[24px] lg:border lg:border-border lg:shadow-xs lg:sb-collapsed:grid-cols-[64px_minmax(0,1fr)]">
             <Sidebar />
             <div className="flex min-w-0 flex-col">
               <Topbar />

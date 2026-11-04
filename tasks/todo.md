@@ -55,3 +55,12 @@ Gates: rama por fase → PR → revisión independiente (`/code-review`) → mer
 ## Revisión
 - Fase 0–3: hechas y revisadas; corrida real E2E desde la UI OK (5 entradas, verificada en intento 2, 4m38s).
 - Lección: `.gitignore` con `data/` ignoraba `apps/web/lib/data` → usar `/data/`. Lección: `git add -A` con worktrees dentro de `.claude/` añade gitlinks → ignorar `.claude/worktrees/`.
+
+## v2.1 — Panel de actividad + competidor profundo (plan: `~/.claude/plans/1-activa-chrome-dev-glittery-naur.md`)
+- [x] Fase 1 `fix/sidebar-reabrir` — botón de expandir visible en todo ≥1024px; botón "Mostrar panel" en el Asistente (verificación visual pendiente)
+- [ ] Fase 2 `chore/ig-chrome-devtools` — rastreador-ig vuelve a chrome-devtools MCP (perfil dedicado)
+- [ ] Fase 3 `feat/datos-publicaciones` — Publicacion / PerfilSnapshot / LecturaCompetidor en corridas
+- [ ] Fase 4 `feat/metricas-agregadas` — core/metricas.ts (ER, cadencia, mix formatos, fallback)
+- [ ] Fase 5 `feat/periodo` — selector 7/30/90/todo/personalizado
+- [ ] Fase 6 `feat/panel-actividad` — Resumen con tarjetas por competidor
+- [ ] Fase 7 `feat/competidor-profundo` — Rendimiento / Publicaciones / Lectura / Estrategia (IA)

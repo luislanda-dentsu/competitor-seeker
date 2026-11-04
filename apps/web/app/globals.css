@@ -5,10 +5,6 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 /* Sidebar colapsado (atributo en <html>, leído de la cookie cs-sidebar). */
 @custom-variant sb-collapsed {
-  /* 1024–1279px: siempre colapsado (plan §12) */
-  @media (width >= 64rem) and (width < 80rem) {
-    @slot;
-  }
   &:where([data-sidebar="collapsed"], [data-sidebar="collapsed"] *) {
     @slot;
   }
