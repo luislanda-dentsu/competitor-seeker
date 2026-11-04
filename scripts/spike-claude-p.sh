@@ -16,9 +16,9 @@ echo "[spike] inicio $(date -Is)" | tee "$OUT/stderr.log"
 set +e
 claude -p "$PROMPT" \
   --output-format stream-json --verbose --include-partial-messages --forward-subagent-text \
-  --permission-mode dontAsk --permission-prompts none --chrome \
+  --permission-mode dontAsk --permission-prompts none \
   --settings .claude/settings.headless.json \
-  --allowedTools "Workflow" "Agent" "Read" "Grep" "Glob" "WebSearch" "WebFetch" "mcp__claude-in-chrome__*" "mcp__apify__*" \
+  --allowedTools "Workflow" "Agent" "Read" "Grep" "Glob" "WebSearch" "WebFetch" "mcp__chrome-devtools__*" "mcp__apify__*" \
   --json-schema "$SCHEMA" \
   --name "spike claude -p" \
   > "$OUT/salida.jsonl" 2>> "$OUT/stderr.log"

@@ -1,6 +1,6 @@
 "use client";
 
-import { AppWindow, ExternalLink } from "lucide-react";
+import { AppWindow } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,7 @@ export function ChromePanel({ estado }: { estado: EstadoChrome }): React.ReactEl
     setAbriendo(true);
     try {
       await llamarApi("/api/ajustes/chrome/abrir", { method: "POST" });
-      avisarOk("Instagram abierto en Chrome", "Inicia sesión con la cuenta de la agencia si hace falta y comprueba que la extensión está conectada.");
+      avisarOk("Chrome dedicado abierto", "Inicia sesión con la cuenta de la agencia si hace falta y cierra esa ventana antes de correr.");
     } catch (e) {
       avisarError("No se pudo abrir Chrome", (e as Error).message);
     } finally {
@@ -39,15 +39,16 @@ export function ChromePanel({ estado }: { estado: EstadoChrome }): React.ReactEl
         <CardHeader>
           <CardTitle className="t-label">Sesión de Instagram</CardTitle>
           <CardDescription className="text-fg-muted">
-            El rastreo de Instagram usa <strong>Claude in Chrome</strong> en tu Chrome. Abre Chrome, activa la extensión e inicia sesión en
-            instagram.com con la cuenta de la agencia. La cuenta es solo lectura: el rastreador jamás da like, sigue ni comenta.
+            El rastreo de Instagram usa el <strong>MCP chrome-devtools</strong> sobre un perfil de Chrome dedicado (distinto de tu Chrome
+            personal). Inicia sesión una vez en ese perfil con la cuenta de la agencia. La cuenta es solo lectura: el rastreador jamás da like,
+            sigue ni comenta.
           </CardDescription>
         </CardHeader>
         <CardPanel className="flex flex-col gap-4">
           <ol className="flex list-decimal flex-col gap-1.5 ps-5 text-sm text-fg">
-            <li>Abre Google Chrome en el perfil donde está instalada la extensión Claude in Chrome.</li>
-            <li>Entra en instagram.com y comprueba que la cuenta dedicada de la agencia tiene la sesión iniciada.</li>
-            <li>Deja Chrome abierto durante la corrida: el agente trabaja en una pestaña propia y la cierra al terminar.</li>
+            <li>Pulsa «Abrir Instagram»: se abre el Chrome dedicado en instagram.com.</li>
+            <li>Inicia sesión con la cuenta de la agencia (solo la primera vez o si caduca la sesión).</li>
+            <li>Cierra esa ventana de Chrome: durante la corrida el agente lanza el perfil dedicado por su cuenta y no puede si ya está abierto.</li>
           </ol>
           <p className="text-xs text-fg-muted">
             Si Instagram pide un challenge o captcha, la corrida sigue solo con web (+Apify) y queda registrado como «sesión no disponible».
@@ -56,10 +57,6 @@ export function ChromePanel({ estado }: { estado: EstadoChrome }): React.ReactEl
             <Button loading={abriendo} onClick={() => void abrir()}>
               <AppWindow aria-hidden="true" />
               Abrir Instagram
-            </Button>
-            <Button render={<a href="https://www.instagram.com/" rel="noreferrer" target="_blank" />} variant="ghost">
-              <ExternalLink aria-hidden="true" />
-              instagram.com
             </Button>
           </div>
         </CardPanel>

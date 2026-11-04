@@ -13,7 +13,7 @@ echo "1) Herramientas"
 if command -v node >/dev/null && [ "$(node -p 'process.versions.node.split(".")[0]')" -ge 22 ]; then ok "node $(node -v)"; else fail "Node ≥ 22 requerido (https://nodejs.org)"; exit 1; fi
 if command -v claude >/dev/null; then ok "claude $(claude --version 2>/dev/null | head -1)"; else fail "Claude Code no está en el PATH (npm i -g @anthropic-ai/claude-code)"; exit 1; fi
 if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then ok "gh autenticado"; else warn "gh no autenticado: ejecuta 'gh auth login' para que el sync por git funcione"; fi
-if [ -d "/Applications/Google Chrome.app" ]; then ok "Google Chrome instalado"; else warn "Instala Google Chrome y la extensión Claude in Chrome"; fi
+if [ -d "/Applications/Google Chrome.app" ]; then ok "Google Chrome instalado"; else warn "Instala Google Chrome (el rastreo de IG usa un perfil dedicado vía MCP chrome-devtools)"; fi
 
 echo "2) Dependencias"
 npm install --no-fund --no-audit >/dev/null && ok "npm install"
@@ -44,8 +44,8 @@ npm test --silent >/dev/null 2>&1 && ok "tests en verde" || warn "tests fallaron
 cat <<'TXT'
 
 Pendiente manual:
-  · Abre Chrome, instala/activa la extensión Claude in Chrome y entra en instagram.com con la cuenta dedicada de la agencia.
-  · Deja Chrome abierto durante las corridas.
+  · Sesión de Instagram (una vez): scripts/chrome-ig.sh login → inicia sesión con la cuenta de la agencia y CIERRA esa ventana.
+  · Aprueba el MCP chrome-devtools la primera vez que abras 'claude' en este repo (o ya va en .claude/settings.json).
   · Pega el token de Apify en Ajustes (o APIFY_TOKEN en .env.local).
   · Arranca el panel: npm run dev → http://localhost:3030
 TXT

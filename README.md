@@ -6,7 +6,7 @@ Inteligencia competitiva por marca para una agencia de contenido. Agentes de Cla
 - Node ≥ 22, npm ≥ 10
 - Claude Code instalado y logueado (`claude --version`)
 - `gh` autenticado (sync por GitHub)
-- Google Chrome con la extensión **Claude in Chrome** conectada y la cuenta IG de la agencia logueada (el rastreador navega en tu Chrome, en una pestaña propia)
+- Google Chrome. El rastreador de IG usa el MCP **chrome-devtools** sobre un perfil dedicado (`~/.competitor-seeker/chrome-profile`) con la cuenta IG de la agencia logueada
 
 ## Arranque
 ```bash
@@ -17,12 +17,12 @@ npm run dev                       # http://localhost:3030
 ```
 Segunda máquina: `scripts/setup-maquina.sh` (clona, instala, crea `.env.local` y comprueba `claude`/`gh`).
 
-Sesión de Instagram (una vez por máquina): instala Claude in Chrome en tu perfil de Chrome, inicia sesión en instagram.com con la cuenta dedicada y deja Chrome abierto durante las corridas.
+Sesión de Instagram (una vez por máquina): `scripts/chrome-ig.sh login`, inicia sesión con la cuenta dedicada y cierra esa ventana (durante la corrida el MCP lanza el perfil por su cuenta).
 
 ## Primer uso
 1. Clona el repo privado: `git clone <url-del-repo> competitor-seeker && cd competitor-seeker`.
 2. Ejecuta `scripts/setup-maquina.sh` (instala dependencias, crea `.env.local` y comprueba `claude` y `gh`), luego `npm run dev`.
-3. Abre Chrome con la extensión **Claude in Chrome** conectada y la cuenta de Instagram de la agencia logueada; déjalo abierto durante las corridas.
+3. Comprueba que el Chrome dedicado tiene sesión en Instagram (`scripts/chrome-ig.sh login`) y que esa ventana está cerrada antes de correr.
 4. En **Ajustes**, pega el token de Apify (opcional: sin él la corrida usa solo el rastreo con navegador y web).
 5. En **Corridas**, elige la marca y lanza la primera corrida; al terminar, los hallazgos aparecen en el Resumen.
 

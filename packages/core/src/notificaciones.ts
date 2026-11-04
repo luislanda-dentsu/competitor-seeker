@@ -278,7 +278,7 @@ export function notificarFinCorrida(corrida: Corrida, ahora: Date = new Date()):
         tipo: 'ig-sesion',
         nivel: 'aviso',
         titulo: 'Sesión de Instagram no disponible',
-        mensaje: `La corrida ${corrida.id} siguió solo con web (+Apify). Abre Chrome con la extensión e inicia sesión en instagram.com.`,
+        mensaje: `La corrida ${corrida.id} siguió solo con web (+Apify). Cierra el Chrome dedicado si está abierto o vuelve a iniciar sesión (Ajustes → Abrir Instagram).`,
         clave: `corrida-${corrida.id}-ig-sesion`,
         href: '/ajustes',
       }),
