@@ -1,9 +1,9 @@
 "use client";
 
-import { GitBranch, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { useId, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { GitSyncStatus } from "@/components/app/shell/GitSyncStatus";
 import { Card, CardPanel } from "@/components/ui/card";
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -93,12 +93,9 @@ export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, on
           <div className="flex flex-col gap-1.5">
             <span className="t-label">Git</span>
             <div className="flex h-8 items-center">
-              <Badge className="rounded-pill px-2" variant="secondary">
-                <GitBranch aria-hidden="true" />
-                sin remoto
-              </Badge>
+              <GitSyncStatus compacto />
             </div>
-            <span className="text-xs text-fg-muted">La sincronización llega en la fase 6.</span>
+            <span className="text-xs text-fg-muted">Se sincroniza antes y después de cada corrida.</span>
           </div>
 
           <div className="flex flex-col gap-1.5 lg:ms-auto">

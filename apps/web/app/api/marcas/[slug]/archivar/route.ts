@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { archivarMarca, existeMarca, leerMarca } from "@competitor-seeker/core";
+import { sincronizarAjustes } from "@/lib/sync/ajustes";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
 import { CuerpoArchivarMarca, SLUG_RE } from "@/lib/settings/validacion";
 
@@ -26,6 +27,7 @@ export async function POST(request: Request, { params }: Ctx): Promise<Response>
   }
   try {
     const destino = archivarMarca(slug);
+    await sincronizarAjustes(`ajustes: archivar marca ${slug}`);
     revalidatePath("/", "layout");
     return okJson({ ok: true, slug, destino });
   } catch (e) {

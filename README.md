@@ -35,6 +35,14 @@ data/             lock, streams, chats, notificaciones, secrets (local, gitignor
 docs/             spike headless, panel legacy
 ```
 
+## Sincronización entre Macs
+
+- Los datos (`marcas/**` y `config.json`) viajan por el repo privado `origin`; `data/` y `.env.local` son locales.
+- Se hace `pull --rebase` al abrir la Home (máx. 1/min) y antes de cada corrida, y `commit + push` al cerrarla o tras cambiar ajustes. `CS_SYNC_AUTO=0` lo deja solo manual.
+- `log.jsonl` usa `merge=union` y cada corrida es un archivo con hostname en el id, así que dos Macs rara vez chocan.
+- La píldora de git del Topbar muestra el estado y permite "Sincronizar ahora"; `GET/POST /api/sync` expone lo mismo.
+- Si hay conflicto (p. ej. `marca.json` editado en ambas): `git pull --rebase`, edita, `git rebase --continue`.
+
 ## Scripts
 - `npm run dev | build | test | typecheck | lint`
 - `./scripts/cs registrar|confirmar|migrar|ultima-corrida|nuevo-id|marca|apify-uso|config`

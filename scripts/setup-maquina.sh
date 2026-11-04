@@ -29,7 +29,15 @@ if [ ! -f .claude/settings.json ]; then
   cp docs/claude-settings.json .claude/settings.json && ok ".claude/settings.json creado desde docs/claude-settings.json"
 else ok ".claude/settings.json ya existe"; fi
 
-echo "4) Verificación"
+echo "4) Sincronización git"
+if url="$(git remote get-url origin 2>/dev/null)"; then
+  ok "remoto origin: $url"
+  git pull --rebase --autostash >/dev/null 2>&1 && ok "git pull --rebase inicial" || warn "git pull --rebase falló (¿sin sesión de gh o conflicto?): resuélvelo antes de correr"
+else
+  warn "No hay remoto 'origin': sin él los datos no viajan entre Macs (git remote add origin <url-privada>)"
+fi
+
+echo "5) Verificación"
 npm test --silent >/dev/null 2>&1 && ok "tests en verde" || warn "tests fallaron: revisa 'npm test'"
 ./scripts/cs marca listar >/dev/null 2>&1 && ok "CLI scripts/cs responde" || warn "scripts/cs no responde"
 

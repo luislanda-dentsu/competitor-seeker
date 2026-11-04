@@ -1,4 +1,6 @@
 import { FolderOpen, Play } from "lucide-react";
+import { after } from "next/server";
+import { pullSiToca } from "@competitor-seeker/core";
 import { FunnelBars } from "@/components/app/charts/FunnelBars";
 import { SignalDistribution } from "@/components/app/charts/SignalDistribution";
 import { SignalTrendChart } from "@/components/app/charts/SignalTrendChart";
@@ -83,6 +85,10 @@ function Kpis({ datos }: { datos: DatosMarca }): React.ReactElement {
  * Alert (sin ocultar los datos legibles).
  */
 export async function Resumen(): Promise<React.ReactElement> {
+  // Pull de fondo (throttle 60 s) sin bloquear el render; nunca lanza.
+  after(() => {
+    void pullSiToca().catch(() => undefined);
+  });
   const slug = await getMarcaActiva();
   if (!slug) {
     return (

@@ -13,6 +13,7 @@ import {
 import { ToastProvider } from "@/components/ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { BrandSwitcher } from "@/components/app/shell/BrandSwitcher";
+import { GitSyncStatus } from "@/components/app/shell/GitSyncStatus";
 import { MobileNav } from "@/components/app/shell/MobileNav";
 import { NotificationCenter } from "@/components/app/shell/NotificationCenter";
 import { usePageTitle } from "@/components/app/shell/PageTitle";
@@ -63,6 +64,8 @@ export function Topbar(): React.ReactElement {
             ))}
           </SelectPopup>
         </Select>
+
+        <GitSyncStatus />
 
         <BrandSwitcher />
 
