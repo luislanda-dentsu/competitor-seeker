@@ -181,3 +181,18 @@ describe('cli', () => {
     expect(fs.existsSync(lock)).toBe(false)
   })
 })
+
+describe('registrar --desde-workflow', () => {
+  it('lee el .result del archivo de salida del workflow (apóstrofos incluidos)', async () => {
+    const salida = path.join(repo.raiz, 'wf.output')
+    fs.writeFileSync(salida, JSON.stringify({ summary: 'x', logs: [], result: { entradas: [entrada], verificado: true, intentos: 1 } }))
+    const id = '2026-11-04-1206-k-mac'
+    const r = (await ejecutar(['registrar', '--marca', 'k', '--corrida-id', id, '--modo', 'ui', '--desde-workflow', salida])) as { estado: string; registradas: number }
+    expect(r).toMatchObject({ estado: 'registrada', registradas: 1 })
+    expect(leerLog('k').items[0]?.movimiento).toContain("'Destapa la Navidad'")
+  })
+
+  it('archivo inexistente → error claro', async () => {
+    await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--desde-workflow', '/no/existe.output'])).rejects.toThrow(/salida del workflow/)
+  })
+})

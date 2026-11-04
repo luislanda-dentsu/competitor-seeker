@@ -81,8 +81,24 @@ async function leerStdin(): Promise<string> {
   return Buffer.concat(trozos).toString('utf8')
 }
 
-/** JSON del workflow: `--json-b64 <base64>` (evita las comillas del shell) o, si no, stdin. */
+/**
+ * JSON del workflow, por orden de preferencia:
+ * `--desde-workflow <ruta>` (archivo de salida del Workflow tool; toma `.result`),
+ * `--json-b64 <base64>` o stdin.
+ */
 async function leerJsonEntrada(a: ArgsCli): Promise<string> {
+  const ruta = a.opciones['desde-workflow']
+  if (ruta !== undefined) {
+    if (typeof ruta !== 'string' || ruta.trim() === '') throw new Error('--desde-workflow requiere la ruta del archivo de salida del workflow')
+    let crudo: unknown
+    try {
+      crudo = JSON.parse(fs.readFileSync(ruta, 'utf8'))
+    } catch (e) {
+      throw new Error(`No se pudo leer la salida del workflow en ${ruta}: ${(e as Error).message}`)
+    }
+    const resultado = crudo && typeof crudo === 'object' && 'result' in crudo ? (crudo as { result: unknown }).result : crudo
+    return JSON.stringify(resultado)
+  }
   const b64 = a.opciones['json-b64']
   if (b64 !== undefined) {
     if (typeof b64 !== 'string' || b64.trim() === '') throw new Error('--json-b64 requiere el JSON del workflow codificado en base64')
@@ -282,6 +298,7 @@ function cmdMarca(a: ArgsCli): unknown {
 const AYUDA = `Uso: scripts/cs <comando>
   registrar --marca <slug> --corrida-id <id> [--pendiente] [--forzar] [--modo ui|terminal] [--json-b64 <base64>]
       JSON del workflow por stdin (here-string: escribe los apóstrofos del JSON como \\u0027)
+      o --desde-workflow <ruta del output del Workflow> (recomendado en headless),
       o en --json-b64 (el JSON codificado en base64; evita las comillas del shell)
   confirmar --marca <slug> --corrida-id <id> --accion registrar|descartar
       (registrar y confirmar toman un lock corridas/<id>.json.lock: dos a la vez fallan)
