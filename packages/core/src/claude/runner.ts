@@ -191,7 +191,11 @@ function lanzarReal(o: OpcionesClaude, args: string[], bin: string): ProcesoClau
   proceso.stderr?.on('data', (c: string) => stderr.push(c))
 
   const onAbort = () => {
-    if (proceso.exitCode === null && !proceso.killed) matarGrupo(proceso.pid, 'SIGTERM')
+    if (proceso.exitCode !== null || proceso.killed) return
+    matarGrupo(proceso.pid, 'SIGTERM')
+    const t = setTimeout(() => { if (proceso.exitCode === null) matarGrupo(proceso.pid, 'SIGKILL') }, 5000)
+    t.unref?.()
+    proceso.once('close', () => clearTimeout(t))
   }
   if (o.signal) {
     if (o.signal.aborted) onAbort()
