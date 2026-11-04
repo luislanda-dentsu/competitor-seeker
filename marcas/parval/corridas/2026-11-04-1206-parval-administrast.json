@@ -1,0 +1,31 @@
+{
+  "id": "2026-11-04-1206-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-04",
+  "ultimaCorrida": null,
+  "inicio": "2026-11-04T16:06:21.266Z",
+  "fin": "2026-11-04T16:14:20.924Z",
+  "duracionMs": 479658,
+  "estado": "error",
+  "verificado": false,
+  "intentos": 0,
+  "objeciones": [],
+  "fuentes": [],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "omitido": false
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "2f5a48e8-ad07-4e2c-afea-37d5a28e1df6",
+  "error": "el orquestador terminó (código 0) sin registrar la corrida: {\"corridaId\":\"2026-11-04-1206-parval-administrast\",\"estado\":\"no-registrada-permiso-denegado\",\"verificado\":false,\"intentos\":3,\"entradas\":13,\"igSesion\":\"ok\"}"
+}
