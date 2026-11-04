@@ -15,6 +15,7 @@ export function rutaPlantillaExport(): string {
 export function jsonParaScript(valor: unknown): string {
   return JSON.stringify(valor, null, 2)
     .replace(/<\//g, "<\\/")
+    .replace(/<!--/g, "\\u003c!--") // `<!--` dentro de <script> alteraría el cierre del bloque
     .replace(/[\u2028\u2029]/g, (c) => `\\u${c.charCodeAt(0).toString(16)}`);
 }
 

@@ -166,10 +166,11 @@ export function nuevoChat(marca: string, primerMensaje: string, o: OpcionesNuevo
 
 /** Borra el archivo del chat. Devuelve false si no existía. */
 export function borrarChat(marca: string, id: string): boolean {
+  const ruta = rutaChat(marca, id) // valida el id antes de tocar nada
+  // Volcado crudo del stream de ese chat: se borra siempre (puede quedar huérfano sin el .json).
+  fs.rmSync(rutaDataArchivo('chats-vivos', `${id}.stream.jsonl`), { force: true })
   try {
-    fs.rmSync(rutaChat(marca, id))
-    // Volcado crudo del stream de ese chat (puede no existir).
-    fs.rmSync(rutaDataArchivo('chats-vivos', `${id}.stream.jsonl`), { force: true })
+    fs.rmSync(ruta)
     return true
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code === 'ENOENT') return false

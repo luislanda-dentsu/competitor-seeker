@@ -45,3 +45,12 @@ describe("generarHtmlExport", () => {
     expect(jsonParaScript("</a>")).toBe('"<\\/a>"');
   });
 });
+
+describe("jsonParaScript · comentarios HTML", () => {
+  it("neutraliza <!-- para que no altere el cierre del <script>", async () => {
+    const { jsonParaScript } = await import("./html");
+    const out = jsonParaScript({ t: "a <!--<script> b" });
+    expect(out).not.toContain("<!--");
+    expect(JSON.parse(out)).toEqual({ t: "a <!--<script> b" });
+  });
+});
