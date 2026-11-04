@@ -1,0 +1,87 @@
+{
+  "id": "2026-11-04-1147-kolareal-administrast",
+  "marca": "kolareal",
+  "fecha": "2026-11-04",
+  "ultimaCorrida": "2026-11-04",
+  "inicio": "2026-11-04T15:47:59.417Z",
+  "fin": "2026-11-04T15:50:38.761Z",
+  "duracionMs": 159344,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 2,
+  "objeciones": [],
+  "fuentes": [
+    "web",
+    "ig"
+  ],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "incluido": true,
+    "omitido": false,
+    "runId": "nFvcvMUOZoflijEWR"
+  },
+  "competidores": [
+    "Coca Cola RD",
+    "Country Club RD"
+  ],
+  "entradas": [
+    {
+      "marca": "Coca Cola RD",
+      "fecha": "2026-11-03",
+      "movimiento": "Publicó un carrusel en colaboración con @festivalcaye y @lenadardelet anunciando el cartel de música en vivo de CAYE 2026 en Ciudad Nueva, 7 y 8 de noviembre, entrada gratis. Ese mismo día publicó un reel navideño, «Nada mejor que celebrar juntos esta Navidad», cuyas cifras no se pudieron confirmar. Un reel del 2026-11-02 sobre botella de vidrio retornable muestra comentarios que preguntan por el encendido del árbol en Plaza España. Publica casi a diario, con predominio de reels: 6 de 10 miniaturas.",
+      "senal": "nuevo",
+      "lectura": "Mezcla patrocinio de evento local con tono navideño temprano. El árbol de Plaza España no está anunciado, pero hay demanda en comentarios.",
+      "fuentes": [
+        "ig"
+      ],
+      "metricas": {
+        "likes": 1069
+      },
+      "id": "892b956db2603436",
+      "corrida": "2026-11-04-1147-kolareal-administrast"
+    },
+    {
+      "marca": "Coca Cola RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Búsqueda web en prensa dominicana sin contenido, campañas ni cobertura publicados el 2026-11-04. Solo contexto previo: campaña Euphoria del Mundial FIFA 2026, encendido del árbol en nov-2025 y relanzamiento de Comparte una Coca-Cola en jun-2025. No hay anuncio de campaña navideña 2026.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web verificable en el periodo. El contexto previo sugiere que el evento del árbol se repite cada año, pero no hay confirmación 2026.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "7cf593e062215ecb",
+      "corrida": "2026-11-04-1147-kolareal-administrast"
+    },
+    {
+      "marca": "Country Club RD",
+      "fecha": "2026-10-31",
+      "movimiento": "Sin posts en el periodo. El último elemento visible del grid es un reel del 2026-10-31: «¿Quiere Country? Ellos también, ve por el tuyo.» Cifras no confirmadas, vistas no visibles, y los posts siguientes no se abrieron. Apify no devolvió datos: no_items.",
+      "senal": "sin-datos",
+      "lectura": "No hay base para juzgar tracción ni frecuencia. Solo consta un reel reciente fuera del periodo.",
+      "fuentes": [
+        "ig"
+      ],
+      "id": "e069cafb267c5d70",
+      "corrida": "2026-11-04-1147-kolareal-administrast"
+    },
+    {
+      "marca": "Country Club RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Búsqueda web sin contenido, campaña, patrocinio ni prensa de 2026 sobre la marca. Solo aparece la campaña Hechos de sabor, material de 2019 con posible re-listado en 2025, y ruido de homonimia. No se halló sitio propio.",
+      "senal": "sin-datos",
+      "lectura": "La ausencia web no prueba inactividad. La marca parece vivir dentro de los sitios de Coca-Cola y Bepensa.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "a141f397eac0f3a0",
+      "corrida": "2026-11-04-1147-kolareal-administrast"
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "6cb3e0b0-01d3-4df0-bd27-e5d96813ea61",
+  "ig": {
+    "sesion": "ok"
+  }
+}
