@@ -180,5 +180,8 @@
   "sessionId": "f82e03d0-0cca-455a-bc72-bc60de896234",
   "ig": {
     "sesion": "no-disponible"
+  },
+  "git": {
+    "pushed": true
   }
 }
