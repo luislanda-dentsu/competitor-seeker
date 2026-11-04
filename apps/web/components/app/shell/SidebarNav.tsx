@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
+import { ChatSidebar } from "@/components/app/chat/ChatSidebar";
 import { SignalDot } from "@/components/app/signals/SignalDot";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { useContextoMarca } from "@/lib/brand-context";
@@ -145,6 +146,10 @@ function NavList({
 
 function NavListLive(props: SidebarNavProps): React.ReactElement {
   const pathname = usePathname() ?? "/";
+  // Modo chat: en /asistente el menú se sustituye por Volver · Nuevo chat · historial.
+  if (pathname === "/asistente" || pathname.startsWith("/asistente/")) {
+    return <ChatSidebar collapsed={(props.collapsible ?? true) && (props.collapsed ?? false)} onNavigate={props.onNavigate} />;
+  }
   return <NavList pathname={pathname} {...props} />;
 }
 
