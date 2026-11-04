@@ -1,0 +1,83 @@
+{
+  "id": "2026-11-04-1054-kolareal-administrast",
+  "marca": "kolareal",
+  "fecha": "2026-11-04",
+  "ultimaCorrida": "2026-08-20",
+  "inicio": "2026-11-04T14:54:22.661Z",
+  "fin": "2026-11-04T14:55:23.533Z",
+  "duracionMs": 60872,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 1,
+  "objeciones": [],
+  "fuentes": [
+    "web"
+  ],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "incluido": false,
+    "omitido": true,
+    "motivo": "desactivado por la usuaria"
+  },
+  "competidores": [
+    "Coca Cola RD",
+    "Country Club RD"
+  ],
+  "entradas": [
+    {
+      "marca": "Coca Cola RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Instagram (@cocacolard) no se pudo inspeccionar: la extensión Claude in Chrome no estaba conectada y no se abrió ningún perfil.",
+      "senal": "sin-datos",
+      "lectura": "No hubo inspección de Instagram; no se puede afirmar ni descartar actividad en el periodo.",
+      "fuentes": [
+        "ig"
+      ],
+      "id": "05a2c9e6bd38045b",
+      "corrida": "2026-11-04-1054-kolareal-administrast"
+    },
+    {
+      "marca": "Coca Cola RD",
+      "fecha": "2026-11-04",
+      "movimiento": "La búsqueda web no halló prensa, campañas ni cambios de sitio fechados entre 2026-08-20 y 2026-11-04. Lo más reciente es de junio y julio de 2026: campañas \"Siéntelo Todo\" y \"Euphoria\" del Mundial FIFA, con QR a WhatsApp, stickers Panini y watching parties.",
+      "senal": "sin-datos",
+      "lectura": "Sin novedad verificable en el periodo; las campañas del Mundial son contexto previo y no hay cifras de tracción ni confirmación de Navidad 2026.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "ceae34b53e489112",
+      "corrida": "2026-11-04-1054-kolareal-administrast"
+    },
+    {
+      "marca": "Country Club RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Instagram (@countryclubrd) no se pudo inspeccionar: la extensión Claude in Chrome no estaba conectada y no se reintentó.",
+      "senal": "sin-datos",
+      "lectura": "No hubo inspección de Instagram; no se puede afirmar ni descartar actividad en el periodo.",
+      "fuentes": [
+        "ig"
+      ],
+      "id": "8b3e1a9d1f059a93",
+      "corrida": "2026-11-04-1054-kolareal-administrast"
+    },
+    {
+      "marca": "Country Club RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Cuatro búsquedas web no hallaron campañas, patrocinios, sitio oficial ni prensa atribuibles a Country Club RD en el periodo. No se confirmó que sea el Santo Domingo Country Club; los resultados son menciones sueltas o de entidades homónimas.",
+      "senal": "sin-datos",
+      "lectura": "Sin evidencia atribuible al competidor; antes de nuevas lecturas conviene confirmar su identidad y revisar su Instagram.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "fe477b0c20ec9af7",
+      "corrida": "2026-11-04-1054-kolareal-administrast"
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "d7b699a0-30f1-4db1-9043-7447d2d9e22a",
+  "ig": {
+    "sesion": "no-disponible"
+  }
+}
