@@ -33,25 +33,23 @@ Gates: rama por fase → PR → revisión independiente (`/code-review`) → mer
 - [x] E2E real desde la UI: corrida registrada, 5 entradas, verificada en intento 2, 4m38s · rama `feat/runner`
 - [x] Revisión independiente corregida (3c19ecd) · PR #3 abierto (base feat/ui-home) — pendiente merge
 
-## Fase 4 — Asistente (`feat/asistente`)   ∥ Fase 5
-- [ ] **PAUSADA 2026-11-03 por cupo.** Trabajo parcial en rama `wip/asistente` (8a1c1db, 11 archivos, SIN verificar). Base: feat/runner antiguo (63e2bdc).
-  Para retomar: `git rebase --onto feat/runner 63e2bdc wip/asistente`, revisar qué falta del brief (packages/core/src/chats.ts, lib/chat/{contexto,artifacts}, api/asistente SSE con --resume, UI /asistente, sidebar modo chat), terminar, lint/tsc/vitest/build, E2E mock y real, revisión independiente, PR #4 (base feat/runner).
+## Fase 4 — Asistente (`feat/asistente`) — PR #5
+- [x] Chat con contexto + `--resume`, artefactos, historial, UI; E2E real de 2 turnos; revisión corregida
+- [ ] Bajo: fecha de contexto en chats largos; podar `data/chats-vivos` al borrar chat
 
-## Fase 5 — Apify + uso + notificaciones + Ajustes (`feat/apify`)   ∥ Fase 4
-- [x] Implementada en `feat/apify` (76153e7, 71 tests, E2E hecho) sobre feat/runner ANTIGUO (63e2bdc)
-- [ ] **PENDIENTE**: `git rebase --onto feat/runner 63e2bdc feat/apify` → 2 conflictos conocidos: `apps/web/lib/runs/apify.ts` (F3 usa `decidirApifyDesdeEstado`, F5 usa `obtenerUsoActual` → quedarse con `obtenerUsoActual` y que el CLI `cs apify-uso` también lo use) y `apps/web/lib/runs/runner.ts` (F5 solo añade import + `try { notificarFinCorrida(actualizada) } catch {}` tras `guardarCorrida` en `cerrarCorrida`). Luego lint/tsc/vitest/build, revisión independiente, PR #5 (base feat/runner).
+## Fase 5 — Apify + uso + notificaciones + Ajustes (`feat/apify-uso`) — PR #4
+- [x] Rebaseada sobre main; revisión corregida (notificaciones atómicas con lock y tope)
+- [ ] Bajo: archivar marca con corrida en curso → 409; slugs vacíos/repetidos en PUT competidores; deep-merge en PUT config
 
-## Fase 6 — Git sync + onboarding (`feat/git-sync`)
-- [ ] git-sync.ts, api/sync, GitSyncStatus, pull/push automáticos, setup-maquina.sh, README
+## Fase 6 — Git sync + onboarding (`feat/git-sync`) — PR #6 (mergear después de #4 y #5)
+- [x] git-sync.ts, api/sync, GitSyncStatus, pull/push automáticos, setup-maquina.sh, README
+- [x] Revisión corregida: sync solo en main y sin código sin commitear; timeouts; index.lock
 
-## Fase 7 — Pulido + export (`feat/pulido`)
-- [ ] Export HTML estático, dark mode, reduced-motion, skeletons, 320px, copy, borrar log.json.migrado
-
-## Estado al pausar (2026-11-03)
-Ramas en origin: `main` (baseline) · `feat/scaffold-core` (PR #1) · `feat/ui-home` (PR #2) · `feat/runner` (PR #3) · `feat/apify` (sin PR, rebase pendiente) · `wip/asistente` (parcial).
-Orden de merge: #1 → #2 → #3; después rebase de feat/apify y wip/asistente sobre main.
-Pendiente del owner: mergear PRs; `cp docs/claude-settings.json .claude/settings.json`; token de Apify en Ajustes; invitar a la compañera al repo.
-Próxima sesión (con `/model` Sonnet, un agente a la vez): Fase 5 rebase+PR → Fase 4 terminar → Fase 6 git sync + setup-maquina → Fase 7 pulido.
+## Fase 7 — Pulido + export (`feat/pulido`) — empezar tras mergear #4, #5, #6
+- [ ] Export HTML estático por marca; revisión dark mode, reduced-motion, skeletons, 320px, copy
+- [ ] Borrar `marcas/kolareal/log.json.migrado`; `cs apify-uso` delegando en `obtenerUsoActual`
+- [ ] Los pendientes "bajo" de las fases 4 y 5
+- [ ] Prueba en la 2.ª Mac con `scripts/setup-maquina.sh`
 
 ## Revisión
 - Fase 0–3: hechas y revisadas; corrida real E2E desde la UI OK (5 entradas, verificada en intento 2, 4m38s).

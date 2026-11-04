@@ -6,6 +6,7 @@ import path from "node:path";
 import {
   adquirirLock,
   allowedToolsCorrida,
+  commitYPush,
   competidoresActivos,
   esquemaSalidaCorrida,
   existeCorrida,
@@ -23,6 +24,7 @@ import {
   notificarFinCorrida,
   nuevoIdCorrida,
   procesoVivo,
+  pull,
   promptCorrida,
   ultimaCorridaRegistrada,
   type ContenidoLock,
@@ -231,6 +233,13 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
   const inicio = ahora.toISOString();
   try {
     const apify = await decidirApifyParaCorrida(o.incluirApify);
+    // Fase 6: traer lo de la otra Mac antes de calcular `ultimaCorrida`. Con conflicto la corrida sigue.
+    try {
+      // Tope de 15 s: una red lenta no deja el lanzamiento colgado (la corrida sigue con lo local).
+      await Promise.race([pull({ auto: true }), new Promise((r) => setTimeout(r, 15_000))]);
+    } catch (e) {
+      log("pull previo a la corrida falló:", e);
+    }
     const ultimaCorrida = ultimaCorridaRegistrada(marca.slug);
     guardarCorrida({
       id: corridaId,
@@ -346,10 +355,32 @@ function cerrarCorrida(viva: CorridaViva, fin: FinProceso, ultimoTexto: string):
       : `el orquestador terminó (código ${fin.code ?? "?"}) sin registrar la corrida${detalle ? `: ${detalle}` : ""}`;
   }
   guardarCorrida(actualizada);
+  // Fase 6: el cierre no espera a git; el resultado (pushed/error) se anota después en la corrida.
+  void sincronizarCierre(actualizada);
   try {
     notificarFinCorrida(actualizada); // Fase 5: campana (corrida-ok / rechazada / ig-sesion / git-error)
   } catch {
     /* una notificación fallida nunca rompe el cierre de la corrida */
+  }
+}
+
+/** commit + push de los datos de la corrida; anota `git:{pushed,error?}` y nunca lanza. */
+async function sincronizarCierre(c: Corrida): Promise<void> {
+  try {
+    const n = c.entradas.length;
+    const r = await commitYPush(`corrida(${c.marca}): ${c.id} — ${n} ${n === 1 ? "entrada" : "entradas"}, ${c.estado}`, { auto: true });
+    if (r.ok && r.omitido) return;
+    const git = r.ok ? { pushed: true } : { pushed: false, error: r.motivo === "conflicto" ? `conflicto en ${r.archivos.join(", ")}` : `${r.motivo}: ${r.error}` };
+    guardarCorrida({ ...leerCorrida(c.marca, c.id), git });
+    if (!r.ok) {
+      try {
+        notificarFinCorrida({ ...c, git });
+      } catch {
+        /* sin notificación no se rompe el cierre */
+      }
+    }
+  } catch (e) {
+    log(`git no sincronizó la corrida ${c.id}:`, e);
   }
 }
 

@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { connection } from "next/server";
 import { existeMarca, guardarMarca, handleInstagram, leerMarca, slugify, type Competidor } from "@competitor-seeker/core";
+import { sincronizarAjustes } from "@/lib/sync/ajustes";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
 import type { CompetidorAjustes } from "@/lib/settings/tipos";
 import { CuerpoCompetidores, SLUG_RE } from "@/lib/settings/validacion";
@@ -49,6 +50,7 @@ export async function PUT(request: Request, { params }: Ctx): Promise<Response> 
       };
     });
     const guardada = guardarMarca({ ...marca, competidores });
+    await sincronizarAjustes(`ajustes: competidores de ${slug}`);
     revalidatePath("/", "layout");
     return okJson({ competidores: guardada.competidores.map(aUi) });
   } catch (e) {

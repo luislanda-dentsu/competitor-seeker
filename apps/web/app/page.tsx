@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Resumen } from "@/components/app/home/Resumen";
+import { GitConflictBanner } from "@/components/app/shell/GitConflictBanner";
 import Loading from "./loading";
 
 export const metadata = { title: "Resumen" };
@@ -10,8 +11,11 @@ export const metadata = { title: "Resumen" };
  */
 export default function ResumenPage(): React.ReactElement {
   return (
+    <>
+    <GitConflictBanner />
     <Suspense fallback={<Loading />}>
       <Resumen />
     </Suspense>
+    </>
   );
 }

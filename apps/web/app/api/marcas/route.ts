@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { connection } from "next/server";
 import { competidoresActivos, crearMarca, listarMarcas, slugify, ultimaCorridaRegistrada } from "@competitor-seeker/core";
+import { sincronizarAjustes } from "@/lib/sync/ajustes";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
 import type { MarcaAjustes } from "@/lib/settings/tipos";
 import { CuerpoNuevaMarca } from "@/lib/settings/validacion";
@@ -30,6 +31,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!slugify(datos.nombre)) return errorJson(`No se pudo derivar un slug de "${datos.nombre}"`, 400);
   try {
     const marca = crearMarca({ nombre: datos.nombre });
+    await sincronizarAjustes(`ajustes: alta de marca ${marca.slug}`);
     revalidatePath("/", "layout");
     return okJson({ marca: resumen(marca.slug)[0] }, 201);
   } catch (e) {
