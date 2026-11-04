@@ -43,11 +43,47 @@ function leerTodas(): Notificacion[] {
   return leerJsonl(rutaNotificaciones(), Notificacion).items
 }
 
+/** Recorta a MAX_NOTIFICACIONES descartando primero las leídas más antiguas. */
+export function recortar(items: readonly Notificacion[]): Notificacion[] {
+  if (items.length <= MAX_NOTIFICACIONES) return [...items]
+  let sobran = items.length - MAX_NOTIFICACIONES
+  const sinLeidasViejas = items.filter((n) => {
+    if (sobran > 0 && n.leida) { sobran--; return false }
+    return true
+  })
+  return sinLeidasViejas.slice(-MAX_NOTIFICACIONES)
+}
+
+/** Escritura atómica: archivo temporal + rename (nunca deja el archivo truncado). */
 function reescribir(items: readonly Notificacion[]): void {
   const ruta = rutaNotificaciones()
   fs.mkdirSync(path.dirname(ruta), { recursive: true })
-  const recientes = items.slice(-MAX_NOTIFICACIONES)
-  fs.writeFileSync(ruta, recientes.map((n) => JSON.stringify(n) + '\n').join(''), 'utf8')
+  const tmp = `${ruta}.${process.pid}.tmp`
+  fs.writeFileSync(tmp, recortar(items).map((n) => JSON.stringify(n) + '\n').join(''), 'utf8')
+  fs.renameSync(tmp, ruta)
+}
+
+/**
+ * Exclusión mutua entre leer-modificar-escribir (append de emisiones vs. marcar leída).
+ * Lock por archivo `wx`; locks de más de 10 s se consideran huérfanos.
+ */
+function conLock<T>(fn: () => T): T {
+  const lock = `${rutaNotificaciones()}.lock`
+  fs.mkdirSync(path.dirname(lock), { recursive: true })
+  const limite = Date.now() + 2000
+  for (;;) {
+    try {
+      fs.writeFileSync(lock, String(process.pid), { flag: 'wx' })
+      break
+    } catch {
+      try {
+        if (Date.now() - fs.statSync(lock).mtimeMs > 10_000) { fs.rmSync(lock, { force: true }); continue }
+      } catch { continue }
+      if (Date.now() > limite) throw new Error('notificaciones ocupadas: no se pudo tomar el lock')
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20)
+    }
+  }
+  try { return fn() } finally { fs.rmSync(lock, { force: true }) }
 }
 
 function nuevoId(ahora: Date): string {
@@ -66,7 +102,12 @@ export interface NuevaNotificacion {
 
 /** Appendea la notificación. Si ya existe una con la misma `clave`, no hace nada y devuelve null. */
 export function emitirNotificacion(datos: NuevaNotificacion): Notificacion | null {
-  if (leerTodas().some((n) => n.clave === datos.clave)) return null
+  return conLock(() => emitirSinLock(datos))
+}
+
+function emitirSinLock(datos: NuevaNotificacion): Notificacion | null {
+  const todas = leerTodas()
+  if (todas.some((n) => n.clave === datos.clave)) return null
   const ahora = datos.ahora ?? new Date()
   const notificacion: Notificacion = {
     id: nuevoId(ahora),
@@ -79,7 +120,8 @@ export function emitirNotificacion(datos: NuevaNotificacion): Notificacion | nul
     leida: false,
     ...(datos.href ? { href: datos.href } : {}),
   }
-  appendJsonl(rutaNotificaciones(), Notificacion, [notificacion])
+  if (todas.length + 1 > MAX_NOTIFICACIONES) reescribir([...todas, notificacion])
+  else appendJsonl(rutaNotificaciones(), Notificacion, [notificacion])
   return notificacion
 }
 
@@ -103,6 +145,7 @@ export function contarNoLeidas(): number {
 
 /** true si existía y se marcó (o ya estaba leída). */
 export function marcarLeida(id: string): boolean {
+  return conLock(() => {
   const items = leerTodas()
   const idx = items.findIndex((n) => n.id === id)
   if (idx < 0) return false
@@ -111,15 +154,18 @@ export function marcarLeida(id: string): boolean {
     reescribir(items)
   }
   return true
+  })
 }
 
 /** Devuelve cuántas cambiaron. */
 export function marcarTodasLeidas(): number {
-  const items = leerTodas()
-  const pendientes = items.filter((n) => !n.leida).length
-  if (pendientes === 0) return 0
-  reescribir(items.map((n) => (n.leida ? n : { ...n, leida: true })))
-  return pendientes
+  return conLock(() => {
+    const items = leerTodas()
+    const pendientes = items.filter((n) => !n.leida).length
+    if (pendientes === 0) return 0
+    reescribir(items.map((n) => (n.leida ? n : { ...n, leida: true })))
+    return pendientes
+  })
 }
 
 const VENTANAS = ['diario', 'semanal', 'mensual'] as const

@@ -123,3 +123,17 @@ describe('notificaciones', () => {
     expect(notificarFinCorrida(corrida({ id: 'c1', estado: 'en-curso' }), ahora)).toHaveLength(0)
   })
 })
+
+describe('recortar', () => {
+  it('descarta primero las leídas más antiguas y conserva las no leídas', async () => {
+    const { recortar, MAX_NOTIFICACIONES } = await import('../src/notificaciones.ts')
+    const base = { tipo: 'corrida-ok' as const, nivel: 'info' as const, titulo: 't', mensaje: 'm' }
+    const items = Array.from({ length: MAX_NOTIFICACIONES + 3 }, (_, i) => ({
+      ...base, id: `n${i}`, ts: new Date(2026, 0, 1, 0, i).toISOString(), clave: `k${i}`, leida: i >= 10 && i < 13,
+    }))
+    const r = recortar(items)
+    expect(r).toHaveLength(MAX_NOTIFICACIONES)
+    expect(r.some((n) => n.id === 'n0')).toBe(true)
+    expect(r.filter((n) => n.leida)).toHaveLength(0)
+  })
+})
