@@ -35,6 +35,8 @@ export const Chat = z.object({
   actualizado: z.string().min(1),
   /** Id de sesión de Claude Code; ausente hasta que la primera respuesta inicia sesión. */
   sessionId: z.string().optional(),
+  /** ISO 8601: cuándo se construyó el contexto del primer turno. */
+  contextoEn: z.string().min(1).optional(),
   mensajes: z.array(MensajeChat).default([]),
 })
 export type Chat = z.infer<typeof Chat>
@@ -164,8 +166,11 @@ export function nuevoChat(marca: string, primerMensaje: string, o: OpcionesNuevo
 
 /** Borra el archivo del chat. Devuelve false si no existía. */
 export function borrarChat(marca: string, id: string): boolean {
+  const ruta = rutaChat(marca, id) // valida el id antes de tocar nada
+  // Volcado crudo del stream de ese chat: se borra siempre (puede quedar huérfano sin el .json).
+  fs.rmSync(rutaDataArchivo('chats-vivos', `${id}.stream.jsonl`), { force: true })
   try {
-    fs.rmSync(rutaChat(marca, id))
+    fs.rmSync(ruta)
     return true
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code === 'ENOENT') return false

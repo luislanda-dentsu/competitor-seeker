@@ -45,11 +45,12 @@ Gates: rama por fase → PR → revisión independiente (`/code-review`) → mer
 - [x] git-sync.ts, api/sync, GitSyncStatus, pull/push automáticos, setup-maquina.sh, README
 - [x] Revisión corregida: sync solo en main y sin código sin commitear; timeouts; index.lock
 
-## Fase 7 — Pulido + export (`feat/pulido`) — empezar tras mergear #4, #5, #6
-- [ ] Export HTML estático por marca; revisión dark mode, reduced-motion, skeletons, 320px, copy
-- [ ] Borrar `marcas/kolareal/log.json.migrado`; `cs apify-uso` delegando en `obtenerUsoActual`
-- [ ] Los pendientes "bajo" de las fases 4 y 5
+## Fase 7 — Pulido + export (`feat/pulido`) — PR #7
+- [x] Export HTML por marca; validaciones (archivar 409, slugs, deep-merge config); contexto del asistente; loading; docs
+- [x] Revisión independiente corregida
+- [ ] Verificar 320 px en navegador
 - [ ] Prueba en la 2.ª Mac con `scripts/setup-maquina.sh`
+- [ ] Owner: `cp docs/claude-settings.json .claude/settings.json`; token de Apify; invitar a la compañera
 
 ## Revisión
 - Fase 0–3: hechas y revisadas; corrida real E2E desde la UI OK (5 entradas, verificada en intento 2, 4m38s).

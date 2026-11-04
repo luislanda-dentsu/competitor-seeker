@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { ConfigCompartida, guardarConfig, leerConfig } from "@competitor-seeker/core";
 import { sincronizarAjustes } from "@/lib/sync/ajustes";
+import { fusionarConfig } from "@/lib/settings/fusion";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
 
 /** GET /api/ajustes/config → `config.json` validado (con defaults). */
@@ -22,7 +23,7 @@ export async function PUT(request: Request): Promise<Response> {
   if (respuesta) return respuesta;
   try {
     const actual = leerConfig();
-    const nueva = ConfigCompartida.parse({ ...actual, ...datos });
+    const nueva = ConfigCompartida.parse(fusionarConfig(actual, datos));
     const guardada = guardarConfig(nueva);
     await sincronizarAjustes("ajustes: config.json");
     return okJson(guardada);

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer, DrawerDescription, DrawerHeader, DrawerPopup, DrawerTitle } from "@/components/ui/drawer";
 import { ToastProvider } from "@/components/ui/toast";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { fmtFecha } from "@/lib/format";
 import { invalidarHistorial } from "@/lib/chat/historial";
 import type { ArtefactoUi, ChatUi, Sugerencia } from "@/lib/chat/tipos";
 import { useChatStream } from "@/lib/chat/use-chat-stream";
@@ -136,6 +137,12 @@ export function ChatView({ marca, marcaNombre, chat, sugerencias, sinEntradas }:
           <section aria-label="Conversación" className="flex min-h-0 flex-col">
             <div className="min-h-0 flex-1 overflow-y-auto" onScroll={onScroll} ref={scrollRef}>
               <div className="mx-auto w-full max-w-3xl px-1 pb-4">
+                {chat && (
+                  <div className="flex flex-col gap-1 pb-2 text-xs text-fg-dim">
+                    <p className="break-words">Contexto del {fmtFecha(chat.contextoEn.slice(0, 10))}</p>
+                    {chat.corridasNuevas && <p className="text-fg-muted">Hay corridas nuevas: abre un chat nuevo para incluirlas.</p>}
+                  </div>
+                )}
                 {inicial ? (
                   <Inicio marcaNombre={marcaNombre} onElegir={enviar} sinEntradas={sinEntradas} sugerencias={sugerencias} />
                 ) : (

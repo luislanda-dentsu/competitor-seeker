@@ -46,7 +46,7 @@ claude -p "Ejecuta exactamente este comando con Bash y devuelve su salida: ./scr
 Resultado: `permission_denials: []`, `num_turns: 2`, `result: "2026-11-03-1222-administrast"` (3,9 s). **La sintaxis con espacio `Bash(<prefijo> *)` funciona**; no hizo falta probar la de dos puntos (`Bash(./scripts/cs:*)`). `allowedToolsCorrida` en `packages/core/src/claude/prompts.ts` mantiene las dos variantes de prefijo (`scripts/cs` y `./scripts/cs`) porque el orquestador escribe el comando de ambas formas.
 
 Decisiones del runner (`apps/web/lib/runs/runner.ts`):
-- Stream crudo en `data/corridas-vivas/<id>.stream.jsonl` (+ `.fin` al cerrar el proceso); `GET /api/corridas/[id]/stream` lo sirve por SSE con `id: <offset en bytes>` y reanuda por `Last-Event-ID` o `?desde=`.
+- Stream crudo en `data/corridas-vivas/<marca>/<id>.stream.jsonl` (+ `.fin` al cerrar el proceso); `GET /api/corridas/[id]/stream` lo sirve por SSE con `id: <offset en bytes>` y reanuda por `Last-Event-ID` o `?desde=`.
 - `corridas/<id>.json` se crea `en-curso` antes de lanzar `claude -p`; si al terminar el proceso sigue `en-curso` (el orquestador no llegó a `cs registrar`), el runner la cierra como `error` con el último texto del stream (o `cancelada` tras un `DELETE`). En `CS_RUNNER=mock` esto ocurre siempre: el stream grabado no registra nada.
 - Lock `data/corrida.lock` con el pid del proceso de Next; se libera siempre en `finally`. Segundo `POST /api/corridas` con lock vivo → 409 con la corrida en curso.
 - Confirmación de corridas `pendiente-confirmacion` vía `scripts/cs confirmar` (execFile): la app nunca escribe `log.jsonl` por su cuenta.

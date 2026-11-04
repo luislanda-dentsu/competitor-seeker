@@ -36,6 +36,10 @@ export interface ChatUi {
   titulo: string;
   creado: string;
   actualizado: string;
+  /** ISO: cuándo se construyó el contexto del primer turno (o la creación del chat si es anterior al campo). */
+  contextoEn: string;
+  /** Hay una corrida registrada posterior al contexto. */
+  corridasNuevas: boolean;
   mensajes: MensajeUi[];
 }
 
