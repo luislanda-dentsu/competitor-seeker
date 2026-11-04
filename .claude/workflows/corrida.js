@@ -145,7 +145,10 @@ const APIFY_SCHEMA = {
   required: ['hallazgos', 'resultados', 'publicaciones', 'perfiles'],
 }
 
-// --- Consolidación determinista de publicaciones y perfiles (Apify prevalece en cifras) ---
+// --- Consolidación determinista de publicaciones y perfiles ---
+// Decisión 2026-11-04 (corrida parval 16:18): las CIFRAS (likes, comentarios, vistas, seguidores)
+// salen SOLO de Apify. El navegador las leía hasta 7× por debajo (likes de comentarios, contadores
+// parciales): del navegador se conserva existencia, URL, fecha, formato y tema.
 function clavePost(url) {
   const m = /instagram\.com\/(?:[^/]+\/)?(?:p|reel|reels|tv)\/([^/?#]+)/i.exec(url || '')
   return m ? `ig:${m[1]}` : String(url || '').replace(/[?#].*$/, '').replace(/\/+$/, '').toLowerCase()
@@ -167,12 +170,17 @@ function normalizarFecha(p) {
   return local ? { ...resto, fecha: local } : resto
 }
 
+function sinCifras(p) {
+  const { likes, comentarios, vistas, ...resto } = p
+  return resto
+}
 function consolidarPublicaciones(ig, apify) {
   const porClave = new Map()
   for (const [lista, fuente] of [[ig, 'ig'], [apify, 'apify']]) {
     for (let p of lista || []) {
       if (!p || !p.url || !p.competidor) continue
       p = normalizarFecha(p)
+      if (fuente === 'ig') p = sinCifras(p)
       if (typeof p.tema === 'string') p = { ...p, tema: p.tema.slice(0, 300) }
       const k = clavePost(p.url)
       const previa = porClave.get(k)
@@ -187,9 +195,10 @@ function consolidarPublicaciones(ig, apify) {
   }
   return [...porClave.values()].sort((a, b) => a.competidor.localeCompare(b.competidor) || b.fecha.localeCompare(a.fecha))
 }
-function consolidarPerfiles(ig, apify) {
+function consolidarPerfiles(_ig, apify) {
+  // Seguidores y nº de publicaciones solo de Apify (el navegador da "41,4 mil").
   const porNombre = new Map()
-  for (const [lista, fuente] of [[ig, 'ig'], [apify, 'apify']]) {
+  for (const [lista, fuente] of [[apify, 'apify']]) {
     for (const p of lista || []) {
       if (!p || !p.competidor) continue
       const previo = porNombre.get(p.competidor) || {}
@@ -323,10 +332,25 @@ const publicaciones = consolidarPublicaciones(datosIG && datosIG.publicaciones, 
 const perfiles = consolidarPerfiles(datosIG && datosIG.perfiles, datosApify && datosApify.perfiles)
 log(`Datos estructurados: ${publicaciones.length} publicaciones, ${perfiles.length} perfiles`)
 
+// Recuentos calculados aquí para que el analista los copie, no los cuente (objeción 16:18: "8 → 9").
+function recuentos() {
+  return args.competidores.map(c => {
+    const propios = publicaciones.filter(p => p.competidor === c.nombre)
+    const nuevos = propios.filter(p => desdeIg ? p.fecha >= desdeIg : true)
+    const porFormato = {}
+    for (const p of propios) porFormato[p.formato] = (porFormato[p.formato] || 0) + 1
+    const suma = k => propios.reduce((a, p) => a + (p[k] || 0), 0)
+    const conCifras = propios.filter(p => p.likes !== undefined || p.comentarios !== undefined).length
+    return `- ${c.nombre}: ${propios.length} publicaciones en datos (${nuevos.length} desde ${desdeIg || 'el inicio de la ventana'}); ` +
+      `formatos ${JSON.stringify(porFormato)}; con cifras de Apify ${conCifras}; likes ${suma('likes')}, comentarios ${suma('comentarios')}, vistas ${suma('vistas')}`
+  }).join('\n')
+}
+
 const crudos = completos
   .map(r => `=== ${r.nombre} ===\n${r.hallazgos}`)
   .join('\n\n') +
-  `\n\n=== DATOS ESTRUCTURADOS (consolidados de IG + Apify; Apify prevalece) ===\n` +
+  `\n\n=== DATOS ESTRUCTURADOS (IG + Apify consolidados; las cifras son SOLO de Apify) ===\n` +
+  `RECUENTOS (calculados; cópialos, no recuentes):\n${recuentos()}\n` +
   `PUBLICACIONES:\n${JSON.stringify(publicaciones)}\nPERFILES:\n${JSON.stringify(perfiles)}`
 
 let notaCaidos = caidos.length
@@ -338,8 +362,8 @@ if (igCaido || igSesion === 'no-disponible') {
     `al valorar los canales propios en Instagram, considera que no hubo inspección, no que no hubo actividad.`
 }
 if (apifyInfo.incluido) {
-  notaCaidos += `\n\nEl bloque APIFY trae métricas numéricas (likes, comentarios, vistas, fechas) de los mismos perfiles: ` +
-    `prevalecen sobre las cifras "visibles" del navegador. Si Apify y navegador discrepan de forma relevante, repórtalo como confuso. ` +
+  notaCaidos += `\n\nEl bloque APIFY trae las métricas numéricas (likes, comentarios, vistas, seguidores): son las ÚNICAS cifras válidas. ` +
+    `Ignora cualquier número del bloque INSTAGRAM (navegador): no es evidencia de cifras y su diferencia con Apify NO es una señal "confuso". ` +
     `Marca las entradas sustentadas en Apify con fuentes: ["apify"] (o combinadas) y rellena metricas cuando tengas cifras.`
 }
 

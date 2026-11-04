@@ -89,7 +89,7 @@ El rastreador-ig usa el **MCP chrome-devtools** (`mcp__chrome-devtools__*`, defi
 Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicado si está abierto (SingletonLock) y, si IG pide login, rehaga `scripts/chrome-ig.sh login`. Challenge/captcha → la corrida sigue solo con web (+Apify); no se reintenta en bucle.
 
 ## Apify
-`rastreador-apify` usa `mcp__apify__apify--instagram-scraper` (free tier $5/mes, ≈$0.0027/resultado). Solo entra si `scripts/cs apify-uso` lo habilita (presupuestos y umbrales en `config.json`; token en `data/secrets.json` o `APIFY_TOKEN`). El coste estimado de cada corrida queda en `corridas/<id>.json`.
+**Apify es la única fuente de cifras** (likes, comentarios, vistas, seguidores; decisión del owner 2026-11-04): el navegador solo aporta existencia, URL, fecha, formato y caption, y el workflow descarta cualquier cifra suya. Sin Apify, los posts quedan sin cifras (ER «—»), nunca con cifras del navegador. `rastreador-apify` usa `mcp__apify__apify--instagram-scraper` (free tier $5/mes, ≈$0.0027/resultado). Solo entra si `scripts/cs apify-uso` lo habilita (presupuestos y umbrales en `config.json`; token en `data/secrets.json` o `APIFY_TOKEN`). El coste estimado de cada corrida queda en `corridas/<id>.json`.
 
 ## Build & Run
 - `npm install` · `cp .env.example .env.local` (rellena `CLAUDE_BIN` absoluto si hace falta) · una vez: `scripts/chrome-ig.sh login` (perfil dedicado con IG logueado) y cerrar esa ventana

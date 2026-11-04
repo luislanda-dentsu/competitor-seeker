@@ -6,7 +6,7 @@
   "inicio": "2026-11-04T20:03:19.428Z",
   "fin": "2026-11-04T20:06:42.768Z",
   "duracionMs": 203340,
-  "estado": "pendiente-confirmacion",
+  "estado": "descartada",
   "verificado": false,
   "intentos": 3,
   "objeciones": [

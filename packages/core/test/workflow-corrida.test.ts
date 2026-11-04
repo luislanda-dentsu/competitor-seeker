@@ -113,7 +113,7 @@ describe('workflow corrida.js ↔ ResultadoWorkflow', () => {
     expect(parse.data?.lecturas).toEqual(LECTURAS)
   })
 
-  it('consolida publicaciones por shortcode (Apify gana en cifras) y perfiles (Apify gana en seguidores)', async () => {
+  it('consolida por shortcode; cifras y perfiles SOLO de Apify (las del navegador se descartan)', async () => {
     const salida = await correrWorkflow(
       {
         marca: 'kolareal',
@@ -129,7 +129,11 @@ describe('workflow corrida.js ↔ ResultadoWorkflow', () => {
     const reel = parse.publicaciones!.find((p) => p.url.includes('ABC123'))!
     expect(reel).toMatchObject({ likes: 100, comentarios: 5, vistas: 2000, tema: 'Torneo', fuente: 'apify', fecha: '2026-11-01' })
     expect(parse.publicaciones![0]!.fecha).toBe('2026-11-01') // más reciente primero
-    expect(parse.perfiles).toEqual([{ competidor: 'Country Club RD', seguidores: 9120, publicacionesTotales: 400, fuente: 'apify' }])
+    expect(parse.perfiles).toEqual([{ competidor: 'Country Club RD', seguidores: 9120, fuente: 'apify' }])
+    // El post que solo vio el navegador conserva fecha/formato pero no sus cifras.
+    const soloIg = parse.publicaciones!.find((p) => p.url.includes('/XYZ/'))!
+    expect(soloIg).toMatchObject({ fuente: 'ig', formato: 'imagen', fecha: '2026-10-30' })
+    expect(soloIg.likes).toBeUndefined()
   })
 
   it('descarta publicaciones inválidas sin tumbar el resultado', () => {
@@ -300,5 +304,9 @@ describe('regresión corrida 2026-11-04 16:03 (parval)', () => {
     expect(prompts['analista']).toContain('Canales que corrieron en esta corrida (el campo "fuentes" solo puede usar estos): web, ig')
     expect(prompts['analista']).toContain('Instagram → fecha ≥ inicio de la ventana')
     expect(prompts['verificador']).toContain('ya están en hora local')
+    // Recuentos deterministas por competidor para que el analista no cuente.
+    expect(prompts['analista']).toContain('- United Capital: 1 publicaciones en datos')
+    // Las cifras del navegador (98 likes de Interval) se descartan.
+    expect(r.publicaciones!.find((p) => p.url === IN)!.likes).toBeUndefined()
   })
 })

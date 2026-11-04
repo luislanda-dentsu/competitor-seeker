@@ -1,0 +1,815 @@
+{
+  "id": "2026-11-04-1618-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-04",
+  "ultimaCorrida": "2026-11-04",
+  "inicio": "2026-11-04T20:18:23.383Z",
+  "fin": "2026-11-04T20:24:47.887Z",
+  "duracionMs": 384504,
+  "estado": "pendiente-confirmacion",
+  "verificado": false,
+  "intentos": 3,
+  "objeciones": [
+    {
+      "marca": "United Capital",
+      "problema": "El conteo no coincide con los datos. La entrada y la lectura dicen 'ocho publicaciones' y 'cinco publicaciones del Congreso Grupo Rizek (4 carruseles y 1 reel)'. DATOS ESTRUCTURADOS lista 9 posts de United Capital (Cóctel, Oktoberfest, De42H, De5Dl, De9rB, DfDG9, DerUK, DeZXu, DePYP). El Congreso son 4 posts: 3 carruseles y 1 reel. Hay que corregir 8→9 y 5→4 en el movimiento y en el resumen."
+    },
+    {
+      "marca": "CCI Puesto de Bolsa / Excel Puesto de Bolsa / Alpha Sociedad de Valores",
+      "problema": "La instrucción pedía reportar como 'confuso' las discrepancias relevantes entre Apify y el navegador. Solo se hizo con Interval. Hay discrepancias del mismo tipo sin reportar. CCI DfVC9: 12 likes y 4 comentarios en el navegador frente a 57 y 12 en Apify. CCI DfCz: 9 likes en el navegador frente a 79 en Apify. Excel DfAw3: 52 likes y 3 comentarios frente a 195 y 52. Alpha DfC3j: 38 likes y 9 comentarios frente a 279 y 38. Falta la entrada confuso o una nota consistente para estos competidores."
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "problema": "El movimiento y la lectura usan como hecho 314 likes y 168 comentarios para DehS0h_uRVq, y la lectura habla de 'picos de comentarios en los posts de fondos'. Esas cifras salen solo del navegador, sin etiqueta explícita y sin respaldo de Apify. En los demás posts el navegador resultó sistemáticamente no fiable. La estrategia también cita ese post. Hay que presentar la cifra como no verificada o quitarla de la lectura."
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "problema": "En la estrategia, la hipótesis 2 ('presencia institucional: Congreso Rizek, arte/RSE') y el pilar 'Eventos y RSE' no tienen ningún post de Congreso Rizek ni de la exposición en postsCitados. Los 6 citados son de app, ahorro y quincena. La implicación sobre el aniversario 15 viene de un artículo web, no de un post citado. Hay que citar los posts que respaldan la hipótesis o eliminarla."
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "problema": "La hipótesis dice que 'reels de beneficio emocional piden comentar, probablemente para captar contactos'. Solo un reel (DfVC9) tiene CTA por comentario. La finalidad de captar contactos es especulación sin dato que la respalde. La implicación sobre el 'patrón de CTA' se apoya en un único caso."
+    }
+  ],
+  "fuentes": [
+    "web",
+    "ig",
+    "apify"
+  ],
+  "apify": {
+    "resultados": 36,
+    "costeEstimadoUsd": 0.0972,
+    "incluido": true,
+    "omitido": false,
+    "runId": "2nglxKOvxYfGHhzkC"
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-04",
+      "movimiento": "Siete publicaciones en el periodo en Instagram (3 carruseles y 2 reels desde Apify, más 1 reel y 1 carrusel desde el navegador): cóctel APB Región Norte en Santiago, 10 años de ANA + MARÍA, Season of Change (evento y resumen en reel), Interval Talks sobre perfiles de inversionista, Puestos de Bolsa vs. Administradoras de Fondos y 5 libros sobre inversiones. Apify: 5 posts, 1298 likes, 41 comentarios, 84821 vistas (solo los 2 reels).",
+      "senal": "nuevo",
+      "lectura": "Mezcla de eventos y educación; los dos reels (Season of Change e Interval Talks) concentran las vistas del periodo.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 1298,
+        "comentarios": 41,
+        "vistas": 84821,
+        "posts": 5
+      },
+      "id": "f6b1c1692bdac651",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-03",
+      "movimiento": "Las cifras del navegador no coinciden con las de Apify en los mismos posts: DfSIfuFkX1l 15 likes y 5 comentarios (navegador) frente a 159 likes y 15 comentarios (Apify); DfACey4xGUu 14 likes y 8 comentarios frente a 409 likes y 9 comentarios.",
+      "senal": "confuso",
+      "lectura": "Se usan las cifras de Apify; las del navegador no son fiables para esta cuenta.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 159,
+        "comentarios": 15
+      },
+      "id": "b4448bf5b8f4aa6a",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-04",
+      "movimiento": "Búsqueda web general (cuatro consultas) sin contenido, campañas, cambios de sitio ni prensa de Interval fechados el 2026-11-04; el sitio oficial no apareció en los resultados.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web verificable en el periodo; solo hay contexto previo institucional.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "1af5d5de89a0b9a3",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Nueve publicaciones en el periodo: 4 reels (CTA 'Comenta DOBLE', tranquilidad familiar, patrimonio y retiro, inversión para bodas) y 5 posts de producto (subastas de Notas del Banco Central, Fideicomiso Renta Fija USD, Décimo Quinta Emisión de Papeles Comerciales). Apify sobre 3 posts: 215 likes, 19 comentarios, 2117 vistas (solo 2 reels).",
+      "senal": "nuevo",
+      "lectura": "Alterna oferta de producto con reels de CTA por comentario; la interacción visible por post es baja salvo en los posts de subasta y fideicomiso.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 215,
+        "comentarios": 19,
+        "vistas": 2117,
+        "posts": 3
+      },
+      "id": "aec3023b11bf512a",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Búsquedas web, prensa y BVRD sin contenido ni campañas del 2026-11-04; cci.com.do no resolvió (ENOTFOUND). Hallazgos anteriores: oficinas nuevas en Santiago (2026-09-03).",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web en el periodo; no se pudo verificar el sitio oficial.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "540c0b3012f00482",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-11-02",
+      "movimiento": "Tres publicaciones en el periodo: capacitación sobre pensiones (programa SIPEN, 71 likes, 0 comentarios), Fondo Dinámico Excel Dólares con CTA 'Comenta DÓLARES' (195 likes, 52 comentarios) y Fondos de Inversión Abiertos Excel (314 likes, 168 comentarios, lectura del navegador). Apify sobre 2 posts: 266 likes, 52 comentarios.",
+      "senal": "nuevo",
+      "lectura": "Baja frecuencia con picos de comentarios en los posts de fondos, uno con CTA explícito por comentario.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 266,
+        "comentarios": 52,
+        "posts": 2
+      },
+      "id": "aaa7825186acb669",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Dos búsquedas web sin contenido, campañas ni prensa de Excel en el 2026-11-04; el sitio oficial no se abrió directamente. Solo material histórico sin fecha verificable.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web verificable en el periodo.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "a24481d75909e51f",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-11-04",
+      "movimiento": "Once publicaciones entre 2026-10-24 y 2026-11-04: contenido de App Alpha y metas de ahorro (quincena, Día Mundial del Ahorro, cierre de año), Congreso Grupo Rizek y exposición Tres veces uno (ASR Galería). Apify: 11 posts, 1020 likes, 62 comentarios, 15482 vistas (solo 5 reels). El reel de cierre de año (DfC3jFuRqpF) tiene 279 likes, 38 comentarios y 7486 vistas.",
+      "senal": "nuevo",
+      "lectura": "Cadencia casi diaria con foco en la app y educación financiera; el reel de cierre de año es el de mayor rendimiento.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 1020,
+        "comentarios": 62,
+        "vistas": 15482,
+        "posts": 11
+      },
+      "id": "60670965af625d2c",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-11-04",
+      "movimiento": "Dos búsquedas web sin contenido, campañas ni cambios de sitio del 2026-11-04. Contexto previo del 2026-07-29: cambio de presidencia ejecutiva y aniversario 15 previsto para noviembre, sin campaña asociada.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web en el periodo; el aniversario 15 queda como punto a vigilar.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "89e61c2a04340ff0",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2026-11-03",
+      "movimiento": "Ocho publicaciones desde 2026-10-08: Cóctel APB en Santiago, Oktoberfest UC 2026, cinco publicaciones del Congreso Grupo Rizek (entre ellas 4 carruseles y 1 reel) y piezas institucionales (aniversario 15, caminata, decisiones personales). Apify: 6 posts, 887 likes, 7 comentarios, 2512 vistas (solo 1 reel).",
+      "senal": "nuevo",
+      "lectura": "Contenido dominado por eventos y vida institucional, con casi ninguna conversación en comentarios.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 887,
+        "comentarios": 7,
+        "vistas": 2512,
+        "posts": 6
+      },
+      "id": "78fc40c73d49851d",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2026-11-04",
+      "movimiento": "Cuatro búsquedas web sin contenido, campañas ni prensa de United Capital fechados el 2026-11-04; el sitio oficial no se abrió. Solo contexto histórico (sucursal Punta Cana, emisiones de bonos).",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web verificable en el periodo.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "448f1d9281badc94",
+      "corrida": "2026-11-04-1618-parval-administrast"
+    }
+  ],
+  "publicaciones": [
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfUseTkoeFR/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Cada meta merece una estrategia propia, App Alpha (Gigantes del Cibao)",
+      "likes": 52,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfS5kt_ItLx/",
+      "fecha": "2026-11-03",
+      "formato": "imagen",
+      "tema": "Opciones de inversión en la App Alpha",
+      "likes": 4,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfQBRRaIcLN/",
+      "fecha": "2026-11-02",
+      "formato": "reel",
+      "tema": "Invertir parte de la quincena",
+      "likes": 86,
+      "comentarios": 14,
+      "vistas": 2791,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfKXQe3o4fA/",
+      "fecha": "2026-10-31",
+      "formato": "reel",
+      "tema": "Día Mundial del Ahorro",
+      "likes": 26,
+      "comentarios": 1,
+      "vistas": 928,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfH8GrEopoR/",
+      "fecha": "2026-10-30",
+      "formato": "imagen",
+      "tema": "Invertir y convivir con la incertidumbre",
+      "likes": 9,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfGGt0XoFPz/",
+      "fecha": "2026-10-29",
+      "formato": "reel",
+      "tema": "Exposición Tres veces uno en ASR Galería, economía naranja",
+      "likes": 71,
+      "comentarios": 4,
+      "vistas": 1978,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfDBCX_I3VR/",
+      "fecha": "2026-10-28",
+      "formato": "reel",
+      "tema": "11vo Congreso del Grupo Rizek",
+      "likes": 89,
+      "comentarios": 1,
+      "vistas": 2299,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfC3jFuRqpF/",
+      "fecha": "2026-10-28",
+      "formato": "reel",
+      "tema": "Cierre de año: cómo quieres llegar a diciembre",
+      "likes": 279,
+      "comentarios": 38,
+      "vistas": 7486,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/De99O8VFbpq/",
+      "fecha": "2026-10-26",
+      "formato": "carrusel",
+      "tema": "Congreso Grupo Rizek 2026, liderazgo e IA",
+      "likes": 218,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/De9nXHcEcjg/",
+      "fecha": "2026-10-26",
+      "formato": "carrusel",
+      "tema": "Cada persona una meta distinta, App Alpha (Gigantes del Cibao)",
+      "likes": 39,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/De4PSRLkQs-/",
+      "fecha": "2026-10-24",
+      "formato": "carrusel",
+      "tema": "Exposición Tres veces uno de Carracedo en ASR Galería",
+      "likes": 147,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfVC9zHRIjr/",
+      "fecha": "2026-11-04",
+      "formato": "reel",
+      "tema": "Comenta DOBLE: cómo invertir el doble sueldo",
+      "likes": 57,
+      "comentarios": 12,
+      "vistas": 973,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfCz_i_hOAO/",
+      "fecha": "2026-10-28",
+      "formato": "reel",
+      "tema": "Inversión para la prosperidad de la familia",
+      "likes": 79,
+      "comentarios": 6,
+      "vistas": 1144,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfAQe1rkSFO/",
+      "fecha": "2026-10-27",
+      "formato": "carrusel",
+      "tema": "Subasta Competitiva de Notas del Banco Central",
+      "likes": 79,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/p/Dergg1JDgrE/",
+      "fecha": "2026-10-19",
+      "formato": "otro",
+      "tema": "Nueva Subasta Competitiva de Notas del Banco Central",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/reel/DekqdQiBbKk/",
+      "fecha": "2026-10-17",
+      "formato": "reel",
+      "tema": "Disfrutar el patrimonio con tranquilidad",
+      "likes": 8,
+      "comentarios": 2,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/p/DejwlLuEdiG/",
+      "fecha": "2026-10-16",
+      "formato": "otro",
+      "tema": "8va, 9na y 10ma emisión Fideicomiso Renta Fija USD",
+      "likes": 69,
+      "comentarios": 2,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/p/DehRXKTkQNe/",
+      "fecha": "2026-10-15",
+      "formato": "otro",
+      "tema": "Décimo Quinta Emisión de Papeles Comerciales CCI",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/p/DeaRjLVjQEa/",
+      "fecha": "2026-10-12",
+      "formato": "otro",
+      "tema": "Subasta Competitiva de Notas del Banco Central",
+      "likes": 88,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/reel/DeMXOF-ho8C/",
+      "fecha": "2026-10-07",
+      "formato": "reel",
+      "tema": "Plan de inversión para preparativos de boda",
+      "likes": 10,
+      "comentarios": 7,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfPfJkXHHUn/",
+      "fecha": "2026-11-02",
+      "formato": "imagen",
+      "tema": "Programa Aquí Sabemos de Pensiones (SIPEN)",
+      "likes": 71,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfAw3NfFDnK/",
+      "fecha": "2026-10-27",
+      "formato": "carrusel",
+      "tema": "Fondo Dinámico Excel Dólares, comenta DÓLARES",
+      "likes": 195,
+      "comentarios": 52,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/excel_rd/p/DehS0h_uRVq/",
+      "fecha": "2026-10-15",
+      "formato": "otro",
+      "tema": "Fondos de Inversión Abiertos Excel",
+      "likes": 314,
+      "comentarios": 168,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfU6x4KoIRF/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Cóctel APB Región Norte en Santiago",
+      "likes": 98,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfSIfuFkX1l/",
+      "fecha": "2026-11-03",
+      "formato": "carrusel",
+      "tema": "Celebración de los 10 años de ANA + MARÍA",
+      "likes": 159,
+      "comentarios": 15,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfFtOPGI6kj/",
+      "fecha": "2026-10-29",
+      "formato": "carrusel",
+      "tema": "Season of Change en Santiago con clientes",
+      "likes": 214,
+      "comentarios": 5,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfACey4xGUu/",
+      "fecha": "2026-10-27",
+      "formato": "reel",
+      "tema": "Season of Change, experiencia con clientes",
+      "likes": 409,
+      "comentarios": 9,
+      "vistas": 42334,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DezaE1fRTka/",
+      "fecha": "2026-10-22",
+      "formato": "reel",
+      "tema": "Interval Talks: perfiles de inversionista",
+      "likes": 418,
+      "comentarios": 8,
+      "vistas": 42487,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/interval.rd/reel/DeuNUNxRu4E/",
+      "fecha": "2026-10-20",
+      "formato": "reel",
+      "tema": "Puestos de Bolsa vs. Administradoras de Fondos de Inversión",
+      "likes": 12,
+      "comentarios": 11,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/interval.rd/p/DeeuNvAkeGN/",
+      "fecha": "2026-10-14",
+      "formato": "carrusel",
+      "tema": "5 libros para comprender las inversiones",
+      "likes": 10,
+      "comentarios": 9,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfTRo7pG58D/",
+      "fecha": "2026-11-03",
+      "formato": "carrusel",
+      "tema": "Cóctel de la APB en Santiago",
+      "likes": 115,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfH0NgckcZt/",
+      "fecha": "2026-10-30",
+      "formato": "carrusel",
+      "tema": "Oktoberfest UC 2026 con el equipo",
+      "likes": 193,
+      "comentarios": 2,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfDG9W1uCLG/",
+      "fecha": "2026-10-28",
+      "formato": "reel",
+      "tema": "Momentos del 11vo Congreso del Grupo Rizek",
+      "likes": 68,
+      "comentarios": 3,
+      "vistas": 2512,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/De9rB3WkXC9/",
+      "fecha": "2026-10-26",
+      "formato": "carrusel",
+      "tema": "Cierre de participación en Congreso Grupo Rizek",
+      "likes": 102,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/De5DldaH1c0/",
+      "fecha": "2026-10-24",
+      "formato": "carrusel",
+      "tema": "Innovar con visión, Congreso Grupo Rizek",
+      "likes": 155,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/De42H9Cn6Yt/",
+      "fecha": "2026-10-24",
+      "formato": "carrusel",
+      "tema": "Inicio de participación en el 11.º Congreso Grupo Rizek",
+      "likes": 254,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/unitedcapitaldr/p/DerUKZ5n1QE/",
+      "fecha": "2026-10-19",
+      "formato": "otro",
+      "tema": "Las decisiones que tomamos son esenciales para el futuro",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/unitedcapitaldr/p/DeZXuBvETxa/",
+      "fecha": "2026-10-12",
+      "formato": "otro",
+      "tema": "Caminata por quienes luchan (causa)",
+      "likes": 3,
+      "comentarios": 3,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/unitedcapitaldr/reel/DePYPB6xQvY/",
+      "fecha": "2026-10-08",
+      "formato": "reel",
+      "tema": "Misa de acción de gracias por 15.º aniversario",
+      "likes": 6,
+      "comentarios": 2,
+      "fuente": "ig"
+    }
+  ],
+  "perfiles": [
+    {
+      "competidor": "Interval",
+      "seguidores": 41464,
+      "publicacionesTotales": 172,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "seguidores": 39474,
+      "publicacionesTotales": 895,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "seguidores": 26107,
+      "publicacionesTotales": 880,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "seguidores": 37091,
+      "publicacionesTotales": 1808,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "seguidores": 20380,
+      "publicacionesTotales": 1094,
+      "fuente": "apify"
+    }
+  ],
+  "lecturas": [
+    {
+      "competidor": "Interval",
+      "resumen": [
+        "Siete publicaciones en el periodo: 4 carruseles y 3 reels (cóctel APB Región Norte, 10 años de ANA + MARÍA, Season of Change en Santiago, resumen en reel, Interval Talks, Puestos de Bolsa vs. Administradoras de Fondos, 5 libros sobre inversiones).",
+        "Apify (5 posts): 1298 likes, 41 comentarios, 84821 vistas en los 2 reels; promedio de 260 likes por post.",
+        "Reel Interval Talks: 418 likes, 8 comentarios, 42487 vistas. Reel Season of Change: 409 likes, 9 comentarios, 42334 vistas.",
+        "Sin hallazgos web en el periodo."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Combina presencia en eventos del sector y con clientes (Season of Change, Cóctel APB) con contenido educativo en reel (Interval Talks), que es el formato que concentra las vistas."
+        ],
+        "pilares": [
+          "Eventos y clientes",
+          "Educación de inversionista",
+          "Celebraciones de aliados"
+        ],
+        "formatosYCadencia": "Carruseles para eventos y reels para educación y resumen de evento; unas 5 publicaciones en 2 semanas según Apify.",
+        "implicaciones": [
+          "Los reels educativos y de evento superan en vistas y likes a los carruseles dentro de esta cuenta; vigilar si repite el formato Interval Talks."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/DezaE1fRTka/",
+          "https://www.instagram.com/p/DfACey4xGUu/",
+          "https://www.instagram.com/p/DfFtOPGI6kj/",
+          "https://www.instagram.com/p/DfU6x4KoIRF/"
+        ]
+      }
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "resumen": [
+        "Nueve publicaciones propias en el periodo: 4 reels y 5 posts de producto.",
+        "Los 4 reels: CTA 'Comenta DOBLE' (DfVC9zHRIjr), tranquilidad familiar (DfCz_i_hOAO), patrimonio y retiro (DekqdQiBbKk) e inversión para bodas (DeMXOF-ho8C).",
+        "Los 5 posts de producto: subastas de Notas del Banco Central (DfAQe1rkSFO, Dergg1JDgrE, DeaRjLVjQEa), Fideicomiso Renta Fija USD (DejwlLuEdiG) y Décimo Quinta Emisión de Papeles Comerciales (DehRXKTkQNe).",
+        "Apify sobre 3 posts: 215 likes, 19 comentarios, 2117 vistas en los 2 reels. Reel DfCz_i_hOAO: 79 likes, 1144 vistas."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Alterna comunicación de oferta (subastas y emisiones) con reels de beneficio emocional que piden comentar, probablemente para captar contactos."
+        ],
+        "pilares": [
+          "Oferta de producto (subastas BCRD, emisiones)",
+          "Tranquilidad y planificación personal",
+          "CTA por comentario"
+        ],
+        "formatosYCadencia": "Mezcla de posts de producto y reels; 9 publicaciones en el periodo.",
+        "implicaciones": [
+          "El patrón de CTA 'Comenta DOBLE' en reel es un formato a vigilar frente a nuestros propios CTA."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/DfVC9zHRIjr/",
+          "https://www.instagram.com/p/DfCz_i_hOAO/",
+          "https://www.instagram.com/p/DfAQe1rkSFO/",
+          "https://www.instagram.com/cci_pb/p/DejwlLuEdiG/",
+          "https://www.instagram.com/cci_pb/reel/DeMXOF-ho8C/"
+        ]
+      }
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "resumen": [
+        "Tres publicaciones en el periodo: capacitación sobre pensiones (SIPEN), Fondo Dinámico Excel Dólares y Fondos de Inversión Abiertos Excel.",
+        "Apify (2 posts): 266 likes, 52 comentarios; el post de Excel Dólares tiene 195 likes y 52 comentarios.",
+        "Fondos Abiertos Excel (navegador): 314 likes, 168 comentarios.",
+        "Sin hallazgos web en el periodo."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Empuja fondos de inversión en dólares y abiertos con CTA por comentario ('Comenta DÓLARES')."
+        ],
+        "pilares": [
+          "Fondos de inversión",
+          "Cuenta digital",
+          "Pensiones"
+        ],
+        "formatosYCadencia": "Baja cadencia: 3 posts en el periodo, imagen y carrusel.",
+        "implicaciones": [
+          "Evidencia limitada a 3 posts; vigilar si se repite el CTA por comentario en fondos."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/p/DfAw3NfFDnK/",
+          "https://www.instagram.com/excel_rd/p/DehS0h_uRVq/"
+        ]
+      }
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "resumen": [
+        "Once publicaciones entre 2026-10-24 y 2026-11-04: 5 reels, 4 carruseles y 2 imágenes.",
+        "Temas: App Alpha y metas de inversión, quincena, Día Mundial del Ahorro, cierre de año, Congreso Grupo Rizek y exposición Tres veces uno.",
+        "Apify: 1020 likes, 62 comentarios, 15482 vistas (solo reels); promedio 93 likes por post.",
+        "Reel de cierre de año DfC3jFuRqpF: 279 likes, 38 comentarios, 7486 vistas. Carrusel Congreso Rizek De99O8VFbpq: 218 likes."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Lleva tráfico hacia la App Alpha mediante mensajes de metas personales y ahorro, con reels como formato de mayor alcance.",
+          "Complementa con presencia institucional (Congreso Rizek, arte/RSE)."
+        ],
+        "pilares": [
+          "App Alpha y metas de ahorro",
+          "Educación financiera estacional",
+          "Eventos y RSE"
+        ],
+        "formatosYCadencia": "Casi diaria (11 posts en 12 días); reels como formato dominante (5 de 11).",
+        "implicaciones": [
+          "El mensaje estacional de cierre de año tuvo el mayor rendimiento; vigilar el aniversario 15 previsto para noviembre."
+        ],
+        "confianza": "alta",
+        "postsCitados": [
+          "https://www.instagram.com/p/DfC3jFuRqpF/",
+          "https://www.instagram.com/p/DfQBRRaIcLN/",
+          "https://www.instagram.com/p/DfKXQe3o4fA/",
+          "https://www.instagram.com/p/DfS5kt_ItLx/",
+          "https://www.instagram.com/p/DfUseTkoeFR/",
+          "https://www.instagram.com/p/De9nXHcEcjg/"
+        ]
+      }
+    },
+    {
+      "competidor": "United Capital",
+      "resumen": [
+        "Ocho publicaciones desde 2026-10-08: eventos (Cóctel APB, Oktoberfest UC 2026), Congreso Grupo Rizek en cinco publicaciones y piezas institucionales.",
+        "Apify (6 posts): 887 likes, 7 comentarios, 2512 vistas (1 reel); promedio 148 likes por post.",
+        "Mayor rendimiento: De42H9Cn6Yt (inicio Congreso Rizek) con 254 likes y DfH0NgckcZt (Oktoberfest) con 193 likes.",
+        "Sin hallazgos web en el periodo."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Prioriza cobertura de eventos y presencia institucional, con el Congreso Grupo Rizek como eje del periodo, por encima de contenido de producto."
+        ],
+        "pilares": [
+          "Eventos del sector",
+          "Cultura corporativa",
+          "Institucional y causas"
+        ],
+        "formatosYCadencia": "Carruseles dominantes (5 de 6 según Apify); varias publicaciones por evento.",
+        "implicaciones": [
+          "Casi sin comentarios (7 en 6 posts); su contenido de eventos genera likes pero poca conversación."
+        ],
+        "confianza": "alta",
+        "postsCitados": [
+          "https://www.instagram.com/p/De42H9Cn6Yt/",
+          "https://www.instagram.com/p/De5DldaH1c0/",
+          "https://www.instagram.com/p/De9rB3WkXC9/",
+          "https://www.instagram.com/p/DfDG9W1uCLG/",
+          "https://www.instagram.com/p/DfH0NgckcZt/",
+          "https://www.instagram.com/p/DfTRo7pG58D/"
+        ]
+      }
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "ad19a73f-bed2-4948-86e5-a797c4f70893",
+  "ig": {
+    "sesion": "ok"
+  }
+}
