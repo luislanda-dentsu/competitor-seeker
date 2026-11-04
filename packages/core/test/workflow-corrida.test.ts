@@ -133,3 +133,34 @@ describe('workflow corrida.js ↔ ResultadoWorkflow', () => {
     expect(r.data?.ig?.sesion).toBe('error')
   })
 })
+
+describe('ventana de Apify', () => {
+  async function promptApify(fechaCorrida: string, ultimaCorrida: string | null): Promise<string> {
+    let capturado = ''
+    const base = agenteFalso(() => ({ valido: true, objeciones: [] }))
+    await correrWorkflow(
+      {
+        marca: 'k', fechaCorrida, ultimaCorrida, corridaId: 'c1',
+        apify: { habilitado: true, resultsLimit: 12 },
+        competidores: [{ nombre: 'A', url: 'https://www.instagram.com/a/' }],
+      },
+      async (prompt, o) => {
+        if (o.agentType === 'rastreador-apify') capturado = prompt
+        return base(prompt, o)
+      },
+    )
+    return capturado
+  }
+
+  it('con una corrida del mismo día pide al menos los últimos 14 días', async () => {
+    expect(await promptApify('2026-11-04', '2026-11-04')).toContain('onlyPostsNewerThan: 2026-10-21')
+  })
+
+  it('si la última corrida es más antigua que 14 días, usa esa fecha', async () => {
+    expect(await promptApify('2026-11-04', '2026-08-20')).toContain('onlyPostsNewerThan: 2026-08-20')
+  })
+
+  it('sin corrida previa usa los últimos 14 días', async () => {
+    expect(await promptApify('2026-11-04', null)).toContain('onlyPostsNewerThan: 2026-10-21')
+  })
+})
