@@ -76,10 +76,9 @@ export function promptCorrida(d: DatosPromptCorrida): string {
       `{ marca, fechaCorrida, ultimaCorrida, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, competidores }.`,
     `La decisión de Apify ya está tomada (${d.apify.habilitado ? 'habilitado' : 'omitido'}${d.apify.motivo ? `, motivo: ${d.apify.motivo}` : ''}): ` +
       'no la re-decidas; no consultes `scripts/cs apify-uso` ni cambies `apify.habilitado` al pasarlo al workflow.',
-    `Registra SIEMPRE con \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui <<< '<JSON del workflow>'\` ` +
-      '(here-string en UNA sola línea, con el JSON compacto entre comillas simples; los heredoc multilínea `<<EOF` se deniegan en headless). ' +
-      "Dentro de ese JSON NUNCA escribas una comilla simple literal (rompería el here-string): escríbela como \\u0027 (JSON la decodifica). " +
-      `Alternativa equivalente si el JSON contiene apóstrofos: \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui --json-b64 <JSON en base64>\` (sin stdin). ` +
+    `Registra SIEMPRE con \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui --desde-workflow <ruta>\` ` +
+      '(añade --pendiente si verificado es false), donde <ruta> es el archivo de salida del Workflow que aparece en su notificación de fin ' +
+      '(output_file / .output). No copies el JSON en la línea de comando ni uses here-strings: el filtro de permisos los rechaza con JSON largo. ',
       'Nunca escribas log.jsonl ni corridas/*.json a mano.',
     'Si el verificador rechaza 3 veces, registra igual con `--pendiente` y termina: la persona decidirá en la UI.',
     'Si Instagram reporta SESIÓN NO DISPONIBLE (Chrome cerrado, extensión desconectada o IG deslogueado) sigue con web (+Apify) y anótalo en `ig.sesion`.',

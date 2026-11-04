@@ -70,8 +70,8 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
       → analista (schema) → verificador (soul.md) → reintento con objeciones, máx. 3
    Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig? }
 5. REGISTRO — únicamente con el CLI (nunca edites log.jsonl ni corridas/ a mano):
-     scripts/cs registrar --marca <slug> --corrida-id <id> [--modo terminal|ui] [--pendiente|--forzar] <<< '<JSON devuelto por el workflow, en UNA línea>'
-   (here-string de una línea; en headless el heredoc multilínea `<<'EOF'` se deniega por el patrón de permisos)
+     scripts/cs registrar --marca <slug> --corrida-id <id> [--modo terminal|ui] [--pendiente|--forzar] --desde-workflow <output_file del Workflow>
+   (lee el `.result` del archivo de salida del workflow; nunca pegues el JSON en la línea de comando: en headless el filtro de permisos lo rechaza)
    · verificado:true  → se registra (corrida `registrada` + entradas al log).
    · verificado:false → interactivo: muestra las objeciones al usuario y pregunta; solo con su "sí" usa `--forzar`.
                         MODO HEADLESS: usa `--pendiente` (queda `pendiente-confirmacion`; la app pide confirmación).
@@ -81,7 +81,7 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 Si el workflow no está disponible, ejecuta el grafo a mano: rastreadores en paralelo (varias llamadas Agent en un solo mensaje), analista y verificador con el mismo bucle acotado, y registra igual con `scripts/cs registrar`.
 
 ## Modo headless
-Si el prompt dice **MODO HEADLESS** (la app web lanzó la corrida con `claude -p`): nadie puede responder preguntas → nunca uses AskUserQuestion; no uses Write/Edit; registra siempre con `scripts/cs registrar` en UNA línea (here-string `<<< '…'` o `--json-b64 <base64>` si el JSON lleva comillas simples; `--pendiente` si el verificador no aprobó tras 3 intentos); no re-decidas Apify: viene decidido en el prompt; si Instagram reporta `SESIÓN NO DISPONIBLE`, sigue con web (+Apify) y déjalo en el JSON (`ig.sesion: "no-disponible"`); termina devolviendo el JSON pedido.
+Si el prompt dice **MODO HEADLESS** (la app web lanzó la corrida con `claude -p`): nadie puede responder preguntas → nunca uses AskUserQuestion; no uses Write/Edit; registra siempre con `scripts/cs registrar … --desde-workflow <output_file>` (`--pendiente` si el verificador no aprobó tras 3 intentos); no re-decidas Apify: viene decidido en el prompt; si Instagram reporta `SESIÓN NO DISPONIBLE`, sigue con web (+Apify) y déjalo en el JSON (`ig.sesion: "no-disponible"`); termina devolviendo el JSON pedido.
 
 ## Sesión de Instagram (Claude in Chrome)
 El rastreador-ig usa **Claude in Chrome** (`mcp__claude-in-chrome__*`) sobre el Chrome del usuario, en el perfil donde está instalada la extensión y la cuenta IG dedicada de la agencia ya tiene sesión. No hay perfil de Chrome aparte ni MCP chrome-devtools. En headless el runner pasa `--chrome`. Solo lectura: jamás like/follow/comentario; el agente trabaja en una pestaña propia y la cierra.
@@ -114,5 +114,5 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que abra Chrome (perfil con 
 ## Gotchas
 - El campo `marca` de cada Entrada es el **nombre del competidor** (herencia del v1); la marca-carpeta es `slug`. La UI nunca lo llama "marca".
 - `Workflow` por nombre puede resolver un snapshot viejo: siempre `scriptPath`.
-- En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`); un heredoc multilínea no casa con ese patrón → usa here-string `<<< '…'` en una línea.
+- En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`); con un JSON largo en la línea (heredoc o here-string) el filtro también deniega → `--desde-workflow <archivo>`.
 - Claude in Chrome solo existe si Chrome (perfil con la extensión) está abierto; en `claude -p` hay que pasar `--chrome` o los tools `mcp__claude-in-chrome__*` no aparecen.
