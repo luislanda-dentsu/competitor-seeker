@@ -55,3 +55,5 @@ Gates: rama por fase → PR → revisión independiente (`/code-review`) → mer
 ## Revisión
 - Fase 0–3: hechas y revisadas; corrida real E2E desde la UI OK (5 entradas, verificada en intento 2, 4m38s).
 - Lección: `.gitignore` con `data/` ignoraba `apps/web/lib/data` → usar `/data/`. Lección: `git add -A` con worktrees dentro de `.claude/` añade gitlinks → ignorar `.claude/worktrees/`.
+- [ ] Pendiente: login IG en el perfil dedicado (`scripts/chrome-ig.sh login`) y corrida real de verificación
+- [ ] Pendiente: export HTML (plantilla legacy) sigue mostrando solo movimientos
