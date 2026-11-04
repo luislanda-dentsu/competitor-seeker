@@ -32,18 +32,48 @@ const ENTRADAS = [
   { marca: 'Coca Cola RD', fecha: '2026-11-03', movimiento: 'Sin rastro', senal: 'sin-datos', lectura: 'Nada' },
 ]
 
+const LECTURAS = [
+  {
+    competidor: 'Country Club RD',
+    resumen: ['Reel de torneo con mayor tracción'],
+    estrategia: {
+      hipotesis: ['Empuja eventos deportivos'],
+      pilares: ['Eventos'],
+      formatosYCadencia: 'Reels, 2 por semana',
+      implicaciones: ['Vigilar su calendario de eventos'],
+      confianza: 'media',
+      postsCitados: ['https://www.instagram.com/reel/ABC123/'],
+    },
+  },
+]
+
 function agenteFalso(veredicto: (intento: number) => { valido: boolean; objeciones: { marca: string; problema: string }[] }): Agente {
   let intento = 0
   return async (_prompt, o) => {
     switch (o.agentType) {
       case 'rastreador-ig':
-        return 'Hallazgos de Instagram: 3 posts nuevos'
+        return {
+          hallazgos: 'Hallazgos de Instagram: 3 posts nuevos',
+          publicaciones: [
+            { competidor: 'Country Club RD', url: 'https://www.instagram.com/reel/ABC123/', fecha: '2026-11-01', formato: 'reel', tema: 'Torneo', likes: 90 },
+            { competidor: 'Country Club RD', url: 'https://www.instagram.com/p/XYZ/', fecha: '2026-10-30', formato: 'imagen', likes: 10 },
+          ],
+          perfiles: [{ competidor: 'Country Club RD', seguidores: 9000, publicacionesTotales: 400 }],
+        }
       case 'rastreador-apify':
-        return { hallazgos: 'Apify: 24 posts con métricas', resultados: 24, runId: 'run-apify-1' }
+        return {
+          hallazgos: 'Apify: 24 posts con métricas',
+          resultados: 24,
+          runId: 'run-apify-1',
+          publicaciones: [
+            { competidor: 'Country Club RD', url: 'https://www.instagram.com/countryclubrd/p/ABC123/?img=1', fecha: '2026-11-01', formato: 'reel', likes: 100, comentarios: 5, vistas: 2000 },
+          ],
+          perfiles: [{ competidor: 'Country Club RD', seguidores: 9120 }],
+        }
       case 'rastreador':
         return 'Hallazgos web: nota de prensa'
       case 'analista':
-        return { entradas: ENTRADAS }
+        return { entradas: ENTRADAS, lecturas: LECTURAS }
       case 'verificador':
         return veredicto(++intento)
       default:
@@ -80,6 +110,39 @@ describe('workflow corrida.js ↔ ResultadoWorkflow', () => {
     expect(parse.data?.apify?.runId).toBe('run-apify-1')
     expect(parse.data?.apify?.motivo).toBeUndefined()
     expect(parse.data?.entradas.length).toBe(2)
+    expect(parse.data?.lecturas).toEqual(LECTURAS)
+  })
+
+  it('consolida publicaciones por shortcode (Apify gana en cifras) y perfiles (Apify gana en seguidores)', async () => {
+    const salida = await correrWorkflow(
+      {
+        marca: 'kolareal',
+        fechaCorrida: '2026-11-03',
+        ultimaCorrida: '2026-10-20',
+        apify: { habilitado: true, resultsLimit: 12 },
+        competidores: [{ nombre: 'Country Club RD', url: 'https://www.instagram.com/countryclubrd/' }],
+      },
+      agenteFalso(() => ({ valido: true, objeciones: [] })),
+    )
+    const parse = ResultadoWorkflow.parse(JSON.parse(JSON.stringify(salida)))
+    expect(parse.publicaciones).toHaveLength(2)
+    const reel = parse.publicaciones!.find((p) => p.url.includes('ABC123'))!
+    expect(reel).toMatchObject({ likes: 100, comentarios: 5, vistas: 2000, tema: 'Torneo', fuente: 'apify', fecha: '2026-11-01' })
+    expect(parse.publicaciones![0]!.fecha).toBe('2026-11-01') // más reciente primero
+    expect(parse.perfiles).toEqual([{ competidor: 'Country Club RD', seguidores: 9120, publicacionesTotales: 400, fuente: 'apify' }])
+  })
+
+  it('descarta publicaciones inválidas sin tumbar el resultado', () => {
+    const r = ResultadoWorkflow.safeParse({
+      entradas: ENTRADAS,
+      verificado: true,
+      publicaciones: [
+        { competidor: 'X', url: 'no-es-url', fecha: '2026-11-01', formato: 'reel', fuente: 'ig' },
+        { competidor: 'X', url: 'https://www.instagram.com/p/OK/', fecha: '2026-11-01', formato: 'reel', fuente: 'ig' },
+      ],
+    })
+    expect(r.success).toBe(true)
+    expect(r.data?.publicaciones).toHaveLength(1)
   })
 
   it('fallo tras 3 intentos sin IG ni Apify: sesion no-usado y motivo string, sin nulls', async () => {

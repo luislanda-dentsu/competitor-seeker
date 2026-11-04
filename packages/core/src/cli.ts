@@ -232,6 +232,9 @@ function registrarConLock(
     maquina: previa?.maquina ?? os.hostname(),
     ...(r.sessionId ? { sessionId: r.sessionId } : {}),
     ...(r.ig ? { ig: r.ig } : {}),
+    ...(r.publicaciones ? { publicaciones: r.publicaciones } : {}),
+    ...(r.perfiles ? { perfiles: r.perfiles } : {}),
+    ...(r.lecturas ? { lecturas: r.lecturas } : {}),
   })
 
   if (estado !== 'registrada') {

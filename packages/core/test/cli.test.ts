@@ -50,6 +50,21 @@ describe('cs registrar', () => {
     expect(leerLog('k').items.length).toBe(1)
   })
 
+  it('persiste publicaciones, perfiles y lecturas en corridas/<id>.json (no en el log)', async () => {
+    const conDatos = JSON.stringify({
+      ...JSON.parse(resultadoOk),
+      publicaciones: [{ competidor: 'Country Club RD', url: 'https://www.instagram.com/p/A1/', fecha: '2026-11-02', formato: 'carrusel', likes: 50, comentarios: 3, fuente: 'apify' }],
+      perfiles: [{ competidor: 'Country Club RD', seguidores: 1000, fuente: 'apify' }],
+      lecturas: [{ competidor: 'Country Club RD', resumen: ['Carrusel de menú'] }],
+    })
+    await registrar('2026-11-03-0930-mac', [], conDatos)
+    const c = leerCorrida('k', '2026-11-03-0930-mac')
+    expect(c.publicaciones).toHaveLength(1)
+    expect(c.perfiles?.[0]?.seguidores).toBe(1000)
+    expect(c.lecturas?.[0]?.resumen).toEqual(['Carrusel de menú'])
+    expect(JSON.stringify(leerLog('k').items)).not.toContain('instagram.com/p/A1')
+  })
+
   it('--pendiente x deja la corrida pendiente; solo `confirmar` la resuelve', async () => {
     const r = await registrar('2026-11-03-1000-mac', ['--pendiente', 'x'])
     expect(r).toMatchObject({ estado: 'pendiente-confirmacion', registradas: 0, entradas: 1 })

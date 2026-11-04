@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { Entrada, EntradaAgente, FechaISO, Fuente } from './entrada.ts'
+import { LecturaCompetidor, PerfilSnapshot, Publicacion } from './publicacion.ts'
 
 export const EstadoCorrida = z.enum(['en-curso', 'registrada', 'pendiente-confirmacion', 'descartada', 'error'])
 export type EstadoCorrida = z.infer<typeof EstadoCorrida>
@@ -45,6 +46,11 @@ export const Corrida = z.object({
   apify: ApifyCorrida.optional(),
   competidores: z.array(z.string()).default([]),
   entradas: z.array(Entrada).default([]),
+  /** Rendimiento por post y por perfil (desde v2.1; ausente en corridas anteriores). */
+  publicaciones: z.array(Publicacion).optional(),
+  perfiles: z.array(PerfilSnapshot).optional(),
+  /** Lectura cualitativa y estratégica por competidor (desde v2.1). */
+  lecturas: z.array(LecturaCompetidor).optional(),
   modo: ModoCorrida,
   maquina: z.string().min(1),
   sessionId: z.string().optional(),
@@ -53,6 +59,19 @@ export const Corrida = z.object({
   error: z.string().optional(),
 })
 export type Corrida = z.infer<typeof Corrida>
+
+/**
+ * Lista tolerante para datos que vienen de scraping: un elemento inválido (URL rota,
+ * fecha mal formada) se descarta en vez de tumbar el registro de toda la corrida.
+ */
+function listaTolerante<T extends z.ZodTypeAny>(item: T) {
+  return z.array(z.unknown()).transform((xs) =>
+    xs.flatMap((x) => {
+      const p = item.safeParse(x)
+      return p.success ? [p.data as z.output<T>] : []
+    }),
+  )
+}
 
 /** Lo que el workflow devuelve y `cs registrar` lee por stdin. */
 export const ResultadoWorkflow = z.object({
@@ -64,5 +83,8 @@ export const ResultadoWorkflow = z.object({
   ig: z.object({ sesion: SesionIg }).optional(),
   fuentes: z.array(Fuente).optional(),
   sessionId: z.string().optional(),
+  publicaciones: listaTolerante(Publicacion).optional(),
+  perfiles: listaTolerante(PerfilSnapshot).optional(),
+  lecturas: listaTolerante(LecturaCompetidor).optional(),
 })
 export type ResultadoWorkflow = z.infer<typeof ResultadoWorkflow>

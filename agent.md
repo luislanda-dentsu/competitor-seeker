@@ -38,7 +38,7 @@ Una entrada por línea (JSON compacto). Lo que producen los agentes:
 Si no hay data, la entrada se registra igual con `senal: "sin-datos"`. No se omite el competidor.
 
 ## Formato de corridas/<id>.json
-Lo escribe `scripts/cs registrar` a partir del JSON del workflow: `{ id, marca(slug), fecha, ultimaCorrida, inicio, fin, duracionMs, estado, verificado, intentos, objeciones[], fuentes[], apify?, ig?, competidores[], entradas[], modo, maquina }`. `estado` ∈ `en-curso | registrada | pendiente-confirmacion | descartada | error`.
+Lo escribe `scripts/cs registrar` a partir del JSON del workflow: `{ id, marca(slug), fecha, ultimaCorrida, inicio, fin, duracionMs, estado, verificado, intentos, objeciones[], fuentes[], apify?, ig?, competidores[], entradas[], publicaciones[]?, perfiles[]?, lecturas[]?, modo, maquina }`. `publicaciones` (por post: url, fecha, formato, tema, likes, comentarios, vistas, fuente) y `perfiles` (seguidores) los consolida el workflow desde IG + Apify sin pasar por el analista; `lecturas` (resumen en bullets + estrategia inferida) las escribe el analista y las refuta el verificador. `estado` ∈ `en-curso | registrada | pendiente-confirmacion | descartada | error`.
 
 ## Cómo hablar
 Analítico y frío. Por cada movimiento: qué hicieron y qué significa para nosotros. Sin adjetivos de más. Español.

@@ -1,7 +1,7 @@
 export const meta = {
   name: 'corrida',
   description: 'Corrida de Competitor-Seeker: rastrea competidores en paralelo, consolida el análisis y lo verifica contra la evidencia hasta 3 intentos',
-  whenToUse: 'Paso 4 de una corrida para UNA marca. args: { marca, fechaCorrida, ultimaCorrida, corridaId?, apify?: {habilitado, resultsLimit, motivo?}, competidores: [{nombre, url}] }. Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig? }. El orquestador registra DESPUÉS con `scripts/cs registrar`; si verificado es false, no registra sin confirmación (o --pendiente en headless).',
+  whenToUse: 'Paso 4 de una corrida para UNA marca. args: { marca, fechaCorrida, ultimaCorrida, corridaId?, apify?: {habilitado, resultsLimit, motivo?}, competidores: [{nombre, url}] }. Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig?, publicaciones, perfiles, lecturas }. El orquestador registra DESPUÉS con `scripts/cs registrar`; si verificado es false, no registra sin confirmación (o --pendiente en headless).',
   phases: [
     { title: 'Rastreo', detail: 'un rastreador-ig (todos los perfiles, secuencial) + un rastreador web por competidor + un rastreador-apify (si está habilitado), en paralelo' },
     { title: 'Análisis', detail: 'un analista consolida todos los hallazgos' },
@@ -43,6 +43,73 @@ const ENTRADAS_SCHEMA = {
   required: ['entradas'],
 }
 
+// Datos estructurados de rendimiento: los devuelven los rastreadores de IG y Apify y el
+// workflow los consolida SIN pasar por el analista (las cifras no se re-teclean).
+const PUBLICACION_SCHEMA = {
+  type: 'object',
+  properties: {
+    competidor: { type: 'string' },
+    url: { type: 'string' },
+    fecha: { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' },
+    formato: { enum: ['reel', 'carrusel', 'imagen', 'video', 'otro'] },
+    tema: { type: 'string' },
+    likes: { type: 'integer', minimum: 0 },
+    comentarios: { type: 'integer', minimum: 0 },
+    vistas: { type: 'integer', minimum: 0 },
+  },
+  required: ['competidor', 'url', 'fecha', 'formato'],
+  additionalProperties: false,
+}
+
+const PERFIL_SCHEMA = {
+  type: 'object',
+  properties: {
+    competidor: { type: 'string' },
+    seguidores: { type: 'integer', minimum: 0 },
+    publicacionesTotales: { type: 'integer', minimum: 0 },
+  },
+  required: ['competidor'],
+  additionalProperties: false,
+}
+
+const IG_SCHEMA = {
+  type: 'object',
+  properties: {
+    hallazgos: { type: 'string' },
+    publicaciones: { type: 'array', items: PUBLICACION_SCHEMA },
+    perfiles: { type: 'array', items: PERFIL_SCHEMA },
+  },
+  required: ['hallazgos', 'publicaciones', 'perfiles'],
+}
+
+const LECTURAS_SCHEMA = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      competidor: { type: 'string' },
+      resumen: { type: 'array', items: { type: 'string' }, maxItems: 6 },
+      estrategia: {
+        type: 'object',
+        properties: {
+          hipotesis: { type: 'array', items: { type: 'string' }, minItems: 1 },
+          pilares: { type: 'array', items: { type: 'string' } },
+          formatosYCadencia: { type: 'string' },
+          implicaciones: { type: 'array', items: { type: 'string' } },
+          confianza: { enum: ['alta', 'media', 'baja'] },
+          postsCitados: { type: 'array', items: { type: 'string' } },
+        },
+        required: ['hipotesis', 'pilares', 'formatosYCadencia', 'implicaciones', 'confianza', 'postsCitados'],
+        additionalProperties: false,
+      },
+    },
+    required: ['competidor', 'resumen'],
+    additionalProperties: false,
+  },
+}
+ENTRADAS_SCHEMA.properties.lecturas = LECTURAS_SCHEMA
+ENTRADAS_SCHEMA.required.push('lecturas')
+
 const VEREDICTO_SCHEMA = {
   type: 'object',
   properties: {
@@ -69,8 +136,50 @@ const APIFY_SCHEMA = {
     hallazgos: { type: 'string' },
     resultados: { type: 'integer' },
     runId: { type: 'string' },
+    publicaciones: { type: 'array', items: PUBLICACION_SCHEMA },
+    perfiles: { type: 'array', items: PERFIL_SCHEMA },
   },
-  required: ['hallazgos', 'resultados'],
+  required: ['hallazgos', 'resultados', 'publicaciones', 'perfiles'],
+}
+
+// --- Consolidación determinista de publicaciones y perfiles (Apify prevalece en cifras) ---
+function clavePost(url) {
+  const m = /instagram\.com\/(?:[^/]+\/)?(?:p|reel|reels|tv)\/([^/?#]+)/i.exec(url || '')
+  return m ? `ig:${m[1]}` : String(url || '').replace(/[?#].*$/, '').replace(/\/+$/, '').toLowerCase()
+}
+const CIFRAS = ['likes', 'comentarios', 'vistas']
+function consolidarPublicaciones(ig, apify) {
+  const porClave = new Map()
+  for (const [lista, fuente] of [[ig, 'ig'], [apify, 'apify']]) {
+    for (const p of lista || []) {
+      if (!p || !p.url || !p.competidor) continue
+      const k = clavePost(p.url)
+      const previa = porClave.get(k)
+      if (!previa) { porClave.set(k, { ...p, fuente }); continue }
+      // Apify (segunda pasada) gana en cifras, fecha y formato; el texto del navegador se conserva si Apify no trae tema.
+      const fusion = { ...previa, fuente: 'apify' }
+      for (const c of [...CIFRAS, 'fecha', 'formato']) if (p[c] !== undefined) fusion[c] = p[c]
+      if (p.tema) fusion.tema = p.tema
+      fusion.url = p.url
+      porClave.set(k, fusion)
+    }
+  }
+  return [...porClave.values()].sort((a, b) => a.competidor.localeCompare(b.competidor) || b.fecha.localeCompare(a.fecha))
+}
+function consolidarPerfiles(ig, apify) {
+  const porNombre = new Map()
+  for (const [lista, fuente] of [[ig, 'ig'], [apify, 'apify']]) {
+    for (const p of lista || []) {
+      if (!p || !p.competidor) continue
+      const previo = porNombre.get(p.competidor) || {}
+      const nuevo = { ...previo, competidor: p.competidor }
+      if (p.seguidores !== undefined) { nuevo.seguidores = p.seguidores; nuevo.fuente = fuente }
+      if (p.publicacionesTotales !== undefined) nuevo.publicacionesTotales = p.publicacionesTotales
+      if (!nuevo.fuente) nuevo.fuente = fuente
+      porNombre.set(p.competidor, nuevo)
+    }
+  }
+  return [...porNombre.values()]
 }
 
 if (!args || !args.marca || !args.fechaCorrida || !Array.isArray(args.competidores) || args.competidores.length === 0) {
@@ -101,6 +210,8 @@ const periodo = args.ultimaCorrida
 // la sesión no se paraleliza); corre en paralelo con los rastreadores web.
 const perfilesIG = args.competidores.filter(c => c.url && c.url.includes('instagram.com'))
 const tareas = []
+let datosIG = null
+let datosApify = null
 
 if (perfilesIG.length) {
   tareas.push(() =>
@@ -109,9 +220,13 @@ if (perfilesIG.length) {
       perfilesIG.map(c => `${c.nombre} → ${c.url}`).join('; ') + `. ` +
       `Periodo: ${periodo}, hasta hoy ${args.fechaCorrida}. ` +
       `Usa el navegador (sesión ya iniciada en el perfil dedicado). ` +
-      `Devuelve un bloque de hallazgos crudos por perfil, según tu formato de salida.`,
-      { label: 'rastreo-ig:todos', phase: 'Rastreo', agentType: 'rastreador-ig' }
-    ).then(h => ({ nombre: 'INSTAGRAM', hallazgos: h }))
+      `En publicaciones y perfiles usa como "competidor" EXACTAMENTE el nombre indicado antes de la flecha. ` +
+      `Devuelve el JSON con hallazgos (un bloque por perfil), publicaciones y perfiles, según tu formato de salida.`,
+      { label: 'rastreo-ig:todos', phase: 'Rastreo', agentType: 'rastreador-ig', schema: IG_SCHEMA }
+    ).then(r => {
+      datosIG = r
+      return { nombre: 'INSTAGRAM', hallazgos: r.hallazgos }
+    })
   )
 }
 
@@ -129,9 +244,11 @@ if (perfilesIG.length && apifyCfg.habilitado) {
       `Periodo: ${periodo}, hasta hoy ${args.fechaCorrida}. ` +
       `resultsLimit por perfil: ${resultsLimit}. onlyPostsNewerThan: ${apifyDesde}. ` +
       `(Los posts anteriores a ${args.ultimaCorrida || 'la ventana'} sirven para medir rendimiento, no son movimientos nuevos.) ` +
-      `Haz UNA sola llamada al actor con todos los perfiles y devuelve hallazgos crudos con METRICAS por post, según tu formato de salida.`,
+      `En publicaciones y perfiles usa como "competidor" EXACTAMENTE el nombre indicado antes de la flecha. ` +
+      `Una llamada de posts y una de details (seguidores) con todos los perfiles; devuelve hallazgos, publicaciones y perfiles según tu formato de salida.`,
       { label: 'rastreo-apify:todos', phase: 'Rastreo', agentType: 'rastreador-apify', schema: APIFY_SCHEMA }
     ).then(r => {
+      datosApify = r
       apifyInfo = { incluido: true, omitido: false, resultados: r.resultados, costeEstimadoUsd: Math.round(r.resultados * 0.0027 * 10000) / 10000 }
       if (typeof r.runId === 'string' && r.runId) apifyInfo.runId = r.runId
       return { nombre: 'APIFY', hallazgos: r.hallazgos }
@@ -168,9 +285,15 @@ const igSesion = igCaido ? 'error' : !bloqueIG ? 'no-usado' : /SESI[ÓO]N NO DIS
 if (igSesion === 'no-disponible') log('Instagram: SESIÓN NO DISPONIBLE — la corrida sigue con web' + (apifyInfo.incluido ? ' + Apify' : ''))
 
 phase('Análisis')
+const publicaciones = consolidarPublicaciones(datosIG && datosIG.publicaciones, datosApify && datosApify.publicaciones)
+const perfiles = consolidarPerfiles(datosIG && datosIG.perfiles, datosApify && datosApify.perfiles)
+log(`Datos estructurados: ${publicaciones.length} publicaciones, ${perfiles.length} perfiles`)
+
 const crudos = completos
   .map(r => `=== ${r.nombre} ===\n${r.hallazgos}`)
-  .join('\n\n')
+  .join('\n\n') +
+  `\n\n=== DATOS ESTRUCTURADOS (consolidados de IG + Apify; Apify prevalece) ===\n` +
+  `PUBLICACIONES:\n${JSON.stringify(publicaciones)}\nPERFILES:\n${JSON.stringify(perfiles)}`
 
 let notaCaidos = caidos.length
   ? `\n\nEstos competidores no pudieron rastrearse en la web (falla técnica del rastreador): ${caidos.join(', ')}. ` +
@@ -203,7 +326,10 @@ for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
   resultado = await agent(
     `Fecha de esta corrida: ${args.fechaCorrida}. Marca que vigila: ${args.marca}. ` +
     `Convierte los siguientes hallazgos crudos en entradas de log según soul.md y agent.md. ` +
-    `Recuerda: todo competidor genera al menos una entrada.${notaCaidos}${notaObjeciones}\n\n${crudos}`,
+    `Recuerda: todo competidor genera al menos una entrada. Además, en "lecturas", una por competidor: ` +
+    `"resumen" (3–5 bullets de en qué consistieron sus publicaciones del periodo) y "estrategia" (qué parece estar haciendo ` +
+    `estratégicamente, con hipótesis apoyadas en posts citados por URL); omite "estrategia" si no hay evidencia suficiente.` +
+    `${notaCaidos}${notaObjeciones}\n\n${crudos}`,
     { label: `analista:intento-${intento}`, phase: 'Análisis', agentType: 'analista', schema: ENTRADAS_SCHEMA }
   )
 
@@ -212,13 +338,14 @@ for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
     `${args.competidores.map(c => c.nombre).join(', ')}.${notaCaidos}\n\n` +
     `HALLAZGOS CRUDOS DE LOS RASTREADORES:\n\n${crudos}\n\n` +
     `ENTRADAS PRODUCIDAS POR EL ANALISTA:\n\n${JSON.stringify(resultado.entradas, null, 2)}\n\n` +
+    `LECTURAS PRODUCIDAS POR EL ANALISTA:\n\n${JSON.stringify(resultado.lecturas || [], null, 2)}\n\n` +
     `Verifica las entradas contra los hallazgos según tu criterio de éxito y emite tu veredicto.`,
     { label: `verificacion:intento-${intento}`, phase: 'Verificación', agentType: 'verificador', schema: VEREDICTO_SCHEMA }
   )
 
   if (veredicto.valido) {
     log(`Verificación superada en el intento ${intento}`)
-    return { corridaId, entradas: resultado.entradas, verificado: true, intentos: intento, objeciones: [], apify: apifyInfo, ig: { sesion: igSesion } }
+    return { corridaId, entradas: resultado.entradas, verificado: true, intentos: intento, objeciones: [], apify: apifyInfo, ig: { sesion: igSesion }, publicaciones, perfiles, lecturas: resultado.lecturas || [] }
   }
   objeciones = veredicto.objeciones
   log(`Intento ${intento} rechazado: ${objeciones.length} objeción(es)`)
@@ -226,4 +353,4 @@ for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
 
 // Tras agotar los intentos, se devuelve igual: el orquestador decide con el usuario
 // si registrar o descartar, mostrando las objeciones pendientes.
-return { corridaId, entradas: resultado.entradas, verificado: false, intentos: MAX_INTENTOS, objeciones, apify: apifyInfo, ig: { sesion: igSesion } }
+return { corridaId, entradas: resultado.entradas, verificado: false, intentos: MAX_INTENTOS, objeciones, apify: apifyInfo, ig: { sesion: igSesion }, publicaciones, perfiles, lecturas: resultado.lecturas || [] }
