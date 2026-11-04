@@ -227,3 +227,78 @@ describe('ventana de Apify', () => {
     expect(await promptApify('2026-11-04', null)).toContain('onlyPostsNewerThan: 2026-10-21')
   })
 })
+
+describe('regresión corrida 2026-11-04 16:03 (parval)', () => {
+  const competidores = [
+    { nombre: 'United Capital', url: 'https://www.instagram.com/unitedcapitaldr/' },
+    { nombre: 'Interval', url: 'https://www.instagram.com/interval.rd/' },
+  ]
+  const UC = 'https://www.instagram.com/unitedcapitaldr/p/DfTRo7pG58D/'
+  const IN = 'https://www.instagram.com/interval.rd/p/DfU6x4KoIRF/'
+
+  function agente(prompts: Record<string, string>): Agente {
+    return async (prompt, o) => {
+      prompts[o.agentType] = prompt
+      switch (o.agentType) {
+        case 'rastreador-ig':
+          return {
+            hallazgos: 'bloques IG',
+            publicaciones: [
+              { competidor: 'United Capital', url: UC, fechaHora: '2026-11-04T01:27:00.000Z', fecha: '2026-11-04', formato: 'carrusel' },
+              { competidor: 'Interval', url: IN, fechaHora: '2026-11-04T14:00:00.000Z', fecha: '2026-11-04', formato: 'carrusel', likes: 98, comentarios: 4 },
+            ],
+            perfiles: [],
+          }
+        case 'rastreador':
+          return 'web'
+        case 'analista':
+          return {
+            entradas: [
+              { marca: 'Interval', fecha: '2026-11-04', movimiento: 'Carrusel', senal: 'nuevo', lectura: 'x', fuentes: ['ig', 'apify'] },
+              { marca: 'United Capital', fecha: '2026-11-03', movimiento: 'Carrusel', senal: 'nuevo', lectura: 'x', fuentes: ['apify'] },
+            ],
+            lecturas: [
+              {
+                competidor: 'United Capital',
+                resumen: ['Carrusel'],
+                estrategia: { hipotesis: ['h'], pilares: [], formatosYCadencia: 'c', implicaciones: [], confianza: 'baja', postsCitados: [UC, IN, 'https://unitedcapital.com.do/nota'] },
+              },
+            ],
+          }
+        case 'verificador':
+          return { valido: true, objeciones: [] }
+        default:
+          throw new Error(o.agentType)
+      }
+    }
+  }
+
+  it('fecha local, ventana de IG, fuentes saneadas y postsCitados solo propios', async () => {
+    const prompts: Record<string, string> = {}
+    const salida = await correrWorkflow(
+      {
+        marca: 'parval',
+        fechaCorrida: '2026-11-04',
+        ultimaCorrida: '2026-11-04',
+        ultimaCorridaIg: null,
+        apify: { habilitado: false, motivo: 'desactivado por la usuaria' },
+        competidores,
+      },
+      agente(prompts),
+    )
+    const r = ResultadoWorkflow.parse(JSON.parse(JSON.stringify(salida)))
+    // 01:27Z del 4/11 es la noche del 3/11 en RD.
+    expect(r.publicaciones!.find((p) => p.url === UC)!.fecha).toBe('2026-11-03')
+    expect(r.publicaciones!.find((p) => p.url === IN)!.fecha).toBe('2026-11-04')
+    expect(JSON.stringify(r.publicaciones)).not.toContain('fechaHora')
+    // Apify apagado: nunca "apify" en fuentes.
+    expect(r.entradas.map((e) => e.fuentes)).toEqual([['ig'], ['web']])
+    // Un post de Interval no sustenta la estrategia de United Capital.
+    expect(r.lecturas![0]!.estrategia!.postsCitados).toEqual([UC, 'https://unitedcapital.com.do/nota'])
+    // IG sin corrida previa inspeccionada: ventana de ~4 semanas, no "desde el 4/11".
+    expect(prompts['rastreador-ig']).toContain('sin corrida previa con Instagram inspeccionado')
+    expect(prompts['analista']).toContain('Canales que corrieron en esta corrida (el campo "fuentes" solo puede usar estos): web, ig')
+    expect(prompts['analista']).toContain('Instagram → fecha ≥ inicio de la ventana')
+    expect(prompts['verificador']).toContain('ya están en hora local')
+  })
+})

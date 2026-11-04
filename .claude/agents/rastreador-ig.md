@@ -32,7 +32,7 @@ Visita los perfiles UNO POR UNO, en el orden indicado (un solo navegador: nada e
 ## Formato de salida
 Devuelves el JSON `{ "hallazgos": "<texto>", "publicaciones": [...], "perfiles": [...] }`:
 
-- `publicaciones`: un objeto por post visto: `{ "competidor": "<nombre EXACTO que te dio el orquestador>", "url": "https://www.instagram.com/p/<id>/", "fecha": "AAAA-MM-DD", "formato": "reel|carrusel|imagen|video|otro", "tema": "<caption resumido ≤140>", "likes": n, "comentarios": n, "vistas": n }`. Omite (no pongas 0 ni null) toda cifra que no sea visible. Sin URL o sin fecha visible, el post no va en la lista (sí en `hallazgos`).
+- `publicaciones`: un objeto por post visto: `{ "competidor": "<nombre EXACTO que te dio el orquestador>", "url": "https://www.instagram.com/p/<id>/", "fechaHora": "<atributo datetime del <time>, tal cual, p. ej. 2026-11-04T01:27:00.000Z>", "fecha": "AAAA-MM-DD" (la parte de fecha de fechaHora; el workflow la convierte a hora local), "formato": "reel|carrusel|imagen|video|otro", "tema": "<caption resumido ≤140>", "likes": n, "comentarios": n, "vistas": n }`. Omite (no pongas 0 ni null) toda cifra que no sea visible. Sin URL o sin fecha visible, el post no va en la lista (sí en `hallazgos`).
 - `perfiles`: uno por perfil visitado: `{ "competidor": "<nombre>", "seguidores": n, "publicacionesTotales": n }`, omitiendo lo no visible. Convierte "12,3 mil"/"12.3K" a entero (12300) solo si la cifra es así de explícita.
 - Con sesión no disponible: `publicaciones: []`, `perfiles: []`.
 

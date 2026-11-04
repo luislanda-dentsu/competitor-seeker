@@ -65,6 +65,14 @@ describe('cs registrar', () => {
     expect(JSON.stringify(leerLog('k').items)).not.toContain('instagram.com/p/A1')
   })
 
+  it('ultima-corrida --fuente ig ignora las corridas sin sesión de Instagram', async () => {
+    const sinIg = JSON.stringify({ entradas: [e1], verificado: true, intentos: 1, ig: { sesion: 'no-disponible' } })
+    await registrar('2026-11-01-0900-mac')
+    await registrar('2026-11-03-0900-mac', [], sinIg)
+    expect(await ejecutar(['ultima-corrida', 'k'])).toBe('2026-11-03')
+    expect(await ejecutar(['ultima-corrida', 'k', '--fuente', 'ig'])).toBe('2026-11-01')
+  })
+
   it('--pendiente x deja la corrida pendiente; solo `confirmar` la resuelve', async () => {
     const r = await registrar('2026-11-03-1000-mac', ['--pendiente', 'x'])
     expect(r).toMatchObject({ estado: 'pendiente-confirmacion', registradas: 0, entradas: 1 })

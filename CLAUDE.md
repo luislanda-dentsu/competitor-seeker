@@ -61,10 +61,11 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 ```
 1. lee marcas/<slug>/marca.json → competidores activos  (no existe → avisa y detente)
 2. ultimaCorrida = scripts/cs ultima-corrida <slug>      (null → primera corrida: últimas ~4 semanas)
+   ultimaCorridaIg = scripts/cs ultima-corrida <slug> --fuente ig  (inicio de la ventana de Instagram)
 2b. apify = el que te dieron en el prompt (la app ya lo decidió con la usuaria) o, si no, scripts/cs apify-uso --json
 3. corridaId = el que te dieron o scripts/cs nuevo-id <slug>
 4. Workflow scriptPath .claude/workflows/corrida.js — SIEMPRE por scriptPath (por nombre puede resolver un snapshot viejo)
-   args: { marca, fechaCorrida (hoy), ultimaCorrida, corridaId, apify: {habilitado, resultsLimit, motivo?},
+   args: { marca, fechaCorrida (hoy), ultimaCorrida, ultimaCorridaIg, corridaId, apify: {habilitado, resultsLimit, motivo?},
            competidores: [{nombre, url}] }
    └─ paralelo: rastreador-ig (todos los perfiles, navegador con sesión) + N rastreadores web + rastreador-apify (si habilitado)
       → analista (schema) → verificador (soul.md) → reintento con objeciones, máx. 3

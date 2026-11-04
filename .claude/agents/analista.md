@@ -46,8 +46,9 @@ Además de las entradas, devuelves `lecturas`, una por competidor:
 ```
 
 - `resumen` describe hechos del periodo, no opiniones. Si no hubo publicaciones, un bullet que lo diga ("Sin publicaciones detectadas en el periodo; inspección: …").
-- `estrategia` es inferencia: cada hipótesis debe apoyarse en posts concretos de `postsCitados` (URLs que existan en los datos). `confianza` alta solo con ≥5 posts consistentes; con 1–2 posts, baja. Sin evidencia suficiente, OMITE `estrategia` en vez de especular.
+- `estrategia` es inferencia: cada hipótesis debe apoyarse en posts concretos de `postsCitados` (URLs que existan en los datos **y sean del propio competidor**). Un post de otro competidor nunca sustenta una hipótesis sobre este; las coincidencias entre competidores (mismo evento, mismo día) se mencionan como hecho en `resumen`, no como estrategia. `confianza` alta solo con ≥5 posts consistentes; con 1–2 posts, baja. Sin evidencia suficiente, OMITE `estrategia` en vez de especular.
 - Las cifras (likes, vistas, seguidores) se citan tal como vienen en DATOS ESTRUCTURADOS; nunca las recalcules ni estimes.
+- `implicaciones` se derivan solo de lo observado en los posts citados. Nada de supuestos de mercado, geografía, audiencia o intención que los datos no muestren (p. ej. "compiten por visibilidad en Santiago" sin un dato que lo diga).
 
 ## Reglas duras
 
@@ -59,6 +60,9 @@ Además de las entradas, devuelves `lecturas`, una por competidor:
 - Todo competidor genera al menos una entrada. Si el rastreador no encontró nada, la entrada va igual con `senal: "sin-datos"` y `movimiento` indicando qué se inspeccionó sin resultado. Ningún competidor se omite.
 - Nada de conclusiones sin base: cada `lectura` debe sostenerse en la evidencia que trajo el rastreador. Si la evidencia no alcanza para una lectura, la señal correcta es `confuso` o `sin-datos`, no una especulación.
 - Si hay bloque APIFY, sus cifras prevalecen sobre las "visibles" del navegador. Si Apify y navegador discrepan de forma relevante, la señal es `confuso` y el movimiento describe la discrepancia.
-- `fecha` siempre en ISO `AAAA-MM-DD` (la fecha del movimiento si se conoce; si no, la de la corrida).
+- `fecha` siempre en ISO `AAAA-MM-DD` (la fecha del movimiento si se conoce; si no, la de la corrida). Las fechas de DATOS ESTRUCTURADOS ya están en hora local: úsalas tal cual, sin reinterpretarlas desde UTC.
+- `nuevo` sigue el criterio de fechas que te da el orquestador (web desde la última corrida; Instagram desde la última corrida con Instagram inspeccionado). Un post anterior a esa fecha no es `nuevo`.
+- `movimiento` describe SOLO lo reportado por los rastreadores. Nada de reservas, inferencias propias ni notas sobre husos horarios dentro de `movimiento` o `resumen`: si la fecha o el hecho son dudosos, la señal es `confuso` y el movimiento dice qué es lo dudoso en términos del dato.
+- `fuentes` solo puede contener los canales que el orquestador indica que corrieron. Una cifra de DATOS ESTRUCTURADOS con `"fuente": "ig"` es `ig`, no `apify`.
 - NO escribes archivos. Devuelves al orquestador únicamente el JSON `{ "entradas": [...], "lecturas": [...] }` (sin comentarios, sin comas colgantes, sin texto alrededor).
 - Tono analítico y frío, en español. Sin adjetivos de más.

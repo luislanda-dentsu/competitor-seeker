@@ -1,0 +1,314 @@
+{
+  "id": "2026-11-04-1603-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-04",
+  "ultimaCorrida": "2026-11-04",
+  "inicio": "2026-11-04T20:03:19.428Z",
+  "fin": "2026-11-04T20:06:42.768Z",
+  "duracionMs": 203340,
+  "estado": "pendiente-confirmacion",
+  "verificado": false,
+  "intentos": 3,
+  "objeciones": [
+    {
+      "marca": "Interval",
+      "problema": "El campo fuentes incluye 'apify', pero los hallazgos no contienen ningún bloque APIFY. En DATOS ESTRUCTURADOS la publicación y las métricas (98 likes, 4 comentarios) figuran con fuente 'ig'. Debe ser fuentes: ['ig']."
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "problema": "El campo fuentes incluye 'apify', pero no hay bloque APIFY y los datos estructurados (49 likes, 1 comentario) tienen fuente 'ig'. Debe ser fuentes: ['ig']."
+    },
+    {
+      "marca": "United Capital",
+      "problema": "Problema de fecha y señal. El post se publicó 2026-11-04 01:27Z, que es el 11-03 en hora de RD. Las cifras 'hace 18 h' y 'hace 3 h' son coherentes con ese UTC. El periodo es solo el 2026-11-04, y el movimiento sería previo al periodo. Aun así el analista lo marca 'nuevo' con fecha 2026-11-04 y deja la contradicción como 'reserva' dentro del texto de movimiento. Debe resolver la fecha o usar una señal acorde, no mezclar una inferencia propia en el campo movimiento, que debe describir solo lo reportado."
+    },
+    {
+      "marca": "United Capital",
+      "problema": "En la estrategia, la hipótesis dice 'igual que Interval, el mismo día', y postsCitados incluye el post de Interval. Ese post es de otro competidor y no sustenta una hipótesis sobre United Capital. Además, la coincidencia de día se contradice con la reserva horaria del propio analista. La implicación 'competencia por visibilidad en Santiago' no tiene base en los datos."
+    }
+  ],
+  "fuentes": [
+    "web",
+    "ig"
+  ],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "incluido": false,
+    "omitido": true,
+    "motivo": "desactivado por la usuaria"
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-04",
+      "movimiento": "Carrusel en Instagram sobre su participación en el Cóctel APB Región Norte, en Santiago, encuentro del sector bursátil dominicano.",
+      "senal": "nuevo",
+      "lectura": "Presencia en eventos gremiales y refuerzo de su plaza Santiago (bio 'SDQ | STGO'); una sola publicación del periodo.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 98,
+        "comentarios": 4
+      },
+      "id": "f44ea0c12bf983ed",
+      "corrida": "2026-11-04-1603-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Reel con llamada a comentar la palabra 'DOBLE' para recibir cómo invertir el doble sueldo (#DobleSueldo).",
+      "senal": "nuevo",
+      "lectura": "Mecánica de captación de leads por palabra clave en comentarios, atada a la temporada del doble sueldo; sin cifras de tracción visibles.",
+      "fuentes": [
+        "ig"
+      ],
+      "id": "c4a117df44fbaff4",
+      "corrida": "2026-11-04-1603-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Sin publicaciones el 2026-11-04 en @excel_rd (la más reciente, del 2026-11-02, es de capacitación sobre un sistema); la web no muestra contenido editorial ni prensa del periodo.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento en el periodo; no hay base para una lectura estratégica.",
+      "fuentes": [
+        "ig",
+        "web"
+      ],
+      "id": "b0c8f614c9a16963",
+      "corrida": "2026-11-04-1603-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-11-04",
+      "movimiento": "Publicación en Instagram en colaboración con @gigantescibao (#GigantesDelCibao): 'cada meta merece una estrategia propia', con llamada a construir el plan desde la App Alpha.",
+      "senal": "nuevo",
+      "lectura": "Usa una colaboración con otra cuenta para empujar la App Alpha; un solo post de colaboración en el periodo.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 49,
+        "comentarios": 1
+      },
+      "id": "27c3a807eb40b135",
+      "corrida": "2026-11-04-1603-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2026-11-04",
+      "movimiento": "Carrusel sobre su participación en el Cóctel de introducción de la APB en Santiago. Fecha 2026-11-04 según el rastreador y DATOS ESTRUCTURADOS (publicado 01:27Z UTC); en hora de RD (UTC-4, inferencia propia) sería la noche del 2026-11-03.",
+      "senal": "nuevo",
+      "lectura": "Coincide en tema con Interval (cóctel APB en Santiago); se mantiene la fecha de los datos estructurados y la diferencia horaria queda como reserva. Sin cifras de tracción visibles.",
+      "fuentes": [
+        "ig"
+      ],
+      "id": "20442d2f4f52c226",
+      "corrida": "2026-11-04-1603-parval-administrast"
+    }
+  ],
+  "publicaciones": [
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/alphapuestodebolsa/p/DfUseTkoeFR/",
+      "fecha": "2026-11-04",
+      "formato": "otro",
+      "tema": "Colaboración con Gigantes del Cibao: cada meta merece una estrategia propia, plan desde la App Alpha",
+      "likes": 49,
+      "comentarios": 1,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/reel/DfVC9zHRIjr/",
+      "fecha": "2026-11-04",
+      "formato": "reel",
+      "tema": "Comenta DOBLE y te contamos cómo invertir tu doble sueldo con criterio (#DobleSueldo)",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/interval.rd/p/DfU6x4KoIRF/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Participación en el Cóctel APB Región Norte en Santiago, encuentro del sector bursátil dominicano",
+      "likes": 98,
+      "comentarios": 4,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/unitedcapitaldr/p/DfTRo7pG58D/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Participación en el Cóctel de introducción de la APB en Santiago",
+      "fuente": "ig"
+    }
+  ],
+  "perfiles": [
+    {
+      "competidor": "Interval",
+      "seguidores": 41400,
+      "publicacionesTotales": 172,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "seguidores": 39400,
+      "publicacionesTotales": 895,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "seguidores": 26100,
+      "publicacionesTotales": 880,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "seguidores": 37000,
+      "publicacionesTotales": 1808,
+      "fuente": "ig"
+    },
+    {
+      "competidor": "United Capital",
+      "seguidores": 20300,
+      "publicacionesTotales": 1094,
+      "fuente": "ig"
+    }
+  ],
+  "lecturas": [
+    {
+      "competidor": "Interval",
+      "resumen": [
+        "Un carrusel el 2026-11-04 sobre su participación en el Cóctel APB Región Norte en Santiago (98 likes, 4 comentarios).",
+        "Cuenta de 41.4K seguidores y 172 publicaciones; el grid reciente mezcla carruseles, reels propios (Interval Talks, educación) y posts de terceros que mencionan a @interval.rd.",
+        "Sin vistas visibles de reels. La búsqueda web no halló contenido del periodo; el único hecho de prensa es de 2025-12-15 (premio BVRD), fuera del periodo."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Capitaliza la presencia en eventos del sector y su plaza en Santiago (bio 'SDQ | STGO')."
+        ],
+        "pilares": [
+          "Eventos del sector",
+          "Educación (Interval Talks)",
+          "Menciones de terceros"
+        ],
+        "formatosYCadencia": "Carruseles y reels propios; un post en el periodo, uno previo el 2026-11-03.",
+        "implicaciones": [
+          "Vigilar si la presencia en Santiago se repite en otros eventos."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/interval.rd/p/DfU6x4KoIRF/"
+        ]
+      }
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "resumen": [
+        "Un reel el 2026-11-04 con llamada a comentar 'DOBLE' para recibir contenido sobre invertir el doble sueldo (#DobleSueldo).",
+        "Cuenta de 39.4K seguidores y 895 publicaciones; likes y vistas del reel no visibles, comentarios al menos 8 sin conteo exacto.",
+        "El grid reciente trata subastas del Banco Central, emisiones y mensajes de marca (#HablemosClaroCCI).",
+        "Sin movimiento en prensa dentro del periodo."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Prueba una mecánica de comentario por palabra clave para captar interesados en inversión, ligada a la temporada del doble sueldo."
+        ],
+        "pilares": [
+          "Educación de inversión",
+          "Subastas y emisiones",
+          "Mensaje de marca"
+        ],
+        "formatosYCadencia": "Reels y carruseles/imagen; un reel en el periodo, el previo fue el 2026-10-28.",
+        "implicaciones": [
+          "Vigilar si la mecánica se repite y si el volumen de comentarios lo respalda."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/cci_pb/reel/DfVC9zHRIjr/"
+        ]
+      }
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "resumen": [
+        "Sin publicaciones con fecha 2026-11-04 en @excel_rd (26.1K seguidores, 880 publicaciones); la más reciente es del 2026-11-02.",
+        "Los tres primeros elementos del grid son sobre la app Excel Móvil, de apariencia fijada (pin no verificado).",
+        "La web no muestra prensa ni campañas del periodo; solo actualizaciones rutinarias de valores cuota y blog de 2026 previo."
+      ]
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "resumen": [
+        "Una publicación el 2026-11-04 en colaboración con @gigantescibao (#GigantesDelCibao) que invita a construir un plan desde la App Alpha (49 likes, 1 comentario).",
+        "Cuenta de 37K seguidores y 1,808 publicaciones; el día anterior (2026-11-03) publicó el mensaje 'Tus sueños merecen algo más que quedarse en el colchón' (#15AñosAlpha).",
+        "Publicación casi diaria observada el 03 y 04 de noviembre.",
+        "Sin prensa ni cambios de sitio fechados en el periodo."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Promueve la App Alpha como llamada a la acción en sus publicaciones recientes; el post del 11-04 la menciona de forma explícita."
+        ],
+        "pilares": [
+          "App Alpha",
+          "Aniversario (#15AñosAlpha, post del 11-03)",
+          "Metas financieras personales"
+        ],
+        "formatosYCadencia": "Formato del post del día no determinado; ritmo casi diario en dos días observados.",
+        "implicaciones": [
+          "Vigilar si la promoción de la app y el aniversario continúan en los próximos días."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/alphapuestodebolsa/p/DfUseTkoeFR/"
+        ]
+      }
+    },
+    {
+      "competidor": "United Capital",
+      "resumen": [
+        "Un carrusel sobre su participación en el Cóctel de introducción de la APB en Santiago; fecha 2026-11-04 (01:27Z) según rastreador y datos estructurados, que en UTC-4 sería la noche del 11-03 (inferencia propia).",
+        "Cuenta de 20.3K seguidores y 1,094 publicaciones; likes, comentarios y vistas no visibles.",
+        "El grid incluye colaboraciones con sipenrd y eventos propios (Oktoberfest UC 2026, Congreso Grupo Rizek).",
+        "El sitio oficial no muestra ítems de noviembre; el más reciente es del 28-oct-2026 (política de mejor ejecución)."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Participa en eventos gremiales de la APB en Santiago, igual que Interval, el mismo día."
+        ],
+        "pilares": [
+          "Eventos y alianzas",
+          "Propósito (#InvierteConPropósito)"
+        ],
+        "formatosYCadencia": "Carruseles; un post en el periodo.",
+        "implicaciones": [
+          "Vigilar la competencia por visibilidad en Santiago frente a Interval."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/unitedcapitaldr/p/DfTRo7pG58D/",
+          "https://www.instagram.com/interval.rd/p/DfU6x4KoIRF/"
+        ]
+      }
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "ac4d4cc7-b8ac-4495-baff-4a2e56e407fc",
+  "ig": {
+    "sesion": "ok"
+  }
+}
