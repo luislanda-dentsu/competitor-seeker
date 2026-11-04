@@ -234,7 +234,7 @@ export function responderChat(o: OpcionesResponder): ReadableStream<Uint8Array> 
       ...(art ? { artefacto: { titulo: art.titulo, ids: art.ids } } : {}),
     };
     try {
-      guardarChat({ ...chat, actualizado: fin, ...(sessionId ? { sessionId } : {}), mensajes: [...chat.mensajes, respuesta] });
+      guardarChat({ ...chat, actualizado: fin, ...(primerTurno && !chat.contextoEn ? { contextoEn: ahora.toISOString() } : {}), ...(sessionId ? { sessionId } : {}), mensajes: [...chat.mensajes, respuesta] });
       if (errorResult && !abortado) enviar({ tipo: "error", error: errorResult });
       enviar({ tipo: "done", chatId: chat.id, titulo: chat.titulo, actualizado: fin });
     } catch (e) {

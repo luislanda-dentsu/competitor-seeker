@@ -4,13 +4,14 @@ import { Suspense } from "react";
 import { competidoresActivos, listarCorridas, listarMarcas } from "@competitor-seeker/core";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CorridasView } from "@/components/app/runs/CorridasView";
 import { RunHistoryTable } from "@/components/app/runs/RunHistoryTable";
 import { apifyParaUi } from "@/lib/runs/apify";
 import { marcaActiva } from "@/lib/runs/consulta";
 import { estadoRunner } from "@/lib/runs/runner";
 import type { MarcaUi } from "@/lib/runs/tipos";
+
+import Loading from "./loading";
 
 export const metadata = { title: "Corridas" };
 
@@ -51,26 +52,9 @@ async function CorridasContenido(): Promise<React.ReactElement> {
   );
 }
 
-function Cargando(): React.ReactElement {
-  return (
-    <div aria-busy="true" aria-label="Cargando corridas" className="flex flex-col gap-4">
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5 lg:flex-row lg:items-end lg:gap-6">
-        <Skeleton className="h-9 w-72" />
-        <Skeleton className="h-9 w-40" />
-        <Skeleton className="h-9 w-28" />
-        <Skeleton className="h-9 w-36 lg:ms-auto" />
-      </div>
-      <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-5">
-        <Skeleton className="h-3 w-40" />
-        <Skeleton className="h-40 w-full" />
-      </div>
-    </div>
-  );
-}
-
 export default function CorridasPage(): React.ReactElement {
   return (
-    <Suspense fallback={<Cargando />}>
+    <Suspense fallback={<Loading />}>
       <CorridasContenido />
     </Suspense>
   );

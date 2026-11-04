@@ -19,6 +19,13 @@ Segunda máquina: `scripts/setup-maquina.sh` (clona, instala, crea `.env.local` 
 
 Sesión de Instagram (una vez por máquina): instala Claude in Chrome en tu perfil de Chrome, inicia sesión en instagram.com con la cuenta dedicada y deja Chrome abierto durante las corridas.
 
+## Primer uso
+1. Clona el repo privado: `git clone <url-del-repo> competitor-seeker && cd competitor-seeker`.
+2. Ejecuta `scripts/setup-maquina.sh` (instala dependencias, crea `.env.local` y comprueba `claude` y `gh`), luego `npm run dev`.
+3. Abre Chrome con la extensión **Claude in Chrome** conectada y la cuenta de Instagram de la agencia logueada; déjalo abierto durante las corridas.
+4. En **Ajustes**, pega el token de Apify (opcional: sin él la corrida usa solo el rastreo con navegador y web).
+5. En **Corridas**, elige la marca y lanza la primera corrida; al terminar, los hallazgos aparecen en el Resumen.
+
 ## Cómo funciona una corrida
 1. La app (o tú, en la terminal con `claude`) pide "corre la marca X".
 2. El orquestador (`CLAUDE.md`) lanza `.claude/workflows/corrida.js`: rastreadores en paralelo → analista → verificador (máx. 3 intentos).

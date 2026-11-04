@@ -36,6 +36,15 @@ export async function PUT(request: Request, { params }: Ctx): Promise<Response> 
   if (!existeMarca(slug)) return errorJson(`La marca "${slug}" no existe`, 404);
   const { datos, respuesta } = await leerCuerpo(request, CuerpoCompetidores);
   if (respuesta) return respuesta;
+  const vistos = new Set<string>();
+  const errores: string[] = [];
+  datos.competidores.forEach((c, i) => {
+    const s = slugify(c.nombre);
+    if (s === "") errores.push(`Fila ${i + 1}: el nombre "${c.nombre}" no genera un identificador válido`);
+    else if (vistos.has(s)) errores.push(`Fila ${i + 1}: el nombre "${c.nombre}" se repite`);
+    vistos.add(s);
+  });
+  if (errores.length > 0) return errorJson(errores.join("; "), 400);
   try {
     const marca = leerMarca(slug);
     const competidores: Competidor[] = datos.competidores.map((c) => {

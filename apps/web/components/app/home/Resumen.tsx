@@ -1,4 +1,4 @@
-import { FolderOpen, Play } from "lucide-react";
+import { Download, FolderOpen, Play } from "lucide-react";
 import { after } from "next/server";
 import { pullSiToca } from "@competitor-seeker/core";
 import { FunnelBars } from "@/components/app/charts/FunnelBars";
@@ -9,6 +9,7 @@ import { RunTimeline } from "@/components/app/home/RunTimeline";
 import { KpiCard } from "@/components/app/kpi/KpiCard";
 import { EmptyState } from "@/components/app/states/EmptyState";
 import { LogAlert } from "@/components/app/states/LogAlert";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { getMarcaActiva } from "@/lib/brand";
 import { cargarDatosMarca, type DatosMarca } from "@/lib/data/marca";
@@ -137,6 +138,13 @@ export async function Resumen(): Promise<React.ReactElement> {
   return (
     <div className="flex flex-col gap-4">
       {alerta}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="min-w-0 break-words text-sm text-fg-muted">{datos.marca.nombre}</p>
+        <Button render={<a download href={`/api/marcas/${encodeURIComponent(slug)}/export`} />} size="sm" variant="outline">
+          <Download aria-hidden="true" />
+          Exportar HTML
+        </Button>
+      </div>
       <Kpis datos={datos} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">

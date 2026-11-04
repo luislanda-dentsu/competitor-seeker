@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Square } from "lucide-react";
+import { ArrowUp, Sparkles, Square } from "lucide-react";
 import { useRef } from "react";
 import {
   Composer,
@@ -54,7 +54,7 @@ export function ChatComposer({ marcaNombre, generando, disabled, onEnviar, onDet
             className="inline-flex h-7 items-center gap-1.5 rounded-pill bg-card-2 px-2.5 text-xs font-medium text-fg-muted"
             data-slot="composer-chip"
           >
-            <span aria-hidden="true">✦</span>
+            <Sparkles aria-hidden="true" className="size-3" />
             Asistente · {marcaNombre}
           </span>
         </ComposerActionGroup>

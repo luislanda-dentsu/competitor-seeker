@@ -1,6 +1,6 @@
 // Solo servidor: resuelve los ids citados por el asistente contra el log y
 // convierte chats persistidos a los objetos planos que recibe el cliente.
-import { leerLog, type Chat, type Entrada, type MensajeChat } from "@competitor-seeker/core";
+import { fechaLocal, leerLog, ultimaCorridaRegistrada, type Chat, type Entrada, type MensajeChat } from "@competitor-seeker/core";
 import type { ArtefactoUi, ChatUi, EntradaCitada, MensajeUi } from "@/lib/chat/tipos";
 
 export type IndiceLog = Map<string, Entrada>;
@@ -35,6 +35,13 @@ export function mensajeAUi(m: MensajeChat, indice: IndiceLog): MensajeUi {
   };
 }
 
+/** ¿Hay una corrida registrada con fecha posterior al día en que se armó el contexto del chat? */
+function corridasNuevas(chat: Chat): boolean {
+  const ultima = ultimaCorridaRegistrada(chat.marca);
+  if (!ultima) return false;
+  return ultima > fechaLocal(new Date(chat.contextoEn ?? chat.creado));
+}
+
 export function chatAUi(chat: Chat, indice: IndiceLog = indiceLog(chat.marca)): ChatUi {
   return {
     id: chat.id,
@@ -42,6 +49,8 @@ export function chatAUi(chat: Chat, indice: IndiceLog = indiceLog(chat.marca)): 
     titulo: chat.titulo,
     creado: chat.creado,
     actualizado: chat.actualizado,
+    contextoEn: chat.contextoEn ?? chat.creado,
+    corridasNuevas: corridasNuevas(chat),
     mensajes: chat.mensajes.map((m) => mensajeAUi(m, indice)),
   };
 }
