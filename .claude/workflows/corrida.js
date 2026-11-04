@@ -78,6 +78,18 @@ if (!args || !args.marca || !args.fechaCorrida || !Array.isArray(args.competidor
 }
 
 const apifyCfg = args.apify || { habilitado: false, motivo: 'no indicado por el orquestador' }
+
+// Ventana de Apify: al menos los últimos 14 días aunque haya una corrida reciente. "Nuevo" se
+// sigue juzgando contra ultimaCorrida (lo hace el analista), pero para medir rendimiento hacen
+// falta posts con métricas. Corrida 2026-11-04 11:47: ultimaCorrida = mismo día → 0 posts.
+const VENTANA_MIN_APIFY_DIAS = 14
+function restarDias(iso, dias) {
+  const [a, m, d] = iso.split('-').map(Number)
+  const f = new Date(Date.UTC(a, m - 1, d - dias))
+  return f.toISOString().slice(0, 10)
+}
+const apifyDesdeMin = restarDias(args.fechaCorrida, VENTANA_MIN_APIFY_DIAS)
+const apifyDesde = args.ultimaCorrida && args.ultimaCorrida < apifyDesdeMin ? args.ultimaCorrida : apifyDesdeMin
 const corridaId = args.corridaId || `${args.fechaCorrida}-sin-id`
 
 phase('Rastreo')
@@ -115,7 +127,8 @@ if (perfilesIG.length && apifyCfg.habilitado) {
       `Perfiles de Instagram a consultar con Apify: ` +
       perfilesIG.map(c => `${c.nombre} → ${c.url}`).join('; ') + `. ` +
       `Periodo: ${periodo}, hasta hoy ${args.fechaCorrida}. ` +
-      `resultsLimit por perfil: ${resultsLimit}. onlyPostsNewerThan: ${args.ultimaCorrida || '30 days'}. ` +
+      `resultsLimit por perfil: ${resultsLimit}. onlyPostsNewerThan: ${apifyDesde}. ` +
+      `(Los posts anteriores a ${args.ultimaCorrida || 'la ventana'} sirven para medir rendimiento, no son movimientos nuevos.) ` +
       `Haz UNA sola llamada al actor con todos los perfiles y devuelve hallazgos crudos con METRICAS por post, según tu formato de salida.`,
       { label: 'rastreo-apify:todos', phase: 'Rastreo', agentType: 'rastreador-apify', schema: APIFY_SCHEMA }
     ).then(r => {
