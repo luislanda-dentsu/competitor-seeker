@@ -1,6 +1,6 @@
 "use client";
 
-import { TriangleAlert } from "lucide-react";
+import { PanelRightOpen, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArtifactPanel } from "@/components/app/chat/ArtifactPanel";
@@ -75,7 +75,13 @@ function ErrorSistema({ error, onReintentar, generando }: { error: string; onRei
 
 /** Página del asistente: hilo centrado, composer y panel de artefacto (grid en ≥1024, Drawer en móvil). */
 export function ChatView({ marca, marcaNombre, chat, sugerencias, sinEntradas }: ChatViewProps): React.ReactElement {
-  const [panel, setPanel] = useState<ArtefactoUi | null>(null);
+  const [panel, setPanelState] = useState<ArtefactoUi | null>(null);
+  // Último artefacto mostrado: permite reabrir el panel tras cerrarlo.
+  const [ultimoPanel, setUltimoPanel] = useState<ArtefactoUi | null>(null);
+  const setPanel = useCallback((a: ArtefactoUi | null) => {
+    setPanelState(a);
+    if (a) setUltimoPanel(a);
+  }, []);
   const escritorio = useMediaQuery("lg");
   const scrollRef = useRef<HTMLDivElement>(null);
   const pegadoAbajo = useRef(true);
@@ -90,7 +96,7 @@ export function ChatView({ marca, marcaNombre, chat, sugerencias, sinEntradas }:
     },
     [],
   );
-  const onArtefacto = useCallback((a: ArtefactoUi) => setPanel(a), []);
+  const onArtefacto = useCallback((a: ArtefactoUi) => setPanel(a), [setPanel]);
 
   const s = useChatStream({ marca, chat, onDone, onArtefacto });
   const { mensajes, generando, estado, error, pensando } = s;
@@ -141,6 +147,14 @@ export function ChatView({ marca, marcaNombre, chat, sugerencias, sinEntradas }:
                   <div className="flex flex-col gap-1 pb-2 text-xs text-fg-dim">
                     <p className="break-words">Contexto del {fmtFecha(chat.contextoEn.slice(0, 10))}</p>
                     {chat.corridasNuevas && <p className="text-fg-muted">Hay corridas nuevas: abre un chat nuevo para incluirlas.</p>}
+                  </div>
+                )}
+                {!panelAbierto && ultimoPanel && (
+                  <div className="sticky top-0 z-10 flex justify-end pb-2">
+                    <Button onClick={() => setPanel(ultimoPanel)} size="sm" variant="outline">
+                      <PanelRightOpen aria-hidden="true" />
+                      Mostrar panel
+                    </Button>
                   </div>
                 )}
                 {inicial ? (
