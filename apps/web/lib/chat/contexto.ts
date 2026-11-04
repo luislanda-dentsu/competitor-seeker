@@ -4,9 +4,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  fechaLocal,
   leerLog,
   leerMarca,
   listarCorridas,
+  metricasCompetidor,
   repoRoot,
   type Corrida,
   type Entrada,
@@ -23,6 +25,8 @@ export interface PiezasContexto {
   entradas: readonly Entrada[];
   topeEntradas?: number;
   topeCaracteres?: number;
+  /** Fecha ISO de referencia para el bloque de rendimiento (tests). */
+  hoy?: string;
 }
 
 export interface Contexto {
@@ -61,6 +65,37 @@ export function seleccionarEntradas(
   return { lineas: elegidas.map((x) => x.linea), incluidas: elegidas.length };
 }
 
+/** Días de rendimiento que se resumen para el asistente. */
+export const DIAS_RENDIMIENTO = 90;
+
+/**
+ * Bloque de rendimiento por competidor (últimos DIAS_RENDIMIENTO días respecto de `hoy`):
+ * cifras agregadas + la lectura más reciente (bullets y estrategia). Vacío si no hay datos v2.1.
+ */
+export function serializarRendimiento(marca: Marca, corridas: readonly Corrida[], hoy: string): string[] {
+  const [a, m, d] = hoy.split("-").map(Number) as [number, number, number];
+  const desde = new Date(Date.UTC(a, m - 1, d - (DIAS_RENDIMIENTO - 1))).toISOString().slice(0, 10);
+  const lineas: string[] = [];
+  for (const c of marca.competidores) {
+    const r = metricasCompetidor(corridas, c.nombre, { periodo: { desde, hasta: hoy }, hoy });
+    if (r.cobertura === "sin-datos" && !r.lecturas.length) continue;
+    const n = (x: number | null) => (x === null ? "s/d" : String(x));
+    lineas.push(
+      `- ${c.nombre}: ${r.posts} posts (${n(r.cadenciaSemanal)}/sem) · seguidores ${n(r.seguidores.actual)} (Δ ${n(r.seguidores.delta)}) · ` +
+        `ER prom ${r.er.promedio === null ? "s/d" : `${r.er.promedio}%`} · likes ${r.likes.total} · comentarios ${r.comentarios.total} · ` +
+        `vistas ${r.vistas.total} · formatos ${Object.entries(r.formatos).map(([f, k]) => `${f} ${k}`).join(", ") || "s/d"} · cobertura ${r.cobertura}`,
+    );
+    const ultima = r.lecturas[0];
+    if (ultima) {
+      lineas.push(`  Lectura (${ultima.fecha}): ${ultima.resumen.join(" | ")}`);
+      if (ultima.estrategia) {
+        lineas.push(`  Estrategia (confianza ${ultima.estrategia.confianza}): ${ultima.estrategia.hipotesis.join(" | ")}`);
+      }
+    }
+  }
+  return lineas;
+}
+
 export function serializarContexto(p: PiezasContexto): Contexto {
   const { marca, corridas, soul, entradas } = p;
   const { lineas, incluidas } = seleccionarEntradas(entradas, p.topeEntradas, p.topeCaracteres);
@@ -89,6 +124,12 @@ export function serializarContexto(p: PiezasContexto): Contexto {
     `# Corridas (${corridas.length}; última registrada: ${ultimaCorrida ?? "ninguna"})`,
     "Formato: id · fecha · estado · intentos · verificación · entradas",
     ...corridasTxt,
+    "",
+    `# Rendimiento por competidor (últimos ${DIAS_RENDIMIENTO} días; cifras de corridas, no estimadas)`,
+    ...(() => {
+      const r = serializarRendimiento(marca, corridas, p.hoy ?? fechaLocal(new Date()));
+      return r.length ? r : ["(sin datos por publicación todavía)"];
+    })(),
     "",
     "# soul.md (criterio de análisis)",
     soul.trim() || "(vacío)",

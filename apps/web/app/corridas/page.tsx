@@ -45,7 +45,8 @@ async function CorridasContenido({ searchParams }: { searchParams: PageProps<"/c
     return { slug: m.slug, nombre: m.nombre, competidores: activos.length, perfilesIg: activos.filter((c) => c.instagram).length };
   });
   const { corridas: todas, invalidas } = listarCorridas(activa.slug);
-  const corridas = todas.filter((c) => enPeriodo(c.fecha, periodo));
+  // Las pendientes de confirmación se muestran siempre: requieren acción aunque estén fuera del periodo.
+  const corridas = todas.filter((c) => enPeriodo(c.fecha, periodo) || c.estado === "pendiente-confirmacion");
   const { enCurso } = estadoRunner();
 
   return (

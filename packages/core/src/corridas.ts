@@ -104,6 +104,17 @@ export function ultimaCorridaRegistrada(slug: string): FechaISO | null {
   return registradas.reduce<string>((max, c) => (c.fecha > max ? c.fecha : max), registradas[0]!.fecha)
 }
 
+/**
+ * Mayor `fecha` entre las corridas `registrada` en las que Instagram se inspeccionó de verdad
+ * (`ig.sesion: ok`), o null. Marca el inicio de la ventana de IG: si las corridas posteriores
+ * no tuvieron sesión, sus posts nunca se vieron y siguen siendo "nuevos".
+ */
+export function ultimaCorridaIgRegistrada(slug: string): FechaISO | null {
+  const conIg = listarCorridas(slug).corridas.filter((c) => c.estado === 'registrada' && c.ig?.sesion === 'ok')
+  if (conIg.length === 0) return null
+  return conIg.reduce<string>((max, c) => (c.fecha > max ? c.fecha : max), conIg[0]!.fecha)
+}
+
 /** Corrida `registrada` más reciente (por fecha, luego inicio), o null. */
 export function ultimaCorridaObjeto(corridas: readonly Corrida[]): Corrida | null {
   const registradas = corridas.filter((c) => c.estado === 'registrada')

@@ -2,6 +2,7 @@
 // Fuente principal: `publicaciones` / `perfiles` / `lecturas` de cada corrida (v2.1).
 // Corridas anteriores sin `publicaciones` aportan solo totales desde `Entrada.metricas`
 // (cobertura "parcial"). Nada se estima: sin seguidores, el ER es null.
+import { fechaLocal } from './corridas.ts'
 import type { Corrida } from './schemas/corrida.ts'
 import { clavePublicacion, type EstrategiaCompetidor, type FormatoPost, type Publicacion } from './schemas/publicacion.ts'
 
@@ -97,6 +98,18 @@ function seguidoresEn(c: Corrida, competidor: string): number | null {
   return c.perfiles?.find((p) => p.competidor === competidor)?.seguidores ?? null
 }
 
+function fuenteSeguidores(c: Corrida, competidor: string): string | null {
+  return c.perfiles?.find((p) => p.competidor === competidor)?.fuente ?? null
+}
+
+/** Ventana de rastreo por defecto de una primera corrida (sin ultimaCorrida). */
+const DIAS_PRIMERA_CORRIDA = 28
+
+function restarDias(iso: string, dias: number): string {
+  const [a, m, d] = iso.split('-').map(Number) as [number, number, number]
+  return new Date(Date.UTC(a, m - 1, d - dias)).toISOString().slice(0, 10)
+}
+
 /** Seguidores de la corrida indicada o, si no los tiene, del snapshot más cercano en fecha. */
 function seguidoresCercanos(corridas: readonly Corrida[], competidor: string, corridaId: string): number | null {
   const base = corridas.find((c) => c.id === corridaId)
@@ -131,10 +144,15 @@ function cifra(valores: readonly number[], legado: readonly { total: number; pos
   return { total, promedio: n ? redondear(base / n, 1) : null, n }
 }
 
-function diasPeriodo(p: Periodo, posts: readonly PostConEr[], hoy: string): number | null {
+/**
+ * Días observados del periodo: empieza en el más tardío entre `p.desde` y el inicio de la
+ * cobertura (lo que rastreó la primera corrida), para no diluir la cadencia en días sin datos.
+ */
+function diasPeriodo(p: Periodo, posts: readonly PostConEr[], hoy: string, coberturaDesde: string | null): number | null {
   const fin = p.hasta ?? hoy
-  const inicio = p.desde ?? posts.at(-1)?.fecha ?? null
-  if (!inicio) return null
+  const candidatos = [p.desde, coberturaDesde].filter((x): x is string => x !== null)
+  const inicio = candidatos.length ? candidatos.sort().at(-1)! : posts.at(-1)?.fecha ?? null
+  if (!inicio || inicio > fin) return null
   return Math.max(1, Math.round((Date.parse(fin) - Date.parse(inicio)) / DIA_MS) + 1)
 }
 
@@ -150,15 +168,25 @@ export function metricasCompetidor(
   o: OpcionesMetricas = {},
 ): MetricasCompetidor {
   const periodo = o.periodo ?? PERIODO_TODO
-  const hoy = o.hoy ?? new Date().toISOString().slice(0, 10)
+  const hoy = o.hoy ?? fechaLocal(new Date())
   const corridas = registradasAsc(corridasTodas)
 
-  // 1. Posts deduplicados: la corrida más reciente que vio el post fija sus cifras.
+  // 1. Posts deduplicados campo a campo: una corrida posterior actualiza las cifras que trae,
+  //    pero no borra las que solo tenía una anterior (p. ej. Apify antes, solo navegador después).
   const porClave = new Map<string, PostConEr>()
   for (const c of corridas) {
     for (const p of c.publicaciones ?? []) {
       if (p.competidor !== competidor) continue
-      porClave.set(clavePublicacion(p.url), { ...p, corrida: c.id, er: null })
+      const k = clavePublicacion(p.url)
+      const previa = porClave.get(k)
+      const definidos = Object.fromEntries(Object.entries(p).filter(([, v]) => v !== undefined)) as Publicacion
+      const traeCifras = p.likes !== undefined || p.comentarios !== undefined || p.vistas !== undefined
+      porClave.set(k, {
+        ...(previa ?? {}),
+        ...definidos,
+        corrida: !previa || traeCifras ? c.id : previa.corrida,
+        er: null,
+      })
     }
   }
   const publicaciones = [...porClave.values()]
@@ -167,11 +195,19 @@ export function metricasCompetidor(
     .sort((a, b) => b.fecha.localeCompare(a.fecha))
 
   // 2. Fallback: corridas sin `publicaciones` aportan totales de Entrada.metricas del periodo.
-  const legado = corridas
+  //    Solo la corrida antigua más reciente con cifras (sus ventanas se solapan entre corridas)
+  //    y solo entradas agregadas con recuento de posts (las demás duplican posts sueltos).
+  const legadoPorCorrida = corridas
     .filter((c) => c.publicaciones === undefined)
-    .flatMap((c) => c.entradas)
-    .filter((e) => e.marca === competidor && e.metricas && enPeriodo(e.fecha, periodo))
-    .map((e) => e.metricas!)
+    .map((c) =>
+      c.entradas
+        .filter((e) => e.marca === competidor && e.metricas?.posts !== undefined && enPeriodo(e.fecha, periodo))
+        .map((e) => e.metricas!),
+    )
+    .filter((xs) => xs.length > 0)
+  // Si ya hay datos por publicación en el periodo, el legado se ignora: cubre los mismos posts
+  // y sumarlo duplicaría (corrida parval 2026-11-04 16:32 + la de las 12:43).
+  const legado = publicaciones.length ? [] : (legadoPorCorrida.at(-1) ?? [])
   const sumar = (k: 'posts') => legado.reduce((a, m) => a + (m[k] ?? 0), 0)
   const delLegado = (k: 'likes' | 'comentarios' | 'vistas') =>
     legado.flatMap((m) => (m[k] === undefined ? [] : [{ total: m[k]!, ...(m.posts !== undefined ? { posts: m.posts } : {}) }]))
@@ -197,9 +233,14 @@ export function metricasCompetidor(
     .map((c) => ({ c, s: seguidoresEn(c, competidor) }))
     .filter((x): x is { c: Corrida; s: number } => x.s !== null)
   const enRango = snaps.filter((x) => enPeriodo(x.c.fecha, periodo))
-  const antes = snaps.filter((x) => periodo.desde !== null && x.c.fecha < periodo.desde).at(-1)
-  const actual = enRango.at(-1)?.s ?? null
-  const referencia = antes?.s ?? (enRango.length > 1 ? enRango[0]!.s : null)
+  const ultimo = enRango.at(-1)
+  const actual = ultimo?.s ?? null
+  // El delta solo compara snapshots de la misma fuente (IG redondea "12,3 mil"; Apify es exacto).
+  const fuente = ultimo ? fuenteSeguidores(ultimo.c, competidor) : null
+  const misma = snaps.filter((x) => fuenteSeguidores(x.c, competidor) === fuente)
+  const antes = misma.filter((x) => periodo.desde !== null && x.c.fecha < periodo.desde).at(-1)
+  const enRangoMisma = misma.filter((x) => enPeriodo(x.c.fecha, periodo))
+  const referencia = antes?.s ?? (enRangoMisma.length > 1 ? enRangoMisma[0]!.s : null)
   const delta = actual !== null && referencia !== null ? actual - referencia : null
 
   // 4. Serie y lecturas por corrida del periodo.
@@ -233,7 +274,9 @@ export function metricasCompetidor(
     .sort((a, b) => (b.er ?? -1) - (a.er ?? -1) || ((b.likes ?? 0) + (b.comentarios ?? 0)) - ((a.likes ?? 0) + (a.comentarios ?? 0)) || (b.vistas ?? 0) - (a.vistas ?? 0))
     .slice(0, 3)
 
-  const dias = diasPeriodo(periodo, publicaciones, hoy)
+  const primera = corridas.find((c) => c.competidores.includes(competidor)) ?? corridas[0]
+  const coberturaDesde = primera ? primera.ultimaCorrida ?? restarDias(primera.fecha, DIAS_PRIMERA_CORRIDA) : null
+  const dias = diasPeriodo(periodo, publicaciones, hoy, coberturaDesde)
   const vistas = valores('vistas')
   const cobertura: Cobertura = publicaciones.length ? (legado.length ? 'parcial' : 'completa') : legado.length ? 'parcial' : 'sin-datos'
 

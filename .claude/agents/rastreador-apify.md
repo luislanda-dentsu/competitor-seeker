@@ -31,7 +31,7 @@ Eres el rastreador Apify del proyecto Competitor-Seeker. Complementas al rastrea
 
 Devuelve el JSON `{ "hallazgos": "<texto>", "resultados": <n resultados devueltos en total, posts + details>, "runId": "<id del run de posts si lo conoces>", "publicaciones": [...], "perfiles": [...] }`.
 
-- `publicaciones`: un objeto por post: `{ "competidor": "<nombre>", "url": "<url>", "fecha": "AAAA-MM-DD" (de timestamp), "formato": Video con productType clips → "reel", Video → "video", Sidecar → "carrusel", Image → "imagen", "tema": "<caption ≤140>", "likes": likesCount, "comentarios": commentsCount, "vistas": videoViewCount o videoPlayCount }`. Omite toda cifra ausente o `-1` (nunca 0 ni null).
+- `publicaciones`: un objeto por post: `{ "competidor": "<nombre>", "url": "<url>", "fechaHora": timestamp tal cual (ISO UTC), "fecha": "AAAA-MM-DD" (parte de fecha del timestamp; el workflow la convierte a hora local), "formato": Video con productType clips → "reel", Video → "video", Sidecar → "carrusel", Image → "imagen", "tema": "<caption ≤140>", "likes": likesCount, "comentarios": commentsCount, "vistas": videoViewCount o videoPlayCount }`. Omite toda cifra ausente o `-1` (nunca 0 ni null).
 - `perfiles`: `{ "competidor": "<nombre>", "seguidores": followersCount, "publicacionesTotales": postsCount }`, omitiendo lo ausente.
 
 `hallazgos` sigue este contrato, un bloque por perfil:

@@ -73,10 +73,35 @@ describe("contexto", () => {
     expect(c.texto).toContain("0000000000000001 · Comp · 2026-08-20 · nuevo");
   });
 
+  it("incluye el rendimiento por competidor con la lectura y la estrategia más recientes", () => {
+    const conDatos: Corrida = {
+      ...corrida,
+      id: "2026-11-01-y",
+      fecha: "2026-11-01",
+      publicaciones: [{ competidor: "A", url: "https://www.instagram.com/p/Q1/", fecha: "2026-10-30", formato: "reel", likes: 90, comentarios: 10, fuente: "apify" }],
+      perfiles: [{ competidor: "A", seguidores: 1000, fuente: "apify" }],
+      lecturas: [
+        {
+          competidor: "A",
+          resumen: ["Reel de lanzamiento"],
+          estrategia: { hipotesis: ["Empuja producto nuevo"], pilares: [], formatosYCadencia: "Reels", implicaciones: [], confianza: "baja", postsCitados: [] },
+        },
+      ],
+    };
+    const c = serializarContexto({ marca, corridas: [corrida, conDatos], soul: "", entradas: [], hoy: "2026-11-04" });
+    expect(c.texto).toContain("# Rendimiento por competidor (últimos 90 días");
+    expect(c.texto).toContain("- A: 1 posts");
+    expect(c.texto).toContain("ER prom 10%");
+    expect(c.texto).toContain("Lectura (2026-11-01): Reel de lanzamiento");
+    expect(c.texto).toContain("Estrategia (confianza baja): Empuja producto nuevo");
+    expect(c.texto).not.toContain("- B: ");
+  });
+
   it("log vacío y sin corridas", () => {
     const c = serializarContexto({ marca, corridas: [], soul: "", entradas: [] });
     expect(c.ultimaCorrida).toBeNull();
     expect(c.texto).toContain("(ninguna corrida)");
     expect(c.texto).toContain("el log está vacío");
+    expect(c.texto).toContain("(sin datos por publicación todavía)");
   });
 });

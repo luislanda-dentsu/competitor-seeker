@@ -10,6 +10,8 @@ export interface DatosPromptCorrida {
   marca: string
   fechaCorrida: string
   ultimaCorrida: string | null
+  /** Última corrida registrada con Instagram inspeccionado (`ig.sesion: ok`). */
+  ultimaCorridaIg?: string | null
   corridaId: string
   apify: ApifyPrompt
 }
@@ -67,13 +69,14 @@ export function promptCorrida(d: DatosPromptCorrida): string {
     : `Apify DESHABILITADO${d.apify.motivo ? ` (${d.apify.motivo})` : ''}: no lances el rastreador-apify.`
   return [
     `Ejecuta una corrida de Competitor-Seeker para la marca "${d.marca}".`,
-    `Fecha de la corrida: ${d.fechaCorrida}. Última corrida registrada: ${d.ultimaCorrida ?? 'ninguna (primera corrida)'}. corridaId: ${d.corridaId}.`,
+    `Fecha de la corrida: ${d.fechaCorrida}. Última corrida registrada: ${d.ultimaCorrida ?? 'ninguna (primera corrida)'}. ` +
+      `Última corrida con Instagram inspeccionado: ${d.ultimaCorridaIg ?? 'ninguna'}. corridaId: ${d.corridaId}.`,
     estadoApify,
     '',
     'MODO HEADLESS: nadie puede responder preguntas; no uses AskUserQuestion ni esperes confirmación.',
     'El Workflow corre en segundo plano y te notifica al terminar: espera esa notificación sin programar despertadores ni monitores, y termina en cuanto registres y devuelvas el JSON.',
     `Sigue el grafo de CLAUDE.md lanzando el workflow .claude/workflows/corrida.js por scriptPath con args ` +
-      `{ marca, fechaCorrida, ultimaCorrida, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, competidores }.`,
+      `{ marca, fechaCorrida, ultimaCorrida, ultimaCorridaIg: ${JSON.stringify(d.ultimaCorridaIg ?? null)}, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, competidores }.`,
     `La decisión de Apify ya está tomada (${d.apify.habilitado ? 'habilitado' : 'omitido'}${d.apify.motivo ? `, motivo: ${d.apify.motivo}` : ''}): ` +
       'no la re-decidas; no consultes `scripts/cs apify-uso` ni cambies `apify.habilitado` al pasarlo al workflow.',
     `Registra SIEMPRE con \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui --desde-workflow <ruta>\` ` +
