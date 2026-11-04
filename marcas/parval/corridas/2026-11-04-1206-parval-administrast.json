@@ -4,17 +4,32 @@
   "fecha": "2026-11-04",
   "ultimaCorrida": null,
   "inicio": "2026-11-04T16:06:21.266Z",
-  "fin": "2026-11-04T16:14:20.924Z",
-  "duracionMs": 479658,
-  "estado": "error",
+  "fin": "2026-11-04T16:32:16.020Z",
+  "duracionMs": 1554754,
+  "estado": "descartada",
   "verificado": false,
-  "intentos": 0,
-  "objeciones": [],
-  "fuentes": [],
+  "intentos": 3,
+  "objeciones": [
+    {
+      "marca": "United Capital",
+      "problema": "La lectura de la entrada 2026-11-04 afirma que United Capital tiene \"el promedio de likes por post más alto de las cinco marcas\" (147). Es falso según el bloque APIFY: Interval promedia 298 likes/post (1191 likes en 4 posts), casi el doble. Los demás promedios son Excel 131, Alpha 88 y CCI 79. Hay que corregir la lectura: United es la segunda, o retirar el superlativo."
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "problema": "En la entrada del 2026-10-30 (campaña #15AñosAlpha), `metricas` no corresponde a lo narrado. `likes: 9` y `comentarios: 0` son solo del post del 30 oct, pero `posts: 3` sugiere un agregado de tres piezas. Esas tres piezas son: 30 oct con 9 likes, 3 nov con 4 likes y el post del 26 oct con 39 likes. Además, el post del 26 oct (#GigantesDelCibao, sidecar) y el del 4 nov se mezclan con las \"piezas tipográficas #15AñosAlpha\", aunque en los hallazgos son otra línea temática (analogía del béisbol, no tipográfica). La lectura \"4 a 39 likes en estas piezas\" arrastra esa mezcla. Hay que separar las piezas de #15AñosAlpha (9 y 4 likes) de #GigantesDelCibao, y poner en `metricas` cifras que sumen sobre un mismo conjunto."
+    }
+  ],
+  "fuentes": [
+    "web",
+    "ig",
+    "apify"
+  ],
   "apify": {
-    "resultados": 0,
-    "costeEstimadoUsd": 0,
-    "omitido": false
+    "resultados": 29,
+    "costeEstimadoUsd": 0.0783,
+    "incluido": true,
+    "omitido": false,
+    "runId": "2CXkntVfHAhJdH6P1"
   },
   "competidores": [
     "Interval",
@@ -23,9 +38,220 @@
     "Alpha Sociedad de Valores",
     "United Capital"
   ],
-  "entradas": [],
+  "entradas": [
+    {
+      "marca": "Interval Puesto de Bolsa",
+      "fecha": "2026-10-27",
+      "movimiento": "Reel colaborativo con @nahiony sobre ahorro e inversión para los hijos, mencionando a @interval.rd. Apify: 1.408 likes, 58 comentarios y 33.617 vistas, frente a los reels propios de la misma ventana con 409 y 415 likes y 41.813 y 41.677 vistas.",
+      "senal": "nuevo",
+      "lectura": "El reel con la creadora externa registra más interacción (likes y comentarios) que los reels propios, pero menos vistas; con esta evidencia no se puede afirmar mayor alcance ni un patrón.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 1408,
+        "comentarios": 58,
+        "vistas": 33617
+      },
+      "id": "0ff86ee360505d70",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Interval Puesto de Bolsa",
+      "fecha": "2026-10-12",
+      "movimiento": "Reel de @economicsdata (influencer) en colaboración con Interval: presenta 3 inversiones y usa el CTA 'Comenta INTERVAL' para enviar el link de la app y abrir cuenta. El navegador muestra 1,5 mil likes y 708 comentarios, mayoría 'Invertir'/'Interval'. Apify no cubre esta fecha y no hay vistas.",
+      "senal": "nuevo",
+      "lectura": "Es el único caso observado con CTA de comentario en contenido de terceros sobre Interval; genera mucha interacción en comentarios, pero sin vistas ni segundo caso no hay base para generalizar.",
+      "fuentes": [
+        "ig"
+      ],
+      "metricas": {
+        "likes": 1500,
+        "comentarios": 708
+      },
+      "id": "0612bfdff29edfe7",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Interval Puesto de Bolsa",
+      "fecha": "2026-11-03",
+      "movimiento": "Línea propia centrada en eventos para clientes y educación: celebración de los 10 años de ANA + MARÍA (155 likes, 15 comentarios), Season of Change en Santiago (212 likes, 5 comentarios) y reels de Season of Change e Interval Talks. Apify registra 4 posts propios entre el 21 oct y el 4 nov, promedio de 298 likes.",
+      "senal": "nuevo",
+      "lectura": "Interval combina eventos de relación con clientes y educación financiera en una cadencia de unos 2 posts por semana; el promedio de 298 likes por post es el dato de comparación disponible en esta corrida.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 1191,
+        "comentarios": 37,
+        "vistas": 83490,
+        "posts": 4
+      },
+      "id": "0c24e867708d6e2c",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Interval Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Búsquedas web y prensa (elDinero, ranking de Hacienda) sin contenido, campaña, patrocinio ni cambio de sitio fechado entre ~7 oct y 4 nov 2026. Sitio oficial, TikTok y YouTube no revisados por falta de resultados. Identidad de @interval.rd no confirmada formalmente.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web verificable en el periodo; el contexto de ranking (primero en activos a julio 2026, según elDinero) está fuera de ventana.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "f1a49470a2e3c0ba",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-10-28",
+      "movimiento": "Apify registra 2 posts en la ventana: reel de tono emocional (#HablemosClaroCCI, 79 likes, 6 comentarios, 1.121 vistas) y carrusel de la Subasta Competitiva de Notas del Banco Central (79 likes, 1 comentario). El navegador añade piezas de producto previas (subastas, emisiones) con 35 a 110 likes.",
+      "senal": "nuevo",
+      "lectura": "En esta corrida CCI promedia 79 likes por post según Apify, frente a 88 de Alpha, 131 de Excel y 147 de United Capital; la comparación no está normalizada por seguidores ni existe serie histórica previa.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 158,
+        "comentarios": 7,
+        "vistas": 1121,
+        "posts": 2
+      },
+      "id": "06ff95b776edd662",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Revisión de cci.com.do (home y noticias), prensa dominicana, BVRD y ranking de Hacienda: sin prensa ni campaña fechada en oct-nov 2026. Las noticias del sitio no muestran fechas. La convocatoria 2026 de la Beca Avanza Sin Límites no se pudo abrir ni fechar.",
+      "senal": "sin-datos",
+      "lectura": "No hay movimiento web confirmable en el periodo; la convocatoria de la beca queda como dato sin verificar.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "29b1f978c596f908",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-10-27",
+      "movimiento": "Carrusel del Fondo Dinámico Excel Dólares con CTA 'Comenta DÓLARES'. Apify: 190 likes y 52 comentarios. Previamente, el 15 oct, un carrusel con CTA 'Comenta Fondos' (314 likes según el navegador). El 2 nov, post de imagen sobre la iniciativa SIPEN (71 likes, 0 comentarios).",
+      "senal": "nuevo",
+      "lectura": "Excel usa CTA 'Comenta X' en sus posts de producto; el de dólares generó 52 comentarios, mucho más que el post institucional de SIPEN (0), con solo dos posts en la ventana de Apify.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 261,
+        "comentarios": 52,
+        "posts": 2
+      },
+      "id": "e029fed2c2e83b15",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-11-04",
+      "movimiento": "Sitio excel.com.do: campaña 'decisiones excelentes' sin fecha de inicio, blog sin entradas entre el 7 oct y el 4 nov (última, 2 jul 2026) y sin cobertura de prensa en la ventana. Los lanzamientos de fondos no se pudieron fechar.",
+      "senal": "sin-datos",
+      "lectura": "No se detectó movimiento web fechado en el periodo; la campaña del carrusel del sitio no puede asignarse a esta corrida.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "0afced93e769bedc",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-10-30",
+      "movimiento": "Piezas tipográficas de la campaña #15AñosAlpha y el lema 'Tu inversión, tu decisión': 9 likes y 0 comentarios (30 oct) y 4 likes y 1 comentario (3 nov). El post de #GigantesDelCibao del 26 oct tuvo 39 likes. Los posts del 3 y 4 nov son muy recientes. En el periodo de Apify, Alpha va de 4 a 279 likes por post.",
+      "senal": "nuevo",
+      "lectura": "Alpha abre una campaña tipográfica ligada a sus 15 años; con las cifras disponibles (4 a 39 likes en estas piezas) su rendimiento es bajo frente a otros formatos de la cuenta, pero el dato es aún insuficiente para concluir.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 9,
+        "comentarios": 0,
+        "posts": 3
+      },
+      "id": "644f8b433d2db99e",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-10-30",
+      "movimiento": "Reel colaborativo de @hectoradriel sobre la actualización de la app de Alpha (cartera, carta consular y constancia de inversión). Apify: 6.305 likes, 181 comentarios y 88.513 vistas, fuera de las métricas propias de Alpha, cuyos 11 posts suman 15.416 vistas en 5 videos.",
+      "senal": "nuevo",
+      "lectura": "El contenido con influencer sobre la app concentra la mayor interacción y vistas observadas de Alpha; los posts propios van de 4 a 279 likes.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 6305,
+        "comentarios": 181,
+        "vistas": 88513
+      },
+      "id": "bf14d9c750798ad9",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-11-04",
+      "movimiento": "Prensa y alpha.com.do sin noticias ni campañas fechadas en oct-nov 2026. El 15.º aniversario figura como 'previsto para noviembre' en una sola nota de elDinero (29 jul), sin detalle. El home muestra un pop-up 'enero' ilegible.",
+      "senal": "sin-datos",
+      "lectura": "No hay movimiento web fechado en el periodo; el aniversario de noviembre solo se apoya en una fuente, aunque coincide con #15AñosAlpha en Instagram.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "1ffc870538287a35",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2026-11-04",
+      "movimiento": "Contenido propio dominado por eventos, RSE y cultura interna: cóctel de la APB (107 likes), Oktoberfest UC (193 likes) y cobertura del Congreso Grupo Rizek (68 a 254 likes). Apify registra 6 posts, 5 de ellos carruseles, con promedio de 147 likes y 7 comentarios en total.",
+      "senal": "nuevo",
+      "lectura": "United Capital tiene el promedio de likes por post más alto de las cinco marcas en esta corrida (147), con casi nada de producto; la comparación no está normalizada por seguidores.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 879,
+        "comentarios": 7,
+        "vistas": 2505,
+        "posts": 6
+      },
+      "id": "e86b5d1d66548928",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2026-10-28",
+      "movimiento": "Prensa (Listín Diario): tercera parada del United Capital Pádel Tour 2026 en Punta Cana (15 al 18 oct), con más de 140 jugadores; master final previsto para noviembre en Santo Domingo. El sitio oficial no se pudo consultar.",
+      "senal": "nuevo",
+      "lectura": "United Capital sostiene un circuito propio de pádel con hito en noviembre; no hay métricas de interacción, solo cobertura de prensa y el número de jugadores.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "1ca4a6208b9448f9",
+      "corrida": "2026-11-04-1206-parval-administrast"
+    }
+  ],
   "modo": "ui",
   "maquina": "Administrastors-MacBook-Air.local",
   "sessionId": "2f5a48e8-ad07-4e2c-afea-37d5a28e1df6",
-  "error": "el orquestador terminó (código 0) sin registrar la corrida: {\"corridaId\":\"2026-11-04-1206-parval-administrast\",\"estado\":\"no-registrada-permiso-denegado\",\"verificado\":false,\"intentos\":3,\"entradas\":13,\"igSesion\":\"ok\"}"
+  "ig": {
+    "sesion": "ok"
+  },
+  "git": {
+    "pushed": true
+  }
 }
