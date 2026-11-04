@@ -1,38 +1,17 @@
 import { Download, FolderOpen, Play } from "lucide-react";
 import { after } from "next/server";
 import { pullSiToca } from "@competitor-seeker/core";
-import { FunnelBars } from "@/components/app/charts/FunnelBars";
-import { SignalDistribution } from "@/components/app/charts/SignalDistribution";
-import { SignalTrendChart } from "@/components/app/charts/SignalTrendChart";
-import { CompetitorList } from "@/components/app/home/CompetitorList";
-import { RunTimeline } from "@/components/app/home/RunTimeline";
+import { ActividadCompetidorCard } from "@/components/app/home/ActividadCompetidorCard";
 import { KpiCard } from "@/components/app/kpi/KpiCard";
+import { PeriodoSelector } from "@/components/app/periodo/PeriodoSelector";
 import { EmptyState } from "@/components/app/states/EmptyState";
 import { LogAlert } from "@/components/app/states/LogAlert";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { getMarcaActiva } from "@/lib/brand";
+import { cargarActividad } from "@/lib/data/actividad";
 import { cargarDatosMarca, type DatosMarca } from "@/lib/data/marca";
 import { fmtFecha } from "@/lib/format";
-
-function Seccion({
-  titulo,
-  children,
-  className,
-}: {
-  titulo: string;
-  children: React.ReactNode;
-  className?: string;
-}): React.ReactElement {
-  return (
-    <Card className={className} data-section={titulo}>
-      <CardHeader className="p-5 pb-3">
-        <CardTitle className="t-label">{titulo}</CardTitle>
-      </CardHeader>
-      <CardPanel className="flex flex-col p-5 pt-0">{children}</CardPanel>
-    </Card>
-  );
-}
+import { periodoDeRequest } from "@/lib/periodo-servidor";
 
 function etiquetaUltimaCorrida(datos: DatosMarca): string {
   const u = datos.kpis.ultimaCorrida;
@@ -85,7 +64,11 @@ function Kpis({ datos }: { datos: DatosMarca }): React.ReactElement {
  * marca sin entradas → Empty "Correr ahora"; log con líneas ilegibles →
  * Alert (sin ocultar los datos legibles).
  */
-export async function Resumen(): Promise<React.ReactElement> {
+export async function Resumen({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<React.ReactElement> {
   // Pull de fondo (throttle 60 s) sin bloquear el render; nunca lanza.
   after(() => {
     void pullSiToca().catch(() => undefined);
@@ -101,8 +84,9 @@ export async function Resumen(): Promise<React.ReactElement> {
       />
     );
   }
+  const periodo = await periodoDeRequest(searchParams);
   const datos = cargarDatosMarca(slug);
-  const { entradas, kpis, conteo, serie, competidores, lineasInvalidas } = datos;
+  const { entradas, kpis, lineasInvalidas } = datos;
 
   const alerta = (
     <LogAlert
@@ -127,47 +111,43 @@ export async function Resumen(): Promise<React.ReactElement> {
     );
   }
 
-  const conEvidencia = entradas.filter((e) => e.senal !== "sin-datos").length;
-  const etapas = [
-    { label: "Competidores", n: kpis.competidoresVigilados, pct: 100 },
-    { label: "Entradas", n: entradas.length, pct: 100 },
-    { label: "Con evidencia", n: conEvidencia, pct: (conEvidencia / entradas.length) * 100 },
-    { label: "Nuevos", n: conteo.nuevo, pct: (conteo.nuevo / entradas.length) * 100 },
-  ];
+  const actividad = cargarActividad(slug, periodo);
+  const conPosts = actividad.filter((a) => a.metricas.posts > 0).length;
 
   return (
     <div className="flex flex-col gap-4">
       {alerta}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="min-w-0 break-words text-sm text-fg-muted">{datos.marca.nombre}</p>
-        <Button render={<a download href={`/api/marcas/${encodeURIComponent(slug)}/export`} />} size="sm" variant="outline">
-          <Download aria-hidden="true" />
-          Exportar HTML
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <PeriodoSelector periodo={periodo} />
+          <Button render={<a download href={`/api/marcas/${encodeURIComponent(slug)}/export`} />} size="sm" variant="outline">
+            <Download aria-hidden="true" />
+            Exportar HTML
+          </Button>
+        </div>
       </div>
       <Kpis datos={datos} />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Seccion className="lg:col-span-8" titulo="Tendencia de señales">
-          <SignalTrendChart serie={serie} />
-        </Seccion>
-        <Seccion className="lg:col-span-4" titulo="Distribución">
-          <SignalDistribution conteo={conteo} pctConEvidencia={kpis.pctConEvidencia} />
-        </Seccion>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Seccion className="lg:col-span-4" titulo="Cadena de evidencia">
-          <FunnelBars etapas={etapas} />
-        </Seccion>
-        <Seccion className="lg:col-span-8" titulo="Competidores">
-          <CompetitorList competidores={competidores} />
-        </Seccion>
-      </div>
-
-      <Seccion titulo="Corridas">
-        <RunTimeline serie={serie} />
-      </Seccion>
+      <section aria-labelledby="actividad-titulo" className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="t-label" id="actividad-titulo">
+            Actividad por competidor
+          </h2>
+          <span className="text-xs text-fg-muted">
+            {periodo.etiqueta} · {conPosts} de {actividad.length} con publicaciones
+          </span>
+        </div>
+        {actividad.length === 0 ? (
+          <p className="text-sm text-fg-muted">No hay competidores activos en la lista de vigilancia.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {actividad.map((a) => (
+              <ActividadCompetidorCard actividad={a} key={a.competidor.slug} query={periodo.query} />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
