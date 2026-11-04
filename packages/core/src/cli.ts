@@ -3,7 +3,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { decidirApifyDesdeEstado } from './apify/limites.ts'
+import { obtenerUsoActual } from './apify/actual.ts'
 import { leerConfig } from './config.ts'
 import { existeCorrida, fechaLocal, guardarCorrida, leerCorrida, nuevoIdCorrida, ultimaCorridaRegistrada } from './corridas.ts'
 import { describirErrorZod } from './jsonl.ts'
@@ -257,10 +257,10 @@ function cmdConfirmar(a: ArgsCli): Promise<unknown> {
   })
 }
 
-/** Misma decisión que toma la UI al lanzar (`decidirApifyDesdeEstado`). */
+/** Misma decisión (y misma caché de 10 min) que toma la UI al lanzar: `obtenerUsoActual`. */
 async function cmdApifyUso(): Promise<unknown> {
-  const { uso, ...decision } = await decidirApifyDesdeEstado()
-  return { ...decision, ...(uso ?? {}) }
+  const { configurado, uso, decision, muestreadoEn, error } = await obtenerUsoActual()
+  return { configurado, ...decision, ...(uso ?? {}), ...(muestreadoEn ? { muestreadoEn } : {}), ...(error ? { error } : {}) }
 }
 
 function cmdMarca(a: ArgsCli): unknown {
