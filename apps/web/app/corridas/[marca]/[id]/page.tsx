@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConfirmActions } from "@/components/app/runs/ConfirmActions";
-import { agruparObjeciones } from "@/components/app/runs/ConfirmDialog";
+import { agruparObjeciones } from "@/lib/runs/objeciones";
 import { EstadoBadge } from "@/components/app/runs/EstadoBadge";
 import { RunConsoleView } from "@/components/app/runs/RunConsole";
 import { SignalBadge } from "@/components/app/signals/SignalBadge";
