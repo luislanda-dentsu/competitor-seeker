@@ -119,7 +119,19 @@ describe('metricasCompetidor', () => {
     expect(metricasCompetidor([c1, c2, ig], CC, { hoy: '2026-11-10' }).seguidores).toEqual({ actual: 11_000, delta: null })
   })
 
-  it('sin datos: cobertura sin-datos y cifras vacías', () => {
+  it('con datos por publicación en el periodo, el legado no se suma (evita duplicar posts)', () => {
+    const vieja = corrida({
+      id: '2026-10-19-m',
+      fecha: '2026-10-19',
+      entradas: [{ id: '0123456789abcdef', corrida: '2026-10-19-m', marca: CC, fecha: '2026-10-18', movimiento: 'x', senal: 'nuevo', lectura: 'y', metricas: { likes: 400, posts: 4 } }],
+    })
+    const m = metricasCompetidor([vieja, c1], CC, { hoy: '2026-11-04' })
+    expect(m.posts).toBe(2)
+    expect(m.likes.total).toBe(130)
+    expect(m.cobertura).toBe('completa')
+  })
+
+    it('sin datos: cobertura sin-datos y cifras vacías', () => {
     const m = metricasCompetidor([], CC, { hoy: '2026-11-04' })
     expect(m.cobertura).toBe('sin-datos')
     expect(m.posts).toBe(0)

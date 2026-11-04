@@ -205,7 +205,9 @@ export function metricasCompetidor(
         .map((e) => e.metricas!),
     )
     .filter((xs) => xs.length > 0)
-  const legado = legadoPorCorrida.at(-1) ?? []
+  // Si ya hay datos por publicación en el periodo, el legado se ignora: cubre los mismos posts
+  // y sumarlo duplicaría (corrida parval 2026-11-04 16:32 + la de las 12:43).
+  const legado = publicaciones.length ? [] : (legadoPorCorrida.at(-1) ?? [])
   const sumar = (k: 'posts') => legado.reduce((a, m) => a + (m[k] ?? 0), 0)
   const delLegado = (k: 'likes' | 'comentarios' | 'vistas') =>
     legado.flatMap((m) => (m[k] === undefined ? [] : [{ total: m[k]!, ...(m.posts !== undefined ? { posts: m.posts } : {}) }]))
