@@ -84,14 +84,14 @@ Si el workflow no está disponible, ejecuta el grafo a mano: rastreadores en par
 Si el prompt dice **MODO HEADLESS** (la app web lanzó la corrida con `claude -p`): nadie puede responder preguntas → nunca uses AskUserQuestion; no uses Write/Edit; registra siempre con `scripts/cs registrar … --desde-workflow <output_file>` (`--pendiente` si el verificador no aprobó tras 3 intentos); no re-decidas Apify: viene decidido en el prompt; si Instagram reporta `SESIÓN NO DISPONIBLE`, sigue con web (+Apify) y déjalo en el JSON (`ig.sesion: "no-disponible"`); termina devolviendo el JSON pedido.
 
 ## Sesión de Instagram (Claude in Chrome)
-El rastreador-ig usa **Claude in Chrome** (`mcp__claude-in-chrome__*`) sobre el Chrome del usuario, en el perfil donde está instalada la extensión y la cuenta IG dedicada de la agencia ya tiene sesión. No hay perfil de Chrome aparte ni MCP chrome-devtools. En headless el runner pasa `--chrome`. Solo lectura: jamás like/follow/comentario; el agente trabaja en una pestaña propia y la cierra.
-Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que abra Chrome (perfil con la extensión), compruebe que Instagram está logueado y que la extensión Claude in Chrome está conectada. Challenge/captcha → la corrida sigue solo con web (+Apify); no se reintenta en bucle.
+El rastreador-ig usa el **MCP chrome-devtools** (`mcp__chrome-devtools__*`, definido en `.mcp.json` → `scripts/chrome-ig.sh mcp`) sobre un **perfil de Chrome dedicado** (`CS_CHROME_PROFILE` o `~/.competitor-seeker/chrome-profile`) donde la cuenta IG de la agencia tiene sesión. Login una vez por Mac: `scripts/chrome-ig.sh login` (o Ajustes → Abrir Instagram) y cerrar esa ventana. Claude in Chrome ya no se usa (el runner no pasa `--chrome`). Solo lectura: jamás like/follow/comentario; el agente abre su propia página y la cierra.
+Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicado si está abierto (SingletonLock) y, si IG pide login, rehaga `scripts/chrome-ig.sh login`. Challenge/captcha → la corrida sigue solo con web (+Apify); no se reintenta en bucle.
 
 ## Apify
 `rastreador-apify` usa `mcp__apify__apify--instagram-scraper` (free tier $5/mes, ≈$0.0027/resultado). Solo entra si `scripts/cs apify-uso` lo habilita (presupuestos y umbrales en `config.json`; token en `data/secrets.json` o `APIFY_TOKEN`). El coste estimado de cada corrida queda en `corridas/<id>.json`.
 
 ## Build & Run
-- `npm install` · `cp .env.example .env.local` (rellena `CLAUDE_BIN` absoluto si hace falta) · Chrome abierto con la extensión Claude in Chrome e Instagram logueado
+- `npm install` · `cp .env.example .env.local` (rellena `CLAUDE_BIN` absoluto si hace falta) · una vez: `scripts/chrome-ig.sh login` (perfil dedicado con IG logueado) y cerrar esa ventana
 - `npm run dev` → http://localhost:3030 · `./scripts/cs --help`
 - Segunda Mac: `scripts/setup-maquina.sh`
 
@@ -115,4 +115,4 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que abra Chrome (perfil con 
 - El campo `marca` de cada Entrada es el **nombre del competidor** (herencia del v1); la marca-carpeta es `slug`. La UI nunca lo llama "marca".
 - `Workflow` por nombre puede resolver un snapshot viejo: siempre `scriptPath`.
 - En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`); con un JSON largo en la línea (heredoc o here-string) el filtro también deniega → `--desde-workflow <archivo>`.
-- Claude in Chrome solo existe si Chrome (perfil con la extensión) está abierto; en `claude -p` hay que pasar `--chrome` o los tools `mcp__claude-in-chrome__*` no aparecen.
+- chrome-devtools-mcp: `--isolated` y `--user-data-dir` son excluyentes (no los combines). Si el perfil dedicado está abierto en otra ventana, el MCP no puede lanzar Chrome → `SESIÓN NO DISPONIBLE`. Los tools solo aparecen si el servidor está aprobado (`enabledMcpjsonServers` en `.claude/settings.json`).

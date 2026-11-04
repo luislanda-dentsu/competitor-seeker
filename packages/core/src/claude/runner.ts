@@ -18,8 +18,8 @@ export interface OpcionesClaude {
   resume?: string
   agent?: string
   /**
-   * `--chrome` (Claude in Chrome). Por defecto solo para el orquestador (sin
-   * `agent`); un agente como el asistente no navega y no lo lleva.
+   * `--chrome` (Claude in Chrome). Desactivado por defecto: Instagram se rastrea
+   * con el MCP chrome-devtools de `.mcp.json` (perfil dedicado), no con la extensión.
    */
   chrome?: boolean
   /** Objeto o string JSON para `--json-schema`. */
@@ -68,7 +68,7 @@ export function argsClaude(o: OpcionesClaude): string[] {
     '--settings',
     '.claude/settings.headless.json',
   ]
-  if (o.chrome ?? o.agent === undefined) args.push('--chrome')
+  if (o.chrome === true) args.push('--chrome')
   if (o.allowedTools?.length) args.push('--allowedTools', ...o.allowedTools)
   if (o.disallowedTools?.length) args.push('--disallowedTools', ...o.disallowedTools)
   if (o.sessionId && o.resume) throw new Error('sessionId y resume son excluyentes')

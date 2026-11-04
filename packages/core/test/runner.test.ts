@@ -23,7 +23,7 @@ describe('runner (mock)', () => {
     expect(args.slice(0, 2)).toEqual(['-p', 'hola'])
     expect(args).toContain('--permission-mode')
     expect(args).toContain('dontAsk')
-    expect(args).toContain('--chrome')
+    expect(args).not.toContain('--chrome')
     const i = args.indexOf('--allowedTools')
     expect(args.slice(i + 1, i + 3)).toEqual(['Read', 'Bash(scripts/cs *)'])
     expect(args).toContain('--name')
@@ -67,8 +67,8 @@ describe('runner (mock)', () => {
 })
 
 describe('argsClaude', () => {
-  it('--chrome solo por defecto para el orquestador (sin agent)', () => {
-    expect(argsClaude({ prompt: 'p' })).toContain('--chrome')
+  it('--chrome solo si se pide explícitamente (IG va por el MCP chrome-devtools)', () => {
+    expect(argsClaude({ prompt: 'p' })).not.toContain('--chrome')
     expect(argsClaude({ prompt: 'p', chrome: false })).not.toContain('--chrome')
     expect(argsClaude({ prompt: 'p', agent: 'asistente' })).not.toContain('--chrome')
     expect(argsClaude({ prompt: 'p', agent: 'rastreador-ig', chrome: true })).toContain('--chrome')

@@ -25,7 +25,7 @@ export const allowedToolsCorrida: readonly string[] = [
   'Glob',
   'WebSearch',
   'WebFetch',
-  'mcp__claude-in-chrome__*',
+  'mcp__chrome-devtools__*',
   'mcp__apify__*',
   'Bash(scripts/cs *)',
   'Bash(./scripts/cs *)',
@@ -81,7 +81,7 @@ export function promptCorrida(d: DatosPromptCorrida): string {
       '(output_file / .output). No copies el JSON en la línea de comando ni uses here-strings: el filtro de permisos los rechaza con JSON largo. ',
       'Nunca escribas log.jsonl ni corridas/*.json a mano.',
     'Si el verificador rechaza 3 veces, registra igual con `--pendiente` y termina: la persona decidirá en la UI.',
-    'Si Instagram reporta SESIÓN NO DISPONIBLE (Chrome cerrado, extensión desconectada o IG deslogueado) sigue con web (+Apify) y anótalo en `ig.sesion`.',
+    'Si Instagram reporta SESIÓN NO DISPONIBLE (perfil dedicado abierto/bloqueado, MCP chrome-devtools caído o IG deslogueado) sigue con web (+Apify) y anótalo en `ig.sesion`.',
     'La cuenta de Instagram es solo lectura: nada de likes, follows ni comentarios.',
     'Al terminar devuelve solo el JSON final: { corridaId, estado, verificado, intentos, entradas: <n>, igSesion }.',
   ].join('\n')
@@ -104,7 +104,7 @@ export const disallowedToolsAsistente: readonly string[] = [
   'Agent',
   'WebSearch',
   'WebFetch',
-  'mcp__claude-in-chrome__*',
+  'mcp__chrome-devtools__*',
   'mcp__apify__*',
   // El log viene de scraping: un texto inyectado no debe poder hacer leer secretos ni estado local.
   'Read(./.env*)',

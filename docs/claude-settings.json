@@ -9,11 +9,14 @@
       "Glob",
       "WebSearch",
       "WebFetch",
-      "mcp__claude-in-chrome__*",
+      "mcp__chrome-devtools__*",
       "mcp__apify__*",
       "Bash(scripts/cs *)",
       "Bash(./scripts/cs *)",
       "Bash(npx tsx packages/core/src/cli.ts *)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "chrome-devtools"
+  ]
 }
