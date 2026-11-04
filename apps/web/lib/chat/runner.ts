@@ -25,6 +25,16 @@ import { indiceLog, resolverArtefacto, type IndiceLog } from "@/lib/chat/resolve
 import type { ArtefactoUi, EventoChat } from "@/lib/chat/tipos";
 import { formatearSSE } from "@/lib/sse";
 
+/** Ya hay un turno en curso para ese chat. */
+export class ChatOcupado extends Error {
+  constructor(id: string) {
+    super(`El chat ${id} ya está respondiendo; espera o detén el turno actual`);
+    this.name = "ChatOcupado";
+  }
+}
+
+const enVuelo: Set<string> = ((globalThis as { __csChatsEnVuelo?: Set<string> }).__csChatsEnVuelo ??= new Set());
+
 export class ChatNoEncontrado extends Error {
   constructor(id: string) {
     super(`No existe el chat ${id}`);
@@ -87,9 +97,13 @@ function detalleDelVolcado(ruta: string): string {
  */
 export function responderChat(o: OpcionesResponder): ReadableStream<Uint8Array> {
   const ahora = new Date();
+  if (o.chatId && enVuelo.has(o.chatId)) throw new ChatOcupado(o.chatId);
   const chat = prepararChat(o, ahora);
   const primerTurno = !chat.sessionId;
-  const prompt = primerTurno ? promptAsistente({ marca: o.marca, contexto: construirContexto(o.marca).texto, pregunta: o.mensaje }) : o.mensaje;
+  // En turnos con --resume el texto va como argumento: el prefijo impide que un mensaje como
+  // "--chrome" se interprete como flag del CLI.
+  const prompt = primerTurno ? promptAsistente({ marca: o.marca, contexto: construirContexto(o.marca).texto, pregunta: o.mensaje }) : `Pregunta de la usuaria: ${o.mensaje}`;
+  enVuelo.add(chat.id);
   // Primer intento: la sesión lleva el id del chat; si una sesión previa no llegó a iniciar, id nuevo.
   const sesionNueva = primerTurno ? (chat.mensajes.length === 1 ? chat.id : randomUUID()) : undefined;
 
@@ -123,7 +137,7 @@ export function responderChat(o: OpcionesResponder): ReadableStream<Uint8Array> 
           /* ya cerrado */
         }
       };
-      void ejecutar(enviar, cerrar);
+      void ejecutar(enviar, cerrar).finally(() => enVuelo.delete(chat.id));
     },
     cancel() {
       controller.abort();

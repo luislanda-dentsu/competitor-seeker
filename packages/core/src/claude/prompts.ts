@@ -90,6 +90,11 @@ export const disallowedToolsAsistente: readonly string[] = [
   'WebFetch',
   'mcp__claude-in-chrome__*',
   'mcp__apify__*',
+  // El log viene de scraping: un texto inyectado no debe poder hacer leer secretos ni estado local.
+  'Read(./.env*)',
+  'Read(./data/**)',
+  'Grep(./data/**)',
+  'Read(./.claude/settings*)',
 ]
 
 export const MARCADOR_ARTEFACTO = 'artifact:entradas'

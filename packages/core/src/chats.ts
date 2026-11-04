@@ -135,7 +135,9 @@ export function guardarChat(chat: Chat): Chat {
   const valido = Chat.parse(chat)
   const ruta = rutaChat(valido.marca, valido.id)
   fs.mkdirSync(path.dirname(ruta), { recursive: true })
-  fs.writeFileSync(ruta, JSON.stringify(valido, null, 2) + '\n', 'utf8')
+  const tmp = `${ruta}.${process.pid}.tmp`
+  fs.writeFileSync(tmp, JSON.stringify(valido, null, 2) + '\n', 'utf8')
+  fs.renameSync(tmp, ruta) // atómico: un lector nunca ve el JSON a medias
   return valido
 }
 

@@ -157,7 +157,13 @@ export function useChatStream(o: OpcionesChatStream): ChatStream {
     abortRef.current?.abort();
   }, []);
 
-  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(
+    () => () => {
+      abortRef.current?.abort();
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    },
+    [],
+  );
 
   const lanzar = useCallback(
     async (texto: string, regenerar: boolean) => {
@@ -216,6 +222,8 @@ export function useChatStream(o: OpcionesChatStream): ChatStream {
         vaciar();
         if (!terminado) dispatch({ tipo: "error", error: "La conexión se cerró sin respuesta." });
       } catch (e) {
+        // Un stream viejo abortado por un turno nuevo no debe pisar el placeholder del nuevo.
+        if (abortRef.current !== ctl && abortRef.current !== null) return;
         vaciar();
         if (ctl.signal.aborted) dispatch({ tipo: "detenido" });
         else dispatch({ tipo: "error", error: (e as Error).message });

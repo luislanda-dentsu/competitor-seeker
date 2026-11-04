@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { borrarChat, esIdChatValido, existeMarca, guardarChat, leerChat, listarMarcas } from "@competitor-seeker/core";
-import { ChatNoEncontrado, responderChat, validarMensaje } from "@/lib/chat/runner";
+import { ChatNoEncontrado, ChatOcupado, responderChat, validarMensaje } from "@/lib/chat/runner";
 
 const CABECERAS_SSE = {
   "content-type": "text/event-stream; charset=utf-8",
@@ -53,6 +53,7 @@ export async function POST(request: Request): Promise<Response> {
     return new Response(stream, { headers: CABECERAS_SSE });
   } catch (e) {
     if (e instanceof ChatNoEncontrado) return NextResponse.json({ error: e.message }, { status: 404 });
+    if (e instanceof ChatOcupado) return NextResponse.json({ error: e.message }, { status: 409 });
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }
 }
