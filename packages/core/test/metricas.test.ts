@@ -4,7 +4,7 @@ import { Corrida } from '../src/schemas/corrida.ts'
 
 const CC = 'Country Club RD'
 
-function corrida(over: Partial<Corrida> & Pick<Corrida, 'id' | 'fecha'>): Corrida {
+function corrida(over: Record<string, unknown> & { id: string; fecha: string }): Corrida {
   return Corrida.parse({
     marca: 'k',
     ultimaCorrida: null,
