@@ -119,4 +119,25 @@ describe('git-sync', () => {
     reiniciarEnv()
     expect(await commitYPush('x', { auto: true })).toMatchObject({ omitido: 'sync automático desactivado' })
   })
+  it('en una rama de feature no hace pull ni push (nunca empuja la rama a main)', async () => {
+    en(a)
+    git(a, 'checkout', '-q', '-b', 'feat/x')
+    fs.appendFileSync(path.join(a, 'marcas/k/log.jsonl'), '{"n":9}\n')
+    const r = await commitYPush('corrida')
+    expect(r).toMatchObject({ ok: true })
+    expect((r as { omitido?: string }).omitido).toMatch(/rama distinta/)
+    expect((await pull()) as { omitido?: string }).toMatchObject({ omitido: expect.stringMatching(/rama distinta/) })
+    expect(git(a, 'ls-remote', 'origin', 'main').split('\t')[0]).toBe(git(b, 'rev-parse', 'HEAD').trim())
+    expect((await estadoSync()).pausado).toMatch(/rama distinta/)
+  })
+
+  it('con código sin commitear el pull se omite (no se stashea trabajo de desarrollo)', async () => {
+    en(a)
+    fs.appendFileSync(path.join(a, 'CLAUDE.md'), 'trabajo en curso')
+    const r = (await pull()) as { ok: boolean; omitido?: string }
+    expect(r.ok).toBe(true)
+    expect(r.omitido).toMatch(/código sin commitear/)
+    expect(git(a, 'stash', 'list').trim()).toBe('')
+    expect(fs.readFileSync(path.join(a, 'CLAUDE.md'), 'utf8')).toContain('trabajo en curso')
+  })
 })

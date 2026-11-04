@@ -26,6 +26,8 @@ export interface EstadoSync {
   ultimoPush?: string
   conflicto?: string[]
   error?: string
+  /** Motivo por el que el sync automático está en pausa (rama de feature, código sin commitear). */
+  pausado?: string
 }
 
 interface EstadoDisco {
@@ -65,7 +67,46 @@ function guardarEstadoDisco(cambios: Partial<EstadoDisco>): void {
 
 function git(): SimpleGit {
   process.env.GIT_TERMINAL_PROMPT ??= '0' // nunca pedir credenciales por TTY
-  return simpleGit(repoRoot())
+  process.env.GIT_SSH_COMMAND ??= 'ssh -o BatchMode=yes -o ConnectTimeout=10' // ni passphrase por TTY
+  process.env.GIT_OPTIONAL_LOCKS ??= '0' // `status` de solo lectura no toma index.lock
+  // Ninguna operación git puede bloquear la cola indefinidamente (red colgada).
+  return simpleGit(repoRoot(), { timeout: { block: 30_000 } })
+}
+
+const RUTAS_DATOS = ['marcas/', 'config.json']
+
+/**
+ * El sync solo opera en la rama de datos (`CS_GIT_RAMA`, main) y sin código sin commitear:
+ * nunca rebasa ni empuja una rama de feature, ni stashea trabajo de desarrollo.
+ */
+async function bloqueoSync(g: SimpleGit, { exigirArbolLimpio }: { exigirArbolLimpio: boolean }): Promise<string | null> {
+  const { CS_GIT_RAMA: rama } = cargarEnv()
+  const actual = (await g.raw(['rev-parse', '--abbrev-ref', 'HEAD'])).trim()
+  if (actual !== rama) return `rama distinta (${actual}); el sync solo corre en ${rama}`
+  if (exigirArbolLimpio) {
+    const st = await g.raw(['status', '--porcelain'])
+    const codigo = st
+      .split('\n')
+      .map((l) => l.slice(3).trim().replace(/^"|"$/g, ''))
+      .filter((f) => f && !RUTAS_DATOS.some((r) => f === r || f.startsWith(r)))
+    if (codigo.length > 0) return `hay cambios de código sin commitear (${codigo.slice(0, 3).join(', ')}${codigo.length > 3 ? '…' : ''})`
+  }
+  return null
+}
+
+function esIndexLock(mensaje: string): boolean {
+  return /index\.lock/i.test(mensaje)
+}
+
+/** Reintenta una vez tras 500 ms si otro proceso git tenía el index. */
+async function conReintentoLock<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn()
+  } catch (e) {
+    if (!esIndexLock((e as Error).message)) throw e
+    await new Promise((r) => setTimeout(r, 500))
+    return fn()
+  }
 }
 
 /** Rutas que viajan por git y existen en disco o están rastreadas. */
@@ -105,6 +146,8 @@ async function archivosEnConflicto(g: SimpleGit): Promise<string[]> {
 async function pullInterno(g: SimpleGit): Promise<ResultadoSync> {
   const { CS_GIT_REMOTO: remoto, CS_GIT_RAMA: rama } = cargarEnv()
   guardarEstadoDisco({ ultimoIntentoPull: Date.now() })
+  const bloqueo = await bloqueoSync(g, { exigirArbolLimpio: true })
+  if (bloqueo) return { ok: true, omitido: bloqueo }
   try {
     await g.fetch(remoto)
     await g.raw(['pull', '--rebase', '--autostash', remoto, rama])
@@ -162,7 +205,7 @@ function notificarErrorPush(mensaje: string): void {
       nivel: 'aviso',
       titulo: 'No se pudo subir a git',
       mensaje: mensaje.slice(0, 300),
-      clave: `git-error-${fechaLocal(new Date())}`,
+      clave: `git-error-${clasificarErrorGit(mensaje)}-${fechaLocal(new Date())}`,
       href: '/',
     })
   } catch {
@@ -177,21 +220,23 @@ export function commitYPush(mensaje: string, o?: OpcionesSync): Promise<Resultad
     const g = git()
     if (!(await tieneRemoto(g))) return SIN_REMOTO
     const { CS_GIT_REMOTO: remoto, CS_GIT_RAMA: rama } = cargarEnv()
+    const bloqueo = await bloqueoSync(g, { exigirArbolLimpio: false })
+    if (bloqueo) return { ok: true, omitido: bloqueo }
     let hizoCommit = false
     try {
       const rutas = rutasSync()
       if (rutas.length > 0) {
-        await g.raw(['add', '--', ...rutas])
+        await conReintentoLock(() => g.raw(['add', '--', ...rutas]))
         const staged = (await g.raw(['diff', '--cached', '--name-only', '--', ...rutas])).trim()
         if (staged) {
-          await g.raw(['commit', '-m', mensaje, '--', ...rutas])
+          await conReintentoLock(() => g.raw(['commit', '-m', mensaje, '--', ...rutas]))
           hizoCommit = true
         }
       }
     } catch (e) {
       const error = (e as Error).message
       guardarEstadoDisco({ error: error.slice(0, 300) })
-      notificarErrorPush(error)
+      if (!esIndexLock(error)) notificarErrorPush(error)
       return { ok: false, motivo: 'otro', error }
     }
 
@@ -268,7 +313,13 @@ export async function estadoSync(): Promise<EstadoSync> {
         /* rama remota aún inexistente */
       }
     }
-    return { remoto: remotoOk, rama: ramaActual, adelante, atras, sucio, ...base }
+    let pausado: string | null = null
+    try {
+      pausado = await bloqueoSync(g, { exigirArbolLimpio: true })
+    } catch {
+      /* repo sin commits */
+    }
+    return { remoto: remotoOk, rama: ramaActual, adelante, atras, sucio, ...base, ...(pausado ? { pausado } : {}) }
   } catch (e) {
     return { remoto: false, rama: cargarEnv().CS_GIT_RAMA, adelante: 0, atras: 0, sucio: [], ...base, error: (e as Error).message }
   }

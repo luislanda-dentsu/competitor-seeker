@@ -235,7 +235,8 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
     const apify = await decidirApifyParaCorrida(o.incluirApify);
     // Fase 6: traer lo de la otra Mac antes de calcular `ultimaCorrida`. Con conflicto la corrida sigue.
     try {
-      await pull({ auto: true });
+      // Tope de 15 s: una red lenta no deja el lanzamiento colgado (la corrida sigue con lo local).
+      await Promise.race([pull({ auto: true }), new Promise((r) => setTimeout(r, 15_000))]);
     } catch (e) {
       log("pull previo a la corrida falló:", e);
     }

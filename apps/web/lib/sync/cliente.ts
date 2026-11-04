@@ -12,15 +12,18 @@ export interface EstadoSyncUi {
   ultimoPush?: string;
   conflicto?: string[];
   error?: string;
+  pausado?: string;
 }
 
 export const INTERVALO_SYNC_MS = 60_000;
 
-export type NivelSync = "ok" | "pendiente" | "error" | "sin-remoto";
+export type NivelSync = "ok" | "pendiente" | "error" | "sin-remoto" | "pausado";
 
 export function nivelSync(e: EstadoSyncUi | null): NivelSync {
   if (!e || !e.remoto) return "sin-remoto";
-  if ((e.conflicto && e.conflicto.length > 0) || e.error) return "error";
+  if (e.conflicto && e.conflicto.length > 0) return "error";
+  if (e.pausado) return "pausado";
+  if (e.error) return "error";
   if (e.adelante > 0 || e.atras > 0 || e.sucio.length > 0) return "pendiente";
   return "ok";
 }
@@ -29,6 +32,7 @@ export function detalleSync(e: EstadoSyncUi | null): string {
   if (!e) return "Cargando estado de git…";
   if (!e.remoto) return "Sin remoto configurado: los datos solo viven en esta Mac.";
   if (e.conflicto && e.conflicto.length > 0) return `Conflicto en ${e.conflicto.join(", ")}`;
+  if (e.pausado) return `Sync en pausa: ${e.pausado}.`;
   if (e.error) return `Error de git: ${e.error}`;
   const partes: string[] = [];
   if (e.adelante > 0) partes.push(`${e.adelante} sin subir`);

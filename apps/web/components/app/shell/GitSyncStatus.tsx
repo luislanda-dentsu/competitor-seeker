@@ -11,6 +11,7 @@ const PUNTO: Record<NivelSync, string> = {
   pendiente: "bg-s-confuso",
   error: "bg-s-no-funciona",
   "sin-remoto": "bg-fg-muted",
+  pausado: "bg-fg-dim",
 };
 
 const ETIQUETA: Record<NivelSync, string> = {
@@ -18,6 +19,7 @@ const ETIQUETA: Record<NivelSync, string> = {
   pendiente: "Pendiente",
   error: "Con error",
   "sin-remoto": "Sin remoto",
+  pausado: "En pausa",
 };
 
 /** Píldora de estado de git. `compacto` la muestra como badge sin popover (RunLauncher). */
