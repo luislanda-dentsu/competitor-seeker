@@ -1,0 +1,61 @@
+{
+  "id": "2026-11-04-1120-kolareal-administrast",
+  "marca": "kolareal",
+  "fecha": "2026-11-04",
+  "ultimaCorrida": "2026-11-04",
+  "inicio": "2026-11-04T15:20:42.881Z",
+  "fin": "2026-11-04T15:21:28.520Z",
+  "duracionMs": 45639,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 1,
+  "objeciones": [],
+  "fuentes": [
+    "web"
+  ],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "incluido": false,
+    "omitido": true,
+    "motivo": "desactivado por la usuaria"
+  },
+  "competidores": [
+    "Coca Cola RD",
+    "Country Club RD"
+  ],
+  "entradas": [
+    {
+      "marca": "Coca Cola RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Instagram (@cocacolard) no se inspeccionó: la extensión del navegador no estaba conectada. En web no hay contenido fechado dentro del periodo; solo referencias previas sin fecha verificada (campaña Euphoria Mundial FIFA 2026, Hechos de Sabor, relanzamiento de campaña de nombres) y un patrón estacional de encendido del árbol navideño a finales de noviembre, sin anuncio confirmado para 2026.",
+      "senal": "sin-datos",
+      "lectura": "No hubo inspección de Instagram ni movimiento verificable en el periodo; no se puede afirmar ni descartar actividad.",
+      "fuentes": [
+        "ig",
+        "web"
+      ],
+      "id": "28f559ea5539e011",
+      "corrida": "2026-11-04-1120-kolareal-administrast"
+    },
+    {
+      "marca": "Country Club RD",
+      "fecha": "2026-11-04",
+      "movimiento": "Instagram (@countryclubrd) no se inspeccionó por sesión no disponible. Cuatro búsquedas web no devolvieron sitio oficial, prensa, campañas ni patrocinios atribuibles a la cuenta; solo resultados sin relación demostrada.",
+      "senal": "sin-datos",
+      "lectura": "Sin evidencia atribuible al competidor; el nombre genérico dificulta ubicarlo y falta contexto (rubro, ciudad o sitio web) para rastrearlo.",
+      "fuentes": [
+        "ig",
+        "web"
+      ],
+      "id": "1f4766f257b79451",
+      "corrida": "2026-11-04-1120-kolareal-administrast"
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "554e914f-8d24-426c-a21b-eb079c109104",
+  "ig": {
+    "sesion": "no-disponible"
+  }
+}
