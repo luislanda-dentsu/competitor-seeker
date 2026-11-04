@@ -115,4 +115,5 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 - El campo `marca` de cada Entrada es el **nombre del competidor** (herencia del v1); la marca-carpeta es `slug`. La UI nunca lo llama "marca".
 - `Workflow` por nombre puede resolver un snapshot viejo: siempre `scriptPath`.
 - En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`); con un JSON largo en la línea (heredoc o here-string) el filtro también deniega → `--desde-workflow <archivo>`.
+- El login del perfil dedicado debe hacerse con `scripts/chrome-ig.sh login` (lanza Chrome con `--use-mock-keychain --password-store=basic`, como Puppeteer); un login con Chrome normal cifra las cookies con el llavero real y el MCP no ve la sesión.
 - chrome-devtools-mcp: `--isolated` y `--user-data-dir` son excluyentes (no los combines). Si el perfil dedicado está abierto en otra ventana, el MCP no puede lanzar Chrome → `SESIÓN NO DISPONIBLE`. Los tools solo aparecen si el servidor está aprobado (`enabledMcpjsonServers` en `.claude/settings.json`).

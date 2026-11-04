@@ -15,7 +15,10 @@ case "${1:-mcp}" in
     exec npx -y chrome-devtools-mcp@latest --user-data-dir="$PERFIL" --channel=stable
     ;;
   login)
-    open -na "Google Chrome" --args --user-data-dir="$PERFIL" --no-first-run "https://www.instagram.com/"
+    # Mismos flags de cifrado que Puppeteer (chrome-devtools-mcp): sin ellos las cookies se cifran
+    # con el llavero real y el Chrome del MCP (--use-mock-keychain) no puede leerlas → sin sesión.
+    open -na "Google Chrome" --args --user-data-dir="$PERFIL" --no-first-run \
+      --use-mock-keychain --password-store=basic "https://www.instagram.com/"
     echo "Perfil dedicado abierto ($PERFIL). Inicia sesión con la cuenta de la agencia y CIERRA esa ventana de Chrome antes de correr."
     ;;
   ruta)
