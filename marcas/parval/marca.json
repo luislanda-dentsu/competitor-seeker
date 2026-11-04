@@ -1,0 +1,42 @@
+{
+  "slug": "parval",
+  "nombre": "Parval",
+  "creadaEn": "2026-11-04T15:57:18.557Z",
+  "competidores": [
+    {
+      "slug": "interval",
+      "nombre": "Interval",
+      "url": "https://www.instagram.com/interval.rd/",
+      "instagram": "interval.rd",
+      "activo": true
+    },
+    {
+      "slug": "cci-puesto-de-bolsa",
+      "nombre": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/cci_pb/",
+      "instagram": "cci_pb",
+      "activo": true
+    },
+    {
+      "slug": "excel-puesto-de-bolsa",
+      "nombre": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/excel_rd/",
+      "instagram": "excel_rd",
+      "activo": true
+    },
+    {
+      "slug": "alpha-sociedad-de-valores",
+      "nombre": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/alphapuestodebolsa/",
+      "instagram": "alphapuestodebolsa",
+      "activo": true
+    },
+    {
+      "slug": "united-capital",
+      "nombre": "United Capital",
+      "url": "https://www.instagram.com/unitedcapitaldr/",
+      "instagram": "unitedcapitaldr",
+      "activo": true
+    }
+  ]
+}
