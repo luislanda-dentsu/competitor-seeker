@@ -1,12 +1,14 @@
 {
   "permissions": {
     "deny": [
-      "Write",
+      "AskUserQuestion",
+      "Bash(git push *)",
+      "Bash(rm -rf *)",
       "Edit",
+      "EnterPlanMode",
       "MultiEdit",
       "NotebookEdit",
-      "AskUserQuestion",
-      "EnterPlanMode"
+      "Write"
     ]
   }
 }
