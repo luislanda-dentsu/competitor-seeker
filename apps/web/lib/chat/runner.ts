@@ -9,18 +9,21 @@ import path from "node:path";
 import {
   allowedToolsAsistente,
   disallowedToolsAsistente,
+  fechaLocal,
   guardarChat,
   lanzarClaude,
   leerChat,
   nuevoChat,
   promptAsistente,
   rutaDataArchivo,
+  ultimaCorridaRegistrada,
   type Chat,
   type EventoStream,
   type MensajeChat,
 } from "@competitor-seeker/core";
 import { ParserArtefactos, type SalidaParser } from "@/lib/chat/artifacts";
 import { construirContexto } from "@/lib/chat/contexto";
+import { promptTurnoSiguiente } from "@/lib/chat/prompt-turno";
 import { indiceLog, resolverArtefacto, type IndiceLog } from "@/lib/chat/resolver";
 import type { ArtefactoUi, EventoChat } from "@/lib/chat/tipos";
 import { formatearSSE } from "@/lib/sse";
@@ -100,9 +103,15 @@ export function responderChat(o: OpcionesResponder): ReadableStream<Uint8Array> 
   if (o.chatId && enVuelo.has(o.chatId)) throw new ChatOcupado(o.chatId);
   const chat = prepararChat(o, ahora);
   const primerTurno = !chat.sessionId;
-  // En turnos con --resume el texto va como argumento: el prefijo impide que un mensaje como
-  // "--chrome" se interprete como flag del CLI.
-  const prompt = primerTurno ? promptAsistente({ marca: o.marca, contexto: construirContexto(o.marca).texto, pregunta: o.mensaje }) : `Pregunta de la usuaria: ${o.mensaje}`;
+  // En turnos con --resume el contexto no se reenvía: se añade la fecha de hoy y la del contexto.
+  const prompt = primerTurno
+    ? promptAsistente({ marca: o.marca, contexto: construirContexto(o.marca).texto, pregunta: o.mensaje })
+    : promptTurnoSiguiente({
+        mensaje: o.mensaje,
+        hoy: fechaLocal(ahora),
+        contextoDel: fechaLocal(new Date(chat.contextoEn ?? chat.creado)),
+        ultimaCorrida: ultimaCorridaRegistrada(o.marca),
+      });
   enVuelo.add(chat.id);
   // Primer intento: la sesión lleva el id del chat; si una sesión previa no llegó a iniciar, id nuevo.
   const sesionNueva = primerTurno ? (chat.mensajes.length === 1 ? chat.id : randomUUID()) : undefined;
