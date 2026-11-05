@@ -11,53 +11,129 @@
 }
 
 /* ============================================================
-   TOKENS — claro (plan §12)
+   TOKENS — paleta AMGC (AllMedia GC), mismo sistema que Orbit.
+   #010101 domina (fondo), #1A1A1A separa (superficies), blanco es la
+   tinta. Los cuatro vivos son acentos con un oficio fijo:
+   naranja = acción · verde = bien/serie · amarillo = aviso · turquesa = info.
+   Oscuro es el tema por defecto; claro redefine los mismos nombres.
    ============================================================ */
 :root {
   color-scheme: light;
-  --radius: 16px;
+  --radius: 14px;
 
-  --canvas: #ecedef;
-  --surface: #fbfbfa;
-  --card: #ffffff;
-  --card-2: #f4f5f7;
-  --border: #e6e7ea;
-  --border-strong: #d2d4d9;
-  --fg: #141518;
-  --fg-muted: #6b7079;
-  --fg-dim: #9a9ea6;
-  --primary: #141518;
-  --primary-fg: #ffffff;
-  --ring: #9a9ea6;
+  --amgc-black: #010101;
+  --amgc-ink: #1a1a1a;
+  --amgc-white: #ffffff;
+  --amgc-orange: #f8620f;
+  --amgc-yellow: #efd554;
+  --amgc-green: #b1ffa3;
+  --amgc-teal: #6affe1;
 
-  /* señales: fuerte + soft */
-  --s-nuevo: #1a7f37;
-  --s-nuevo-soft: #dafbe1;
-  --s-confuso: #9a6700;
-  --s-confuso-soft: #fff8c5;
-  --s-sin-datos: #59636e;
-  --s-sin-datos-soft: #eff1f3;
-  --s-no-funciona: #cf222e;
-  --s-no-funciona-soft: #ffebe9;
-  --s-invalida: #8250df;
-  --s-invalida-soft: #fbefff;
+  --canvas: #e4e4e4;
+  --surface: #e4e4e4;
+  --card: #f3f3f3;
+  --card-2: #e8e8e8;
+  --hover: #dcdcdc;
+  --border: #d6d6d6;
+  --border-strong: #bdbdbd;
+  --fg: #010101;
+  --fg-muted: #2e2e2e;
+  --fg-dim: #5c5c5c;
+  --action-ink: #010101;
 
-  /* acento de marca (en Tailwind: brand, para no pisar --accent de coss/ui) */
-  --brand: #2da44e;
-  --brand-soft: #dafbe1;
-  --brand-line: #4ade80;
+  /* estados (en claro se oscurecen para contraste AA sobre gris) */
+  --ok: #1b7130;
+  --warn: #7d6200;
+  --wait: #07705d;
+  --danger: #c0281a;
+  --neutral: #5c5c5c;
 
-  --chart-1: #2da44e;
-  --chart-2: #9a9ea6;
-  --chart-3: #9a6700;
-  --chart-4: #cf222e;
-  --chart-5: #8250df;
-  --chart-6: #0969da;
-  --grid: #e6e7ea;
+  /* gráficos: categórica validada (orden fijo) */
+  --chart-1: #33ae29;
+  --chart-2: #983e04;
+  --chart-3: #18a7a1;
+  --chart-4: #ac9003;
+  --chart-5: #7233bb;
+  --chart-6: #a80463;
+  --chart-7: #005bb5;
+  --chart-8: #b2001b;
 
-  --sh-xs: 0 1px 2px rgb(20 21 24 / 0.04);
-  --sh-sm: 0 1px 3px rgb(20 21 24 / 0.06), 0 1px 2px rgb(20 21 24 / 0.04);
-  --sh-float: 0 8px 24px rgb(20 21 24 / 0.08), 0 2px 6px rgb(20 21 24 / 0.04);
+  --sh-xs: none;
+  --sh-sm: none;
+  --sh-float: 0 8px 24px rgb(0 0 0 / 0.08);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --canvas: #010101;
+  --surface: #010101;
+  --card: #1a1a1a;
+  --card-2: #242424;
+  --hover: #2e2e2e;
+  --border: #2a2a2a;
+  --border-strong: #3a3a3a;
+  --fg: #ffffff;
+  --fg-muted: #b8b8b8;
+  --fg-dim: #8c8c8c;
+
+  --ok: #b1ffa3;
+  --warn: #efd554;
+  --wait: #6affe1;
+  --danger: #ff5340;
+  --neutral: #8c8c8c;
+
+  --chart-1: #33ae29;
+  --chart-2: #bd4d00;
+  --chart-3: #18a7a1;
+  --chart-4: #ac9003;
+  --chart-5: #894ed6;
+  --chart-6: #c62b7a;
+  --chart-7: #0072dd;
+  --chart-8: #d02b31;
+
+  --sh-float: 0 8px 24px rgb(0 0 0 / 0.4);
+}
+
+/* Acentos por vista (degradado): --sec-a es el acento, --sec-b el final del degradado.
+   La sección la fija <SectionScope> en <html data-section>, así llega también a los portales. */
+:root { --sec-a: var(--amgc-orange); --sec-b: var(--amgc-yellow); }
+:root[data-section="competidores"] { --sec-a: var(--amgc-yellow); --sec-b: var(--amgc-green); }
+:root[data-section="corridas"] { --sec-a: var(--amgc-green); --sec-b: var(--amgc-teal); }
+:root[data-section="asistente"] { --sec-a: var(--amgc-teal); --sec-b: var(--amgc-white); }
+
+/* Derivados: se declaran en :root (var() se resuelve donde se declara). */
+:root {
+  --action: var(--sec-a);
+  --action-fill: linear-gradient(120deg, var(--sec-a), var(--sec-b));
+  --action-text: color-mix(in oklab, var(--sec-a) 45%, #000);
+  --title-fill: linear-gradient(var(--fg), var(--fg));
+  --spot: var(--sec-a);
+  --series: var(--ok);
+  --series-b: var(--wait);
+  --series-fill: linear-gradient(90deg, var(--series), var(--series-b));
+  --ring: var(--action);
+
+  /* señales del log ↔ estados AMGC */
+  --s-nuevo: var(--ok);
+  --s-confuso: var(--warn);
+  --s-sin-datos: var(--neutral);
+  --s-no-funciona: var(--danger);
+  --s-invalida: var(--wait);
+  --s-nuevo-soft: color-mix(in oklab, var(--s-nuevo) 16%, transparent);
+  --s-confuso-soft: color-mix(in oklab, var(--s-confuso) 16%, transparent);
+  --s-sin-datos-soft: color-mix(in oklab, var(--s-sin-datos) 16%, transparent);
+  --s-no-funciona-soft: color-mix(in oklab, var(--s-no-funciona) 16%, transparent);
+  --s-invalida-soft: color-mix(in oklab, var(--s-invalida) 16%, transparent);
+
+  /* «brand» = acento de la vista (en Tailwind: brand, para no pisar --accent de coss/ui) */
+  --brand: var(--action);
+  --brand-soft: color-mix(in oklab, var(--action) 16%, transparent);
+  --brand-line: var(--series);
+  --grid: var(--border-strong);
+
+  --primary: var(--action);
+  --primary-fg: var(--action-ink);
 
   /* ---- tokens que esperan los componentes de coss/ui, mapeados a los nuestros ---- */
   --background: var(--surface);
@@ -73,84 +149,93 @@
   --accent: var(--card-2);
   --accent-foreground: var(--fg);
   --input: var(--border-strong);
-  --destructive: var(--s-no-funciona);
-  --destructive-foreground: var(--s-no-funciona);
-  --success: var(--s-nuevo);
-  --success-foreground: var(--s-nuevo);
-  --warning: var(--s-confuso);
-  --warning-foreground: var(--s-confuso);
-  --info: var(--chart-6);
-  --info-foreground: var(--chart-6);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--danger);
+  --success: var(--ok);
+  --success-foreground: var(--ok);
+  --warning: var(--warn);
+  --warning-foreground: var(--warn);
+  --info: var(--wait);
+  --info-foreground: var(--wait);
   --code: var(--card);
   --code-foreground: var(--fg);
   --code-highlight: var(--card-2);
-  --sidebar: var(--surface);
+  --sidebar: var(--card);
   --sidebar-foreground: var(--fg-muted);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-fg);
+  --sidebar-primary: var(--action);
+  --sidebar-primary-foreground: var(--action-ink);
   --sidebar-accent: var(--card-2);
   --sidebar-accent-foreground: var(--fg);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 }
-
-/* ============================================================
-   TOKENS — oscuro (plan §12)
-   ============================================================ */
 :root[data-theme="dark"] {
-  color-scheme: dark;
+  --action-text: var(--sec-a);
+  --title-fill: var(--action-fill);
+}
 
-  --canvas: #141517;
-  --surface: #1e1f22;
-  --card: #26272b;
-  --card-2: #2d2e33;
-  --border: #33353a;
-  --border-strong: #44474e;
-  --fg: #ecedef;
-  --fg-muted: #9a9ea6;
-  --fg-dim: #6b7079;
-  --primary: #ecedef;
-  --primary-fg: #141518;
-  --ring: #6b7079;
-
-  --s-nuevo: #3fb950;
-  --s-nuevo-soft: rgb(63 185 80 / 0.16);
-  --s-confuso: #d29922;
-  --s-confuso-soft: rgb(210 153 34 / 0.16);
-  --s-sin-datos: #8b949e;
-  --s-sin-datos-soft: rgb(139 148 158 / 0.16);
-  --s-no-funciona: #f85149;
-  --s-no-funciona-soft: rgb(248 81 73 / 0.16);
-  --s-invalida: #a371f7;
-  --s-invalida-soft: rgb(163 113 247 / 0.16);
-
-  --brand: #3fb950;
-  --brand-soft: rgb(63 185 80 / 0.16);
-  --brand-line: #4ade80;
-
-  --chart-1: #3fb950;
-  --chart-2: #8b949e;
-  --chart-3: #d29922;
-  --chart-4: #f85149;
-  --chart-5: #a371f7;
-  --chart-6: #58a6ff;
-  --grid: #33353a;
-
-  --sh-xs: 0 1px 2px rgb(0 0 0 / 0.24);
-  --sh-sm: 0 1px 3px rgb(0 0 0 / 0.32), 0 1px 2px rgb(0 0 0 / 0.2);
-  --sh-float: 0 8px 24px rgb(0 0 0 / 0.4), 0 2px 6px rgb(0 0 0 / 0.24);
-
-  --input: var(--border-strong);
-  --info: var(--chart-6);
-  --info-foreground: var(--chart-6);
+/* Superficie siempre negra (sidebar, botones secundarios, píldoras): repone los valores oscuros. */
+.tone-ink {
+  --card: #010101;
+  --surface: #010101;
+  --background: #010101;
+  --card-2: #242424;
+  --hover: #2e2e2e;
+  --border: #2a2a2a;
+  --border-strong: #3a3a3a;
+  --fg: #ffffff;
+  --fg-muted: #b8b8b8;
+  --fg-dim: #8c8c8c;
+  --foreground: #ffffff;
+  --muted: #242424;
+  --muted-foreground: #b8b8b8;
+  --accent: #242424;
+  --accent-foreground: #ffffff;
+  --sidebar: #010101;
+  --sidebar-accent: #242424;
+  --sidebar-foreground: #b8b8b8;
+  --sidebar-accent-foreground: #ffffff;
+  --action-text: var(--sec-a);
+  /* estados con los valores del oscuro (si no, heredan los del claro, pensados para gris) */
+  --ok: #b1ffa3;
+  --warn: #efd554;
+  --wait: #6affe1;
+  --danger: #ff5340;
+  --neutral: #8c8c8c;
+  --series: var(--ok);
+  --s-nuevo: var(--ok);
+  --s-confuso: var(--warn);
+  --s-sin-datos: var(--neutral);
+  --s-no-funciona: var(--danger);
+  --s-invalida: var(--wait);
+  --s-nuevo-soft: color-mix(in oklab, var(--s-nuevo) 16%, transparent);
+  --s-confuso-soft: color-mix(in oklab, var(--s-confuso) 16%, transparent);
+  --s-sin-datos-soft: color-mix(in oklab, var(--s-sin-datos) 16%, transparent);
+  --s-no-funciona-soft: color-mix(in oklab, var(--s-no-funciona) 16%, transparent);
+  --s-invalida-soft: color-mix(in oklab, var(--s-invalida) 16%, transparent);
+  --success: var(--ok);
+  --success-foreground: var(--ok);
+  --warning: var(--warn);
+  --warning-foreground: var(--warn);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--danger);
+  --info: var(--wait);
+  --info-foreground: var(--wait);
+  color: var(--fg);
+}
+:root[data-theme="dark"] .tone-ink {
+  --card: #1a1a1a;
+  --sidebar: #1a1a1a;
 }
 
 /* ============================================================
    @theme inline — expone los tokens como utilidades de Tailwind
    ============================================================ */
 @theme inline {
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans: var(--font-gotham), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Cifras en Gotham (tabulares): font-mono ya no es monoespaciada; el código usa --font-code. */
+  --font-mono: var(--font-gotham), ui-sans-serif, system-ui, sans-serif;
+  --font-code: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
   --font-heading: var(--font-sans);
 
   --color-canvas: var(--canvas);
@@ -180,6 +265,15 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
   --color-brand-line: var(--brand-line);
+  --color-action: var(--action);
+  --color-action-ink: var(--action-ink);
+  --color-action-text: var(--action-text);
+  --color-hover: var(--hover);
+  --color-series: var(--series);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-wait: var(--wait);
+  --color-danger: var(--danger);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -187,6 +281,8 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
   --color-grid: var(--grid);
 
   /* coss/ui */
@@ -212,7 +308,7 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-code: var(--code);
-  --code-foreground: var(--code-foreground);
+  --color-code-foreground: var(--code-foreground);
   --color-code-highlight: var(--code-highlight);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -223,18 +319,19 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* radios: sm 8 / md 12 / lg 16 / xl 24 / pill */
+  /* radios (Orbit): controles 8–10 · tarjetas 14 · pill */
   --radius-xs: 6px;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 24px;
-  --radius-3xl: 28px;
-  --radius-4xl: 32px;
+  --radius-md: 10px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 14px;
+  --radius-3xl: 14px;
+  --radius-4xl: 14px;
+  --radius-card: 14px;
   --radius-pill: 9999px;
 
-  /* sombras casi nulas */
+  /* regla plana: sin sombras (solo lo flotante) */
   --shadow-xs: var(--sh-xs);
   --shadow-sm: var(--sh-sm);
   --shadow-float: var(--sh-float);
@@ -305,7 +402,11 @@
     color: var(--fg);
   }
   code, kbd, samp, pre {
-    font-family: var(--font-mono);
+    font-family: var(--font-code);
+  }
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -345,30 +446,134 @@
 }
 
 /* ============================================================
-   Utilidades tipográficas
+   Utilidades tipográficas (Gotham: Book 400 texto · Medium 500 énfasis)
    ============================================================ */
 @utility t-page {
   font-size: 28px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   color: var(--fg);
+  background-image: var(--title-fill);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 @utility t-kpi {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 28px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.03em;
   line-height: 1.1;
   color: var(--fg);
 }
 
 @utility t-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
   color: var(--fg-muted);
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Botón / superficie de acción con el degradado de la vista.
+   background-origin: border-box evita la línea del otro color en el borde transparente. */
+@utility bg-action {
+  background-color: var(--action);
+  background-image: var(--action-fill);
+  background-origin: border-box;
+  color: var(--action-ink);
+}
+
+@utility bg-series {
+  background-color: var(--series);
+  background-image: var(--series-fill);
+}
+
+/* Chip teñido de un estado: `chip-tint` + `[--tint:var(--ok)]`. */
+@utility chip-tint {
+  background-color: color-mix(in oklab, var(--tint, var(--fg-dim)) 16%, transparent);
+  color: var(--tint, var(--fg-muted));
+}
+
+/* Separador discontinuo (tablas y listas). */
+@utility rule-dashed {
+  border-top: 1px dashed var(--border-strong);
+}
+
+/* ============================================================
+   Movimiento (Orbit): entrada, crecimiento, trazo. Todo termina
+   visible; con prefers-reduced-motion la base lo lleva a ~0 ms.
+   ============================================================ */
+@keyframes amgc-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+}
+@keyframes amgc-grow-x {
+  from { transform: scaleX(0); }
+}
+@keyframes amgc-grow-y {
+  from { transform: scaleY(0); }
+}
+@keyframes amgc-draw {
+  from { stroke-dashoffset: var(--len, 2000); }
+  to { stroke-dashoffset: 0; }
+}
+@layer components {
+  .anim-in {
+    animation: amgc-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(min(var(--i, 0), 12) * 40ms);
+  }
+  .anim-grow-x {
+    transform-origin: left;
+    animation: amgc-grow-x 640ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(min(var(--i, 0), 12) * 40ms);
+  }
+  .anim-grow-y {
+    transform-origin: bottom;
+    animation: amgc-grow-y 640ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(min(var(--i, 0), 40) * 15ms);
+  }
+  .anim-draw {
+    stroke-dasharray: var(--len, 2000);
+    animation: amgc-draw 1100ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+  .lift {
+    transition: background-color 120ms ease;
+  }
+  /* El contenido de cada vista entra escalonado: hijos directos de <main>. */
+  #contenido > * > * {
+    animation: amgc-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  #contenido > * > :nth-child(2) { animation-delay: 40ms; }
+  #contenido > * > :nth-child(3) { animation-delay: 80ms; }
+  #contenido > * > :nth-child(4) { animation-delay: 120ms; }
+  #contenido > * > :nth-child(n + 5) { animation-delay: 160ms; }
+}
+
+/* Foco y selección con el acento de la vista. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--action);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--action) 40%, transparent);
+  }
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Cambio de tema: barrido circular con View Transitions (ThemeToggle fija --vt-x/--vt-y). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

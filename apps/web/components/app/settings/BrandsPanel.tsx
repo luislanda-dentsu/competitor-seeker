@@ -171,7 +171,7 @@ export function BrandsPanel({ marcas, activa }: { marcas: MarcaAjustes[]; activa
   };
 
   return (
-    <Card className="rounded-lg">
+    <Card>
       <CardHeader className="flex-row items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <CardTitle className="t-label">Marcas</CardTitle>
@@ -209,7 +209,7 @@ export function BrandsPanel({ marcas, activa }: { marcas: MarcaAjustes[]; activa
                       )}
                     </span>
                   </TableCell>
-                  <TableCell className="font-mono text-xs text-fg-muted">{m.slug}</TableCell>
+                  <TableCell className="font-code text-xs text-fg-muted">{m.slug}</TableCell>
                   <TableCell className="text-right font-mono tabular-nums">{m.competidores}</TableCell>
                   <TableCell className="text-fg-muted">{fmtFecha(m.ultimaCorrida)}</TableCell>
                   <TableCell>

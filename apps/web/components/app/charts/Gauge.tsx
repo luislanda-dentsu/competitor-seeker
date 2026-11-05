@@ -33,14 +33,14 @@ export function Gauge({
         <path
           d={d}
           fill="none"
-          stroke="var(--border)"
+          stroke="var(--card-2)"
           strokeLinecap="round"
           strokeWidth={8}
         />
         <path
           d={d}
           fill="none"
-          stroke="var(--brand)"
+          stroke="var(--series)"
           strokeDasharray={`${trazo} ${largo}`}
           strokeLinecap="round"
           strokeWidth={8}

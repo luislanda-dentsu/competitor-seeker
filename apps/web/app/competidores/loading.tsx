@@ -6,7 +6,7 @@ export default function Loading(): React.ReactElement {
     <div
       aria-busy="true"
       aria-label="Cargando competidores"
-      className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5"
+      className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5"
     >
       <Skeleton className="h-3 w-40" />
       <Skeleton className="h-7 w-36 rounded-lg" />

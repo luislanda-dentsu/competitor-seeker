@@ -10,9 +10,9 @@ import { fmtFecha } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const INDICADOR: Record<TonoUso, string> = {
-  ok: "bg-primary",
-  aviso: "bg-s-confuso",
-  critico: "bg-s-no-funciona",
+  ok: "bg-series anim-grow-x",
+  aviso: "bg-s-confuso anim-grow-x",
+  critico: "bg-s-no-funciona anim-grow-x",
 };
 const TEXTO: Record<TonoUso, string> = {
   ok: "text-fg",
@@ -20,13 +20,13 @@ const TEXTO: Record<TonoUso, string> = {
   critico: "text-s-no-funciona",
 };
 const TRAZO: Record<TonoUso, string> = {
-  ok: "stroke-primary",
+  ok: "stroke-series",
   aviso: "stroke-s-confuso",
   critico: "stroke-s-no-funciona",
 };
 
 function fmtPctCorto(pct: number): string {
-  return `${Math.round(pct)} %`;
+  return `${Math.round(pct)}%`;
 }
 
 function fmtUsd(n: number): string {
@@ -108,7 +108,7 @@ export function UsageMeterView({
     <Link
       aria-label={resumen}
       className={cn(
-        "flex flex-col gap-2 rounded-md border border-border px-2.5 py-2 transition-colors hover:bg-card-2/70 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1",
+        "flex flex-col gap-2 rounded-[10px] bg-card-2 px-2.5 py-2 transition-colors hover:bg-hover focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1",
         collapsible && "sb-collapsed:hidden",
         className,
       )}
@@ -117,7 +117,7 @@ export function UsageMeterView({
       <span className="flex items-center justify-between">
         <span className="t-label">Uso de Apify</span>
         {!decision.habilitado && (
-          <span className="rounded-sm bg-s-confuso-soft px-1 font-mono text-[10px] uppercase text-s-confuso" title={decision.motivo}>
+          <span className="rounded-sm bg-s-confuso-soft px-1 font-mono text-[10px] text-s-confuso" title={decision.motivo}>
             pausado
           </span>
         )}

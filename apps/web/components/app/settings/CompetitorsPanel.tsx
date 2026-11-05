@@ -122,7 +122,7 @@ export function CompetitorsPanel({ marca, competidores }: { marca: MarcaAjustes 
 
   if (!marca) {
     return (
-      <Card className="rounded-lg">
+      <Card>
         <CardHeader>
           <CardTitle className="t-label">Competidores</CardTitle>
           <CardDescription className="text-fg-muted">No hay marca activa. Crea una en la pestaña Marcas.</CardDescription>
@@ -133,7 +133,7 @@ export function CompetitorsPanel({ marca, competidores }: { marca: MarcaAjustes 
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="rounded-lg">
+      <Card>
         <CardHeader className="flex-row items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <CardTitle className="t-label">Competidores de {marca.nombre}</CardTitle>
@@ -223,7 +223,7 @@ export function CompetitorsPanel({ marca, competidores }: { marca: MarcaAjustes 
         </CardPanel>
       </Card>
 
-      <Card className="rounded-lg">
+      <Card>
         <CardHeader>
           <CardTitle className="t-label">Pegar lista</CardTitle>
           <CardDescription className="text-fg-muted">

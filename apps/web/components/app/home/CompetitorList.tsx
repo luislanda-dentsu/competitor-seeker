@@ -48,7 +48,7 @@ function SemaforoDot({ c }: { c: CompetidorResumen }): React.ReactElement {
 function Tarjeta({ c }: { c: CompetidorResumen }): React.ReactElement {
   const e = c.semaforo;
   return (
-    <Card className="gap-3 rounded-lg p-4" render={<li />}>
+    <Card className="gap-3 p-4" render={<li />}>
       <div className="flex items-center gap-2.5">
         <SemaforoDot c={c} />
         <NombreLink c={c} className="min-w-0 flex-1" />

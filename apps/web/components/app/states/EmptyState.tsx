@@ -64,5 +64,5 @@ export function EmptyState({
     </Empty>
   );
   if (plano) return cuerpo;
-  return <Card className="rounded-lg">{cuerpo}</Card>;
+  return <Card>{cuerpo}</Card>;
 }

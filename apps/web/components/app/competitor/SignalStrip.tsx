@@ -29,7 +29,7 @@ export function SignalStrip({ evolucion }: { evolucion: PuntoEvolucion[] }): Rea
           >
             <span className="flex flex-col">
               <span className="font-mono tabular-nums text-fg">{fmtFecha(p.fecha)}</span>
-              <span className="truncate font-mono text-[10px] text-fg-dim" title={p.corridaId}>
+              <span className="truncate font-code text-[10px] text-fg-dim" title={p.corridaId}>
                 {p.corridaId}
               </span>
             </span>

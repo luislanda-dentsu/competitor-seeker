@@ -34,7 +34,7 @@ export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, on
   const sinCompetidores = !seleccionada || seleccionada.competidores === 0;
 
   return (
-    <Card className="rounded-lg">
+    <Card>
       <CardPanel className="flex flex-col gap-4 p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-6">
           <div className="flex min-w-0 flex-col gap-1.5 lg:w-72">

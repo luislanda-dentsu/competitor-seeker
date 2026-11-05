@@ -25,7 +25,7 @@ function Fila({ entrada: e, ultima }: { entrada: Entrada; ultima: boolean }): Re
           </time>
           <SignalBadge dot={false} senal={e.senal} size="sm" />
           {e.fuentes && e.fuentes.length > 0 && (
-            <span className="font-mono text-[10px] uppercase tracking-wider text-fg-dim">
+            <span className="font-code text-[10px] text-fg-dim">
               {e.fuentes.join(" · ")}
             </span>
           )}

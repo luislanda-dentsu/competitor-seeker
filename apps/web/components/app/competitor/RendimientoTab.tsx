@@ -54,7 +54,7 @@ export function RendimientoTab({ m, periodo }: { m: MetricasCompetidor; periodo:
                 <TableRow key={f}>
                   <TableCell>{ETIQUETA_FORMATO[f]}</TableCell>
                   <TableCell className="text-right font-mono tabular-nums">{d.posts}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">{Math.round((d.posts / m.publicaciones.length) * 100)} %</TableCell>
+                  <TableCell className="text-right font-mono tabular-nums">{Math.round((d.posts / m.publicaciones.length) * 100)}%</TableCell>
                   <TableCell className="text-right font-mono tabular-nums">{fmtEr(d.erPromedio)}</TableCell>
                 </TableRow>
               ))}
@@ -100,7 +100,7 @@ export function RendimientoTab({ m, periodo }: { m: MetricasCompetidor; periodo:
             <TableBody>
               {[...m.serie].reverse().map((s) => (
                 <TableRow key={s.corrida}>
-                  <TableCell className="font-mono text-xs tabular-nums text-fg-muted" title={s.corrida}>
+                  <TableCell className="font-code text-xs tabular-nums text-fg-muted" title={s.corrida}>
                     {fmtFecha(s.fecha)}
                   </TableCell>
                   <TableCell className="text-right font-mono tabular-nums">{fmtInt(s.seguidores)}</TableCell>

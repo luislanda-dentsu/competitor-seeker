@@ -26,7 +26,7 @@ function Kpis({ datos }: { datos: DatosMarca }): React.ReactElement {
   return (
     <section
       aria-label="Indicadores"
-      className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4"
     >
       <KpiCard
         hint="En la lista de vigilancia de la marca"
@@ -44,7 +44,7 @@ function Kpis({ datos }: { datos: DatosMarca }): React.ReactElement {
         decimals={kpis.pctConEvidencia % 1 === 0 ? 0 : 1}
         hint="Entradas con señal distinta de sin-datos"
         label="% con evidencia"
-        suffix=" %"
+        suffix="%"
         value={kpis.pctConEvidencia}
       />
       <KpiCard
@@ -141,7 +141,7 @@ export async function Resumen({
         {actividad.length === 0 ? (
           <p className="text-sm text-fg-muted">No hay competidores activos en la lista de vigilancia.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 xl:grid-cols-2">
             {actividad.map((a) => (
               <ActividadCompetidorCard actividad={a} key={a.competidor.slug} query={periodo.query} />
             ))}

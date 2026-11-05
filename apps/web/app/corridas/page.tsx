@@ -19,7 +19,7 @@ export const metadata = { title: "Corridas" };
 
 function SinMarcas(): React.ReactElement {
   return (
-    <Empty className="rounded-lg border border-border bg-card">
+    <Empty className="rounded-[var(--radius-card)] bg-card">
       <EmptyHeader>
         <EmptyTitle className="text-base font-medium">No hay marcas</EmptyTitle>
         <EmptyDescription>Sin una marca con competidores no hay nada que correr. Da de alta la primera en Ajustes.</EmptyDescription>

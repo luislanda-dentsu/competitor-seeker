@@ -2,7 +2,7 @@
 
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import CountUp from "@/components/bits/CountUp";
-import { Card } from "@/components/ui/card";
+import { SpotlightCard } from "@/components/bits/SpotlightCard";
 import { cn } from "@/lib/utils";
 
 export interface KpiCardProps {
@@ -34,7 +34,7 @@ function DeltaBadge({
   if (delta === undefined || delta === null) {
     if (!deltaLabel) return null;
     return (
-      <span className="inline-flex h-6 items-center gap-1 rounded-pill bg-s-sin-datos-soft px-2 text-xs font-medium text-s-sin-datos">
+      <span className="inline-flex h-6 shrink-0 items-center gap-1 whitespace-nowrap rounded-md bg-s-sin-datos-soft px-1.5 text-[11px] font-medium text-s-sin-datos">
         <Minus aria-hidden="true" className="size-3" />
         {deltaLabel}
       </span>
@@ -46,7 +46,7 @@ function DeltaBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-6 items-center gap-1 rounded-pill px-2 font-mono text-xs font-medium tabular-nums",
+        "tnum inline-flex h-6 shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-1.5 text-[11px] font-medium",
         good === null && "bg-s-sin-datos-soft text-s-sin-datos",
         good === true && "bg-s-nuevo-soft text-s-nuevo",
         good === false && "bg-s-no-funciona-soft text-s-no-funciona",
@@ -72,9 +72,9 @@ export function KpiCard({
   className,
 }: KpiCardProps): React.ReactElement {
   return (
-    <Card className={cn("gap-3 rounded-lg p-5", className)}>
+    <SpotlightCard className={cn("flex min-h-[120px] flex-col gap-3 p-4", className)}>
       <div className="flex items-start justify-between gap-2">
-        <span className="t-label">{label}</span>
+        <span className="t-label min-w-0">{label}</span>
         <DeltaBadge
           delta={delta}
           deltaLabel={deltaLabel}
@@ -87,14 +87,14 @@ export function KpiCard({
             decimals={decimals}
             duration={1.2}
             prefix={prefix}
-            separator="."
+            separator=","
             suffix={suffix}
             to={value}
             trigger="load"
           />
         )}
       </div>
-      {hint && <p className="text-xs text-fg-muted">{hint}</p>}
-    </Card>
+      {hint && <p className="text-xs text-fg-dim">{hint}</p>}
+    </SpotlightCard>
   );
 }

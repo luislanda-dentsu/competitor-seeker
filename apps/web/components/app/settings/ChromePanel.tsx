@@ -35,7 +35,7 @@ export function ChromePanel({ estado }: { estado: EstadoChrome }): React.ReactEl
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="rounded-lg" id="ayuda">
+      <Card id="ayuda">
         <CardHeader>
           <CardTitle className="t-label">Sesión de Instagram</CardTitle>
           <CardDescription className="text-fg-muted">
@@ -62,7 +62,7 @@ export function ChromePanel({ estado }: { estado: EstadoChrome }): React.ReactEl
         </CardPanel>
       </Card>
 
-      <Card className="rounded-lg">
+      <Card>
         <CardHeader className="flex-row items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <CardTitle className="t-label">Última corrida{estado.marca ? ` · ${estado.marca}` : ""}</CardTitle>

@@ -5,7 +5,7 @@ Panel web local de Competitor-Seeker (Next.js 16 · React 19 · Tailwind v4 · c
 ## Correr
 
 ```bash
-npm run dev -w apps/web        # http://localhost:3000
+npm run dev -w apps/web        # http://localhost:3030
 npm run lint -w apps/web
 npm run typecheck -w apps/web
 npm run build -w apps/web

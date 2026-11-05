@@ -17,5 +17,5 @@ export const ETIQUETA_COBERTURA: Record<Cobertura, string> = {
 /** ER en %, con 2 decimales; "—" si no hay seguidores o cifras. */
 export function fmtEr(er: number | null | undefined): string {
   if (er === null || er === undefined) return "—";
-  return `${er.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`;
+  return `${er.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 }

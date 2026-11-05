@@ -67,3 +67,20 @@ Gates: rama por fase → PR → revisión independiente (`/code-review`) → mer
 - [x] Fase 6 `feat/panel-actividad` — Resumen con tarjetas por competidor
 - [x] Fase 7 `feat/competidor-profundo` — Rendimiento / Publicaciones / Lectura / Estrategia (IA)
 - PRs #13–#19; #17–#19 quedaron en la rama base → llevados a main con #20
+
+## v2.2 — Piloto: rediseño AMGC + ajustes 320 px (`feat/rediseno-amgc`)
+Base: auditoría del código de Orbit (`~/Claude/Projects/orbit`, 2026-11-05). La estructura de vistas y módulos NO cambia: solo lo visual.
+- [x] Tipografía: Gotham Book (texto) + Medium (el «semibold») + Bold puntual, en el repo vía `next/font/local`
+- [x] Tokens AMGC: #010101 fondo · #1A1A1A superficie · blanco tinta · naranja acción · verde ok · amarillo aviso · turquesa info; claro y oscuro (oscuro por defecto)
+- [x] Acentos por vista con degradado (Resumen naranja→amarillo · Competidores amarillo→verde · Corridas verde→turquesa · Asistente turquesa→blanco · Ajustes naranja→amarillo)
+- [x] Superficies planas: radio 14, sin sombras ni bordes, hueco de 8 px, separadores discontinuos, chips teñidos
+- [x] Movimiento: anim-in escalonado, barras que crecen, líneas que se dibujan, contadores, SpotlightCard en KPIs, ClickSpark en el botón primario, barrido circular al cambiar de tema
+- [x] KPIs compactos «15.5K» (no «15,5 mil»)
+- [x] Componentes: sidebar tone-ink, topbar, KPI, tabla, botones, badges/señales, tabs en píldora, selects, gráficos (serie verde + paleta categórica)
+- [x] 320 px: tabs de Ajustes (activa visible), tabs de Competidor (indicar que hay más), píldora «verificada · N intentos», «1 intentos»
+- [x] `Date.now()` en el prerender de `/`
+- [x] Puerto: `next dev` ignoraba `PORT` de `.env.local` y arrancaba en 3000; el script fija `--port 3030` (lo que dicen los docs)
+- [ ] Verificación visual (claro/oscuro, 320 px y escritorio) + revisión independiente
+
+## Siguiente (separado, core)
+- [ ] `fix/seguidores-apify`: las métricas solo cuentan seguidores con `fuente: 'apify'` (corrida parval 2026-11-04-1603 tiene snapshots del navegador)

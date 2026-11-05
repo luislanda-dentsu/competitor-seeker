@@ -8,7 +8,7 @@ function CardSkeleton({
   alto?: string;
 }): React.ReactElement {
   return (
-    <div className={`flex flex-col gap-4 rounded-lg border border-border bg-card p-5 ${className ?? ""}`}>
+    <div className={`flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5 ${className ?? ""}`}>
       <Skeleton className="h-3 w-32" />
       <Skeleton className={`${alto} w-full`} />
     </div>
@@ -19,10 +19,10 @@ function CardSkeleton({
 export default function Loading(): React.ReactElement {
   return (
     <div aria-busy="true" aria-label="Cargando resumen" className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }, (_, i) => (
           <div
-            className="flex flex-col gap-3 rounded-lg border border-border bg-card p-5"
+            className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5"
             key={i}
           >
             <div className="flex items-center justify-between">

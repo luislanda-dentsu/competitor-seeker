@@ -33,7 +33,7 @@ export function GitSyncStatus({ compacto = false }: { compacto?: boolean }): Rea
       <span>{ETIQUETA[nivel]}</span>
     </>
   );
-  const clases = "inline-flex h-8 items-center gap-1.5 rounded-pill bg-card-2 px-2.5 text-xs text-fg";
+  const clases = "tone-ink inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-pill bg-card px-3 text-xs text-fg";
 
   if (compacto) {
     return (
