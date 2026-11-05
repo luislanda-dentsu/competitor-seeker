@@ -163,6 +163,23 @@
   .lectura b { color: var(--text); font-weight: 600; }
   .registros { margin-top: 14px; font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
 
+  /* Rendimiento (cifras de Apify) */
+  .rend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+    margin: 0 0 14px;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--border);
+  }
+  .rend div { min-width: 0; }
+  .rend dt { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
+  .rend dd { margin: 2px 0 0; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .rend dd small { font-size: 11px; font-weight: 400; color: var(--muted); }
+  .rend-nota { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+  .rend-top { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+  .rend-top a { color: var(--text); }
+
   /* Estado vacío */
   .vacio {
     grid-column: 1 / -1;
@@ -304,6 +321,53 @@
   });
   competidores.forEach(function (c) { c.senal = normSenal(c.ultima.senal); });
 
+  // Rendimiento por competidor (opcional: exports antiguos no lo traen).
+  var rendimiento = new Map();
+  (Array.isArray(datos.rendimiento) ? datos.rendimiento : []).forEach(function (r) {
+    if (r && typeof r.competidor === "string") rendimiento.set(r.competidor, r);
+  });
+
+  function fmtNum(n, dec) {
+    if (typeof n !== "number" || !isFinite(n)) return "—";
+    return n.toLocaleString("es", { maximumFractionDigits: dec == null ? 0 : dec });
+  }
+
+  function dato(dl, etiqueta, valor, extra) {
+    var d = el("div");
+    d.appendChild(el("dt", null, etiqueta));
+    var dd = el("dd", null, valor);
+    if (extra) { dd.appendChild(document.createTextNode(" ")); dd.appendChild(el("small", null, extra)); }
+    d.appendChild(dd);
+    dl.appendChild(d);
+  }
+
+  // Sin Apify no hay cifras: se muestra «—», nunca números del navegador.
+  function bloqueRendimiento(r) {
+    var dl = el("dl", "rend");
+    var delta = typeof r.deltaSeguidores === "number" && r.deltaSeguidores !== 0
+      ? (r.deltaSeguidores > 0 ? "+" : "") + fmtNum(r.deltaSeguidores) : null;
+    dato(dl, "Posts", fmtNum(r.posts), typeof r.cadenciaSemanal === "number" ? fmtNum(r.cadenciaSemanal, 1) + "/sem" : null);
+    dato(dl, "ER medio", typeof r.erPromedio === "number" ? fmtNum(r.erPromedio, 2) + "%" : "—");
+    dato(dl, "Seguidores", fmtNum(r.seguidores), delta);
+    dato(dl, "Likes / post", fmtNum(r.likesPromedio), typeof r.comentariosPromedio === "number" ? fmtNum(r.comentariosPromedio) + " com." : null);
+    if (r.cobertura === "sin-datos") {
+      dl.appendChild(el("div", "rend-nota", "Sin cifras: Apify no aportó datos de este competidor."));
+    } else if (r.cobertura === "parcial" || (typeof r.conCifras === "number" && r.conCifras < r.posts)) {
+      dl.appendChild(el("div", "rend-nota", "Cifras parciales: " + fmtNum(r.conCifras) + " de " + fmtNum(r.posts) + " posts."));
+    }
+    var top = (Array.isArray(r.top) ? r.top : [])[0];
+    if (top && /^https?:\/\//i.test(String(top.url))) {
+      var p = el("div", "rend-top");
+      p.appendChild(document.createTextNode("Mejor post: "));
+      var a = el("a", null, (top.formato || "post") + " · " + fmtFecha(top.fecha));
+      a.href = top.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      p.appendChild(a);
+      if (typeof top.er === "number") p.appendChild(document.createTextNode(" · ER " + fmtNum(top.er, 2) + "%"));
+      dl.appendChild(p);
+    }
+    return dl;
+  }
+
   // --- Aviso de datos de ejemplo ---
   // Sin esto, el panel presentaría marcas ficticias como si fueran hallazgos
   // reales al abrirlo por primera vez. soul.md lo prohíbe explícitamente.
@@ -405,6 +469,9 @@
 
     t.appendChild(el("div", "fecha", fmtFecha(u.fecha)));
     t.appendChild(el("p", "movimiento", u.movimiento || "Sin movimiento descrito."));
+
+    var r = rendimiento.get(c.marca);
+    if (r && r.posts > 0) t.appendChild(bloqueRendimiento(r));
 
     var lec = el("p", "lectura");
     lec.appendChild(el("b", null, "Lectura: "));

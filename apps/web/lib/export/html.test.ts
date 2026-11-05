@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Entrada } from "@competitor-seeker/core";
-import { generarHtmlExport, jsonParaScript } from "./html";
+import type { Entrada, MetricasCompetidor } from "@competitor-seeker/core";
+import { generarHtmlExport, jsonParaScript, leerPlantillaExport, rendimientoExport } from "./html";
 
 const PLANTILLA = `<html><body>
 <!-- INICIO DATOS · reemplazar -->
@@ -52,5 +52,49 @@ describe("jsonParaScript · comentarios HTML", () => {
     const out = jsonParaScript({ t: "a <!--<script> b" });
     expect(out).not.toContain("<!--");
     expect(JSON.parse(out)).toEqual({ t: "a <!--<script> b" });
+  });
+});
+
+describe("rendimiento en el export", () => {
+  const metricas = {
+    competidor: "Marca A",
+    publicaciones: [],
+    posts: 4,
+    cadenciaSemanal: 1.5,
+    likes: { total: 400, promedio: 100, n: 4 },
+    comentarios: { total: 20, promedio: 5, n: 4 },
+    vistas: { total: 0, promedio: null, n: 0, mediana: null },
+    er: { promedio: 1.05, porFormato: {} },
+    formatos: { reel: 3, carrusel: 1 },
+    seguidores: { actual: 10_000, delta: 250 },
+    top: [1, 2, 3, 4].map((i) => ({ url: `https://www.instagram.com/p/P${i}/`, fecha: "2026-11-0" + i, formato: "reel", er: i, corrida: "c1", competidor: "Marca A" })),
+    cobertura: "completa",
+    conCifras: 4,
+    serie: [{ corrida: "c1", fecha: "2026-11-04", seguidores: 10_000, posts: 4, erPromedio: 1.05 }],
+    lecturas: [{ corrida: "c1", fecha: "2026-11-04", resumen: ["x"] }],
+  } as unknown as MetricasCompetidor;
+
+  it("rendimientoExport proyecta cifras y recorta el top a 3, sin series ni lecturas", () => {
+    const r = rendimientoExport(metricas);
+    expect(r).toMatchObject({ competidor: "Marca A", posts: 4, erPromedio: 1.05, likesPromedio: 100, seguidores: 10_000, deltaSeguidores: 250, cobertura: "completa" });
+    expect(r.top).toHaveLength(3);
+    expect(r.top[0]).toEqual({ url: "https://www.instagram.com/p/P1/", fecha: "2026-11-01", formato: "reel", er: 1 });
+    expect(r).not.toHaveProperty("serie");
+    expect(r).not.toHaveProperty("lecturas");
+  });
+
+  it("el bloque DATOS lleva `rendimiento` (vacío por defecto)", () => {
+    const datosDe = (html: string) => JSON.parse(html.match(/id="datos">([\s\S]*?)<\/script>/)![1]!);
+    expect(datosDe(generarHtmlExport(PLANTILLA, "2026-11-01", [])).rendimiento).toEqual([]);
+    const conR = datosDe(generarHtmlExport(PLANTILLA, "2026-11-01", [entrada("Reel")], [rendimientoExport(metricas)]));
+    expect(conR.rendimiento[0].competidor).toBe("Marca A");
+  });
+
+  it("la plantilla real conserva el bloque y su script compila", () => {
+    const html = generarHtmlExport(leerPlantillaExport(), "2026-11-01", [entrada("Reel")], [rendimientoExport(metricas)]);
+    const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]!);
+    expect(scripts.length).toBeGreaterThan(0);
+    for (const s of scripts) expect(() => new Function(s)).not.toThrow();
+    expect(html).toContain("bloqueRendimiento");
   });
 });

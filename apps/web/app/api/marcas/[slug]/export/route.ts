@@ -1,6 +1,6 @@
 import { connection } from "next/server";
-import { existeMarca, fechaLocal, leerLog, ultimaCorridaRegistrada } from "@competitor-seeker/core";
-import { generarHtmlExport, leerPlantillaExport } from "@/lib/export/html";
+import { competidoresActivos, existeMarca, fechaLocal, leerLog, leerMarca, listarCorridas, metricasMarca, ultimaCorridaRegistrada } from "@competitor-seeker/core";
+import { generarHtmlExport, leerPlantillaExport, rendimientoExport } from "@/lib/export/html";
 import { errorJson } from "@/lib/settings/api";
 import { SLUG_RE } from "@/lib/settings/validacion";
 
@@ -16,7 +16,10 @@ export async function GET(_request: Request, { params }: Ctx): Promise<Response>
     const entradas = leerLog(slug).items;
     const corrida = ultimaCorridaRegistrada(slug) ?? entradas.reduce((m, e) => (e.fecha > m ? e.fecha : m), "");
     const fecha = corrida || fechaLocal();
-    const html = generarHtmlExport(leerPlantillaExport(), fecha, entradas);
+    // Rendimiento de todo el histórico: competidores activos + los que aparecen en el log.
+    const nombres = [...new Set([...competidoresActivos(leerMarca(slug)).map((c) => c.nombre), ...entradas.map((e) => e.marca)])];
+    const rendimiento = metricasMarca(listarCorridas(slug).corridas, nombres, { hoy: fechaLocal() }).map(rendimientoExport);
+    const html = generarHtmlExport(leerPlantillaExport(), fecha, entradas, rendimiento);
     return new Response(html, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
