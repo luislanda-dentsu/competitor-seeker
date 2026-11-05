@@ -114,9 +114,18 @@ describe('metricasCompetidor', () => {
     expect(m.cadenciaSemanal).toBe(1)
   })
 
-  it('el delta de seguidores no mezcla fuentes (IG redondea, Apify es exacto)', () => {
+  it('los seguidores del navegador se ignoran: solo cuenta Apify (actual, delta, serie y ER)', () => {
     const ig = corrida({ id: '2026-11-10-i', fecha: '2026-11-10', perfiles: [{ competidor: CC, seguidores: 11_000, fuente: 'ig' }] })
-    expect(metricasCompetidor([c1, c2, ig], CC, { hoy: '2026-11-10' }).seguidores).toEqual({ actual: 11_000, delta: null })
+    const m = metricasCompetidor([c1, c2, ig], CC, { hoy: '2026-11-10' })
+    expect(m.seguidores).toEqual({ actual: 10_500, delta: 500 })
+    expect(m.serie.find((p) => p.corrida === '2026-11-10-i')?.seguidores ?? null).toBeNull()
+  })
+
+  it('una corrida con solo seguidores del navegador no aporta ER', () => {
+    const soloIg = corrida({ id: '2026-11-10-j', fecha: '2026-11-10', publicaciones: [post('J', '2026-11-09')], perfiles: [{ competidor: CC, seguidores: 11_000, fuente: 'ig' }] })
+    const m = metricasCompetidor([soloIg], CC, { hoy: '2026-11-10' })
+    expect(m.seguidores.actual).toBeNull()
+    expect(m.publicaciones.find((p) => p.url.includes('/J/'))?.er).toBeNull()
   })
 
   it('con datos por publicación en el periodo, el legado no se suma (evita duplicar posts)', () => {

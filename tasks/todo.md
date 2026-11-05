@@ -83,4 +83,4 @@ Base: auditoría del código de Orbit (`~/Claude/Projects/orbit`, 2026-11-05). L
 - [ ] Verificación visual (claro/oscuro, 320 px y escritorio) + revisión independiente
 
 ## Siguiente (separado, core)
-- [ ] `fix/seguidores-apify`: las métricas solo cuentan seguidores con `fuente: 'apify'` (corrida parval 2026-11-04-1603 tiene snapshots del navegador)
+- [x] `fix/seguidores-apify`: las métricas solo cuentan seguidores con `fuente: 'apify'` (corrida parval 2026-11-04-1603 tiene snapshots del navegador)

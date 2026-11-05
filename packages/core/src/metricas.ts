@@ -94,12 +94,14 @@ function mediana(xs: readonly number[]): number | null {
   return o.length % 2 ? o[m]! : (o[m - 1]! + o[m]!) / 2
 }
 
+/**
+ * Seguidores de Apify en esa corrida, o null. Decisión del owner (2026-11-04): Apify es la
+ * única fuente de cifras; los snapshots del navegador («41,4 mil», redondeados) se ignoran
+ * aunque existan en corridas anteriores a esa regla (p. ej. parval 2026-11-04-1603).
+ */
 function seguidoresEn(c: Corrida, competidor: string): number | null {
-  return c.perfiles?.find((p) => p.competidor === competidor)?.seguidores ?? null
-}
-
-function fuenteSeguidores(c: Corrida, competidor: string): string | null {
-  return c.perfiles?.find((p) => p.competidor === competidor)?.fuente ?? null
+  const p = c.perfiles?.find((x) => x.competidor === competidor)
+  return p?.fuente === 'apify' ? (p.seguidores ?? null) : null
 }
 
 /** Ventana de rastreo por defecto de una primera corrida (sin ultimaCorrida). */
@@ -235,12 +237,9 @@ export function metricasCompetidor(
   const enRango = snaps.filter((x) => enPeriodo(x.c.fecha, periodo))
   const ultimo = enRango.at(-1)
   const actual = ultimo?.s ?? null
-  // El delta solo compara snapshots de la misma fuente (IG redondea "12,3 mil"; Apify es exacto).
-  const fuente = ultimo ? fuenteSeguidores(ultimo.c, competidor) : null
-  const misma = snaps.filter((x) => fuenteSeguidores(x.c, competidor) === fuente)
-  const antes = misma.filter((x) => periodo.desde !== null && x.c.fecha < periodo.desde).at(-1)
-  const enRangoMisma = misma.filter((x) => enPeriodo(x.c.fecha, periodo))
-  const referencia = antes?.s ?? (enRangoMisma.length > 1 ? enRangoMisma[0]!.s : null)
+  // Todos los snapshots son de Apify (seguidoresEn descarta el resto): el delta compara exactos.
+  const antes = snaps.filter((x) => periodo.desde !== null && x.c.fecha < periodo.desde).at(-1)
+  const referencia = antes?.s ?? (enRango.length > 1 ? enRango[0]!.s : null)
   const delta = actual !== null && referencia !== null ? actual - referencia : null
 
   // 4. Serie y lecturas por corrida del periodo.
