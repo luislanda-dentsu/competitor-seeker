@@ -116,7 +116,7 @@ export function RunConsoleView({ marca, fecha, consola, tiempo, conexion = "inac
           aria-label="Eventos de la corrida"
           aria-live="polite"
           aria-relevant="additions"
-          className="h-72 overflow-y-auto overscroll-contain px-4 py-3 font-mono text-xs leading-5 sm:h-80"
+          className="h-72 overflow-y-auto overscroll-contain px-4 py-3 font-code text-xs leading-5 sm:h-80"
           onScroll={onScroll}
           ref={listaRef}
         >

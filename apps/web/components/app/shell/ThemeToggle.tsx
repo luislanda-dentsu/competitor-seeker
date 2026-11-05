@@ -27,12 +27,16 @@ function cambiarConBarrido(aplicar: () => void, x: number, y: number): void {
   }
   const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
   const t = doc.startViewTransition(aplicar);
-  void t.ready.then(() => {
-    document.documentElement.animate(
-      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-      { duration: 520, easing: "cubic-bezier(0.65, 0, 0.35, 1)", pseudoElement: "::view-transition-new(root)" },
-    );
-  });
+  t.ready
+    .then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+        { duration: 520, easing: "cubic-bezier(0.65, 0, 0.35, 1)", pseudoElement: "::view-transition-new(root)" },
+      );
+    })
+    .catch(() => {
+      /* transición saltada (pestaña oculta u otra en curso): el tema ya se aplicó */
+    });
 }
 
 export function ThemeToggle(): React.ReactElement {

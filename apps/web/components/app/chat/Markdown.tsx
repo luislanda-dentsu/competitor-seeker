@@ -21,7 +21,7 @@ function Inlines({ nodos }: { nodos: readonly Inline[] }): React.ReactElement {
             );
           case "codigo":
             return (
-              <code className="rounded-sm bg-card-2 px-1 py-0.5 font-mono text-[0.85em] text-fg" key={i}>
+              <code className="rounded-sm bg-card-2 px-1 py-0.5 font-code text-[0.85em] text-fg" key={i}>
                 {n.texto}
               </code>
             );
@@ -58,7 +58,7 @@ function BloqueView({ b }: { b: Bloque }): React.ReactElement {
     }
     case "codigo":
       return (
-        <pre className="overflow-x-auto rounded-md bg-card-2 p-3 font-mono text-xs text-fg">
+        <pre className="overflow-x-auto rounded-md bg-card-2 p-3 font-code text-xs text-fg">
           <code>{b.texto}</code>
         </pre>
       );

@@ -106,7 +106,7 @@
 :root {
   --action: var(--sec-a);
   --action-fill: linear-gradient(120deg, var(--sec-a), var(--sec-b));
-  --action-text: color-mix(in oklab, var(--sec-a) 55%, #000);
+  --action-text: color-mix(in oklab, var(--sec-a) 45%, #000);
   --title-fill: linear-gradient(var(--fg), var(--fg));
   --spot: var(--sec-a);
   --series: var(--ok);
@@ -196,6 +196,31 @@
   --sidebar-foreground: #b8b8b8;
   --sidebar-accent-foreground: #ffffff;
   --action-text: var(--sec-a);
+  /* estados con los valores del oscuro (si no, heredan los del claro, pensados para gris) */
+  --ok: #b1ffa3;
+  --warn: #efd554;
+  --wait: #6affe1;
+  --danger: #ff5340;
+  --neutral: #8c8c8c;
+  --series: var(--ok);
+  --s-nuevo: var(--ok);
+  --s-confuso: var(--warn);
+  --s-sin-datos: var(--neutral);
+  --s-no-funciona: var(--danger);
+  --s-invalida: var(--wait);
+  --s-nuevo-soft: color-mix(in oklab, var(--s-nuevo) 16%, transparent);
+  --s-confuso-soft: color-mix(in oklab, var(--s-confuso) 16%, transparent);
+  --s-sin-datos-soft: color-mix(in oklab, var(--s-sin-datos) 16%, transparent);
+  --s-no-funciona-soft: color-mix(in oklab, var(--s-no-funciona) 16%, transparent);
+  --s-invalida-soft: color-mix(in oklab, var(--s-invalida) 16%, transparent);
+  --success: var(--ok);
+  --success-foreground: var(--ok);
+  --warning: var(--warn);
+  --warning-foreground: var(--warn);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--danger);
+  --info: var(--wait);
+  --info-foreground: var(--wait);
   color: var(--fg);
 }
 :root[data-theme="dark"] .tone-ink {
@@ -283,7 +308,7 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-code: var(--code);
-  --code-foreground: var(--code-foreground);
+  --color-code-foreground: var(--code-foreground);
   --color-code-highlight: var(--code-highlight);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -502,17 +527,17 @@
 }
 @layer components {
   .anim-in {
-    animation: amgc-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: amgc-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
     animation-delay: calc(min(var(--i, 0), 12) * 40ms);
   }
   .anim-grow-x {
     transform-origin: left;
-    animation: amgc-grow-x 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: amgc-grow-x 640ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
     animation-delay: calc(min(var(--i, 0), 12) * 40ms);
   }
   .anim-grow-y {
     transform-origin: bottom;
-    animation: amgc-grow-y 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: amgc-grow-y 640ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
     animation-delay: calc(min(var(--i, 0), 40) * 15ms);
   }
   .anim-draw {
@@ -524,7 +549,7 @@
   }
   /* El contenido de cada vista entra escalonado: hijos directos de <main>. */
   #contenido > * > * {
-    animation: amgc-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: amgc-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
   #contenido > * > :nth-child(2) { animation-delay: 40ms; }
   #contenido > * > :nth-child(3) { animation-delay: 80ms; }

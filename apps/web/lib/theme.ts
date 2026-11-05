@@ -20,8 +20,9 @@ export function isThemePref(v: unknown): v is ThemePref {
  * - resuelve system con matchMedia
  * - fija <html data-theme="light|dark">
  * - lee la cookie cs-sidebar y fija <html data-sidebar="collapsed"> si aplica
+ * - fija <html data-section> según la ruta (mismo criterio que lib/section.ts) para que el acento no parpadee
  */
-export const THEME_INIT_SCRIPT = `(function(){try{var k="cs-theme";var p=null;try{p=localStorage.getItem(k)}catch(e){}if(p!=="light"&&p!=="dark"&&p!=="system"){p="dark"}var d=p==="system"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p;var h=document.documentElement;h.dataset.theme=d;h.dataset.themePref=p;var m=document.cookie.match(/(?:^|; )cs-sidebar=([^;]*)/);if(m&&decodeURIComponent(m[1])==="collapsed"){h.dataset.sidebar="collapsed"}}catch(e){}})();`;
+export const THEME_INIT_SCRIPT = `(function(){try{var k="cs-theme";var p=null;try{p=localStorage.getItem(k)}catch(e){}if(p!=="light"&&p!=="dark"&&p!=="system"){p="dark"}var d=p==="system"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p;var h=document.documentElement;h.dataset.theme=d;h.dataset.themePref=p;var m=document.cookie.match(/(?:^|; )cs-sidebar=([^;]*)/);if(m&&decodeURIComponent(m[1])==="collapsed"){h.dataset.sidebar="collapsed"}var u=location.pathname;h.dataset.section=u.indexOf("/competidores")===0?"competidores":u.indexOf("/corridas")===0?"corridas":u.indexOf("/asistente")===0?"asistente":"general"}catch(e){}})();`;
 
 function readPref(): ThemePref {
   if (typeof window === "undefined") return "dark";
@@ -29,7 +30,7 @@ function readPref(): ThemePref {
     const v = window.localStorage.getItem(THEME_KEY);
     return isThemePref(v) ? v : "dark";
   } catch {
-    return "system";
+    return "dark";
   }
 }
 
