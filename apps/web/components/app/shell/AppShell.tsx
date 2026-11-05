@@ -1,15 +1,16 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PageTitleProvider } from "@/components/app/shell/PageTitle";
+import { SectionScope } from "@/components/app/shell/SectionScope";
 import { Sidebar } from "@/components/app/shell/Sidebar";
 import { Topbar } from "@/components/app/shell/Topbar";
 import { cargarContextoMarca } from "@/lib/brand";
 import { BrandProvider } from "@/lib/brand-context";
 
 /**
- * Canvas (gris) con padding → contenedor surface radio 24 → sidebar + main.
- * En <lg el contenedor va a sangre (sin radio ni padding) y el sidebar se
- * sustituye por el Sheet de MobileNav.
+ * Estilo AMGC (Orbit): fondo #010101 a sangre; el sidebar es una tarjeta
+ * flotante (m-2, radio 14) y el contenido son tarjetas separadas por el
+ * hueco de fondo. En <lg el sidebar se sustituye por el Sheet de MobileNav.
  *
  * El contexto de marca (cookie + marca.json) se pasa como PROMESA sin
  * esperar: BrandSwitcher y el sub-menú de competidores la resuelven con
@@ -21,12 +22,15 @@ export function AppShell({ children }: { children: ReactNode }): React.ReactElem
     <TooltipProvider delay={300}>
       <BrandProvider promise={contextoMarca}>
       <PageTitleProvider>
-        <div className="min-h-dvh bg-canvas lg:p-4">
-          <div className="grid min-h-dvh grid-cols-1 overflow-clip bg-surface lg:min-h-[calc(100dvh-2rem)] lg:grid-cols-[240px_minmax(0,1fr)] lg:rounded-[24px] lg:border lg:border-border lg:shadow-xs lg:sb-collapsed:grid-cols-[64px_minmax(0,1fr)]">
+        <Suspense fallback={null}>
+          <SectionScope />
+        </Suspense>
+        <div className="min-h-dvh bg-canvas">
+          <div className="grid min-h-dvh grid-cols-1 lg:grid-cols-[232px_minmax(0,1fr)] lg:sb-collapsed:grid-cols-[76px_minmax(0,1fr)]">
             <Sidebar />
             <div className="flex min-w-0 flex-col">
               <Topbar />
-              <main className="min-w-0 flex-1 p-4 lg:p-6" id="contenido">
+              <main className="mx-auto w-full min-w-0 max-w-[1680px] flex-1 px-4 pt-2 pb-6 sm:px-6 lg:px-8" id="contenido">
                 {children}
               </main>
             </div>

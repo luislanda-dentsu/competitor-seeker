@@ -52,7 +52,7 @@ export function SettingsView({ datos }: { datos: DatosAjustes }): React.ReactEle
     <Tabs className="gap-4 md:gap-6" onValueChange={cambiar} orientation={estrecho ? "horizontal" : "vertical"} value={pestana}>
       <TabsList
         aria-label="Secciones de ajustes"
-        className="w-full shrink-0 overflow-x-auto md:w-52 md:items-stretch"
+        className="w-full shrink-0 justify-start overflow-x-auto [scrollbar-width:none] md:w-52 md:items-stretch"
         variant="underline"
       >
         {PESTANAS.map((p) => (

@@ -124,7 +124,7 @@ export function BudgetPanel({ config }: { config: ConfigApify }): React.ReactEle
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
-      <Card className="rounded-lg">
+      <Card>
         <CardHeader>
           <CardTitle className="t-label">Presupuestos y umbrales</CardTitle>
           <CardDescription className="text-fg-muted">
@@ -201,7 +201,7 @@ export function BudgetPanel({ config }: { config: ConfigApify }): React.ReactEle
         </CardPanel>
       </Card>
 
-      <Card className="h-fit rounded-lg">
+      <Card className="h-fit">
         <CardHeader>
           <CardTitle className="t-label">Vista previa</CardTitle>
           <CardDescription className="text-fg-muted">Lo que verás en la barra lateral. Se recalcula al guardar.</CardDescription>

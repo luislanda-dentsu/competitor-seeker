@@ -135,7 +135,7 @@ export function ApifyPanel({ token: inicial }: { token: EstadoToken }): React.Re
   };
 
   return (
-    <Card className="rounded-lg">
+    <Card>
       <CardHeader className="flex-row items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <CardTitle className="t-label">Apify</CardTitle>

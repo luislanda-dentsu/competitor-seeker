@@ -18,7 +18,7 @@ export function SuggestionCards({ sugerencias, disabled, onElegir }: SuggestionC
         <li key={s.id}>
           <button
             className={cn(
-              "flex h-full w-full flex-col gap-2 rounded-xl border border-border bg-card p-4 text-left text-sm text-fg shadow-xs transition-colors",
+              "flex h-full w-full flex-col gap-2 rounded-xl bg-card p-4 text-left text-sm text-fg shadow-xs transition-colors",
               "hover:border-border-strong hover:bg-card-2/60 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-card",
             )}

@@ -4,7 +4,6 @@ import { CircleQuestionMark, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
-import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarCollapseButton } from "@/components/app/shell/SidebarCollapseButton";
 import { SidebarNav } from "@/components/app/shell/SidebarNav";
@@ -30,8 +29,8 @@ function FooterLink({
     <Link
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex h-9 items-center gap-2.5 rounded-md px-2.5 text-sm text-fg-muted transition-colors hover:bg-card-2/70 hover:text-fg focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1 sb-collapsed:justify-center sb-collapsed:px-0",
-        active && "bg-card-2 font-medium text-fg",
+        "flex h-9 items-center gap-2.5 rounded-sm px-2.5 text-sm text-fg-muted transition-colors hover:bg-card-2 hover:text-fg focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1 sb-collapsed:justify-center sb-collapsed:px-0",
+        active && "bg-card-2 font-medium text-fg [&_svg]:text-action-text",
       )}
       href={href}
     >
@@ -91,7 +90,7 @@ export function Sidebar(): React.ReactElement {
   return (
     <aside
       aria-label="Barra lateral"
-      className="hidden min-h-0 flex-col border-e border-border bg-surface lg:flex"
+      className="tone-ink sticky top-2 m-2 me-0 hidden h-[calc(100dvh-1rem)] min-h-0 flex-col rounded-[var(--radius-card)] bg-card transition-[width] duration-200 ease-out lg:flex"
     >
       {/* Marca + colapsar */}
       <div className="flex h-16 items-center justify-between gap-2 px-3 sb-collapsed:justify-center sb-collapsed:px-0">
@@ -102,11 +101,11 @@ export function Sidebar(): React.ReactElement {
         >
           <span
             aria-hidden="true"
-            className="grid size-7 shrink-0 place-items-center rounded-md bg-primary font-mono text-[13px] font-semibold text-primary-fg"
+            className="bg-action grid size-7 shrink-0 place-items-center rounded-md"
           >
-            cs
+            <span className="size-2 rounded-full bg-action-ink" />
           </span>
-          <span className="truncate text-sm font-medium text-fg sb-collapsed:sr-only">
+          <span className="truncate text-[15px] font-medium tracking-tight text-fg sb-collapsed:sr-only">
             Competitor-Seeker
           </span>
         </Link>
@@ -123,7 +122,7 @@ export function Sidebar(): React.ReactElement {
       {/* Hueco UsageMeter + pie */}
       <div className="flex flex-col gap-2 px-3 pb-3 sb-collapsed:px-2.5">
         <UsageMeter collapsed={collapsed} />
-        <Separator />
+        <div className="rule-dashed" role="separator" />
         <Suspense fallback={<FooterLinks collapsed={collapsed} pathname="" />}>
           <FooterLinksLive collapsed={collapsed} />
         </Suspense>

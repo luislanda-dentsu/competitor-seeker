@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { AppShell } from "@/components/app/shell/AppShell";
 import { ThemeScript } from "@/components/app/shell/ThemeScript";
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
+// Gotham (AMGC): Book para el texto, Medium como «semibold», Bold puntual.
+const gotham = localFont({
+  variable: "--font-gotham",
   display: "swap",
+  src: [
+    { path: "./fonts/Gotham-Book.otf", weight: "400", style: "normal" },
+    { path: "./fonts/Gotham-BookItalic.otf", weight: "400", style: "italic" },
+    { path: "./fonts/Gotham-Medium.otf", weight: "500", style: "normal" },
+    { path: "./fonts/Gotham-Medium.otf", weight: "600", style: "normal" },
+    { path: "./fonts/Gotham-Bold.otf", weight: "700", style: "normal" },
+  ],
 });
 
 const geistMono = Geist_Mono({
@@ -27,7 +35,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      className={`${geist.variable} ${geistMono.variable} h-full`}
+      className={`${gotham.variable} ${geistMono.variable} h-full`}
       lang="es"
       suppressHydrationWarning
     >

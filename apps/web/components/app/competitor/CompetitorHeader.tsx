@@ -24,7 +24,7 @@ export function CompetitorHeader({ datos }: { datos: DatosCompetidor }): React.R
   const esIg = Boolean(c.instagram);
   const inicial = c.nombre.trim().charAt(0).toUpperCase() || "?";
   return (
-    <Card className="gap-5 rounded-lg p-5">
+    <Card className="gap-5 p-5">
       <div className="flex flex-wrap items-start gap-4">
         <Avatar className="[--avatar-size:--spacing(12)] bg-card-2 text-fg">
           <AvatarFallback aria-hidden="true" className="bg-card-2 text-lg font-medium">

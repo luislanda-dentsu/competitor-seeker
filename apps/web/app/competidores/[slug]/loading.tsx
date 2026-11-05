@@ -5,7 +5,7 @@ export default function Loading(): React.ReactElement {
   return (
     <div aria-busy="true" aria-label="Cargando competidor" className="flex flex-col gap-4">
       <Skeleton className="h-4 w-64" />
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
         <div className="flex items-center gap-4">
           <Skeleton className="size-12 rounded-full" />
           <div className="flex flex-1 flex-col gap-2">
@@ -21,7 +21,7 @@ export default function Loading(): React.ReactElement {
           ))}
         </div>
       </div>
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-5">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
         <Skeleton className="h-8 w-72 rounded-lg" />
         {Array.from({ length: 3 }, (_, i) => (
           <div className="flex gap-3" key={i}>

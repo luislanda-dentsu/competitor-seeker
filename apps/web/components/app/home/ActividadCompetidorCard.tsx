@@ -20,7 +20,7 @@ export function ActividadCompetidorCard({ actividad, query }: { actividad: Activ
   const delta = m.seguidores.delta;
 
   return (
-    <Card className="rounded-lg" data-competidor={competidor.nombre}>
+    <Card data-competidor={competidor.nombre}>
       <CardPanel className="flex flex-col gap-4 p-5">
         <header className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-0.5">

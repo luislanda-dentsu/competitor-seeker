@@ -32,11 +32,12 @@ export function CompetitorTabs({
 }): React.ReactElement {
   const legado = metricas.publicaciones.length === 0 && datos.conMetricas.length > 0;
   return (
-    <Card className="rounded-lg">
+    <Card>
       <CardPanel className="p-5">
         <Tabs className="gap-4" defaultValue="rendimiento">
-          <div className="overflow-x-auto">
-            <TabsList aria-label="Secciones de la ficha">
+          {/* En móvil la fila desliza: el borde derecho se desvanece para indicar que hay más pestañas. */}
+          <div className="-mx-1 overflow-x-auto px-1 [mask-image:linear-gradient(to_right,#000_80%,transparent)] [scrollbar-width:none] lg:[mask-image:none]">
+            <TabsList aria-label="Secciones de la ficha" className="justify-start">
               <TabsTab value="rendimiento">Rendimiento</TabsTab>
               <TabsTab value="publicaciones">
                 Publicaciones

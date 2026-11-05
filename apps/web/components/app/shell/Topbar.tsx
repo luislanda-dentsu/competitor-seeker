@@ -33,7 +33,7 @@ function TopbarTitle(): React.ReactElement {
 
 export function Topbar(): React.ReactElement {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border px-4 lg:px-6">
+    <header className="mx-auto flex h-16 w-full max-w-[1680px] shrink-0 items-center gap-3 px-4 sm:px-6 lg:h-20 lg:px-8">
       <MobileNav />
       {/* usePathname es dato de runtime en rutas dinámicas: va en Suspense */}
       <Suspense
@@ -51,7 +51,7 @@ export function Topbar(): React.ReactElement {
         <Select defaultValue="3" items={PERIODOS}>
           <SelectTrigger
             aria-label="Período"
-            className="hidden h-8 min-h-8 min-w-0 rounded-pill border-transparent bg-card-2 text-fg shadow-none sm:h-8 md:inline-flex"
+            className="tone-ink hidden h-8 min-h-8 min-w-0 rounded-pill border-transparent bg-card ps-3.5 font-medium text-fg shadow-none sm:h-8 md:inline-flex"
             size="sm"
           >
             <SelectValue />

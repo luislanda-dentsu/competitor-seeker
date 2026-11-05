@@ -50,7 +50,7 @@ export function RunHistoryTable({
   filtradas?: number;
 }): React.ReactElement {
   return (
-    <Card className="rounded-lg">
+    <Card>
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3">
         <CardTitle className="t-label">Histórico de corridas</CardTitle>
         {acciones}

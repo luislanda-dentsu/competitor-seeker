@@ -39,7 +39,7 @@ function CompetidorSubnavLive({
               aria-current={active ? "page" : undefined}
               className={cn(
                 "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] text-fg-muted transition-colors hover:bg-card-2/70 hover:text-fg focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1",
-                active && "bg-card-2 font-medium text-fg",
+                active && "bg-card-2 font-medium text-fg [&_svg]:text-action-text",
               )}
               href={href}
               onClick={onNavigate}
@@ -107,7 +107,7 @@ function NavList({
               aria-current={active ? "page" : undefined}
               className={cn(
                 "flex h-9 items-center gap-2.5 rounded-md px-2.5 text-sm text-fg-muted transition-colors hover:bg-card-2/70 hover:text-fg focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1",
-                active && "bg-card-2 font-medium text-fg",
+                active && "bg-card-2 font-medium text-fg [&_svg]:text-action-text",
                 collapsible && "sb-collapsed:justify-center sb-collapsed:px-0",
               )}
               href={href}

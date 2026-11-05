@@ -16,18 +16,18 @@ export function isThemePref(v: unknown): v is ThemePref {
 /**
  * Script inline (string) que se ejecuta antes del primer paint.
  * Debe ser autocontenido: no importa nada de este módulo.
- * - lee localStorage['cs-theme'] (light|dark|system; default system)
+ * - lee localStorage['cs-theme'] (light|dark|system; default dark, como Orbit)
  * - resuelve system con matchMedia
  * - fija <html data-theme="light|dark">
  * - lee la cookie cs-sidebar y fija <html data-sidebar="collapsed"> si aplica
  */
-export const THEME_INIT_SCRIPT = `(function(){try{var k="cs-theme";var p=null;try{p=localStorage.getItem(k)}catch(e){}if(p!=="light"&&p!=="dark"&&p!=="system"){p="system"}var d=p==="system"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p;var h=document.documentElement;h.dataset.theme=d;h.dataset.themePref=p;var m=document.cookie.match(/(?:^|; )cs-sidebar=([^;]*)/);if(m&&decodeURIComponent(m[1])==="collapsed"){h.dataset.sidebar="collapsed"}}catch(e){}})();`;
+export const THEME_INIT_SCRIPT = `(function(){try{var k="cs-theme";var p=null;try{p=localStorage.getItem(k)}catch(e){}if(p!=="light"&&p!=="dark"&&p!=="system"){p="dark"}var d=p==="system"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p;var h=document.documentElement;h.dataset.theme=d;h.dataset.themePref=p;var m=document.cookie.match(/(?:^|; )cs-sidebar=([^;]*)/);if(m&&decodeURIComponent(m[1])==="collapsed"){h.dataset.sidebar="collapsed"}}catch(e){}})();`;
 
 function readPref(): ThemePref {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "dark";
   try {
     const v = window.localStorage.getItem(THEME_KEY);
-    return isThemePref(v) ? v : "system";
+    return isThemePref(v) ? v : "dark";
   } catch {
     return "system";
   }
@@ -92,7 +92,7 @@ function getSnapshot(): ThemePref {
 }
 
 function getServerSnapshot(): ThemePref {
-  return "system";
+  return "dark";
 }
 
 export function useTheme(): {

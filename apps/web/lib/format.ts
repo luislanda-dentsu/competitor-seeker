@@ -34,9 +34,10 @@ export function fmtFecha(iso: string | null | undefined): string {
   return `${dia} ${MESES[mes - 1]} ${anio}`;
 }
 
-const intFmt = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 });
+// Cifras en notación inglesa, coherente con los KPIs compactos («15.5K»): 12,345 · 0.68%.
+const intFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 
-/** 12345 → '12.345'. */
+/** 12345 → '12,345'. */
 export function fmtInt(n: number | null | undefined): string {
   if (n === null || n === undefined || !Number.isFinite(n)) return "—";
   return intFmt.format(Math.round(n));
@@ -44,7 +45,7 @@ export function fmtInt(n: number | null | undefined): string {
 
 /**
  * Porcentaje: recibe una fracción (0.382) o un porcentaje ya escalado si
- * `scaled` es true (38.2). Devuelve '38 %' con el espacio fino en español.
+ * `scaled` es true (38.2). Devuelve '38%' (notación inglesa, como los KPIs).
  */
 export function fmtPct(
   v: number | null | undefined,
@@ -53,11 +54,11 @@ export function fmtPct(
   if (v === null || v === undefined || !Number.isFinite(v)) return "—";
   const { decimals = 0, scaled = false } = opts;
   const pct = scaled ? v : v * 100;
-  const s = new Intl.NumberFormat("es-ES", {
+  const s = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(pct);
-  return `${s} %`;
+  return `${s}%`;
 }
 
 /** Duración en ms → '850 ms' · '12 s' · '3 min 20 s' · '1 h 05 min'. */
@@ -76,9 +77,10 @@ export function fmtDur(ms: number | null | undefined): string {
   return `${h} h ${String(min).padStart(2, "0")} min`;
 }
 
-const compactoFmt = new Intl.NumberFormat("es-ES", { notation: "compact", maximumFractionDigits: 1 });
+// KPIs compactos en notación inglesa (decisión del owner 2026-11-05): «15.5K», no «15,5 mil».
+const compactoFmt = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 
-/** 12345 → '12 mil'; 1234567 → '1,2 M'. */
+/** 15532 → '15.5K'; 1234567 → '1.2M'; 950 → '950'. */
 export function fmtCompacto(n: number | null | undefined): string {
   if (n === null || n === undefined || !Number.isFinite(n)) return "—";
   return compactoFmt.format(n);
