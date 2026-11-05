@@ -10,7 +10,6 @@ import { SidebarCollapseButton } from "@/components/app/shell/SidebarCollapseBut
 import { SidebarNav } from "@/components/app/shell/SidebarNav";
 import { UsageMeter } from "@/components/app/shell/UsageMeter";
 import { isNavActive } from "@/lib/nav";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { useSidebar } from "@/lib/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -85,12 +84,10 @@ function FooterLinksLive({ collapsed }: { collapsed: boolean }): React.ReactElem
  * Sidebar de escritorio: 240px expandido / 64px colapsado.
  * El ancho lo gobierna el atributo <html data-sidebar> vía la variante
  * `sb-collapsed` (fijado antes del paint desde la cookie cs-sidebar), así no
- * hay salto al cargar. Entre 1024 y 1279px va siempre colapsado.
+ * hay salto al cargar. Siempre hay un botón visible para colapsar/expandir.
  */
 export function Sidebar(): React.ReactElement {
-  const { collapsed: byCookie } = useSidebar();
-  const narrow = useMediaQuery("lg:max-xl");
-  const collapsed = byCookie || narrow;
+  const { collapsed } = useSidebar();
   return (
     <aside
       aria-label="Barra lateral"
@@ -113,12 +110,12 @@ export function Sidebar(): React.ReactElement {
             Competitor-Seeker
           </span>
         </Link>
-        <SidebarCollapseButton className="sb-collapsed:hidden max-xl:hidden" />
+        <SidebarCollapseButton className="sb-collapsed:hidden" />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 py-3 sb-collapsed:px-2.5">
         <SidebarNav collapsed={collapsed} />
-        <div className="hidden justify-center xl:sb-collapsed:flex">
+        <div className="hidden justify-center sb-collapsed:flex">
           <SidebarCollapseButton />
         </div>
       </div>
