@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { obtenerUsoActual } from './apify/actual.ts'
 import { leerConfig } from './config.ts'
-import { existeCorrida, fechaLocal, guardarCorrida, leerCorrida, nuevoIdCorrida, ultimaCorridaRegistrada } from './corridas.ts'
+import { existeCorrida, fechaLocal, guardarCorrida, leerCorrida, nuevoIdCorrida, ultimaCorridaIgRegistrada, ultimaCorridaRegistrada } from './corridas.ts'
 import { describirErrorZod } from './jsonl.ts'
 import { conId, registrarEntradas } from './log.ts'
 import { competidoresActivos, crearMarca, existeMarca, leerMarca, listarMarcas } from './marcas.ts'
@@ -306,7 +306,7 @@ const AYUDA = `Uso: scripts/cs <comando>
   confirmar --marca <slug> --corrida-id <id> --accion registrar|descartar
       (registrar y confirmar toman un lock corridas/<id>.json.lock: dos a la vez fallan)
   migrar <slug>
-  ultima-corrida <slug>
+  ultima-corrida <slug> [--fuente ig]   (--fuente ig: última registrada con sesión de Instagram ok)
   nuevo-id <slug>
   marca listar | marca crear --nombre X [--competidores "Nombre | URL; ..."]
   apify-uso [--json]
@@ -335,7 +335,7 @@ export async function ejecutar(argv: readonly string[], op: OpcionesEjecucion = 
     case 'migrar':
       return migrarMarca(slug())
     case 'ultima-corrida':
-      return ultimaCorridaRegistrada(slug())
+      return a.opciones.fuente === 'ig' ? ultimaCorridaIgRegistrada(slug()) : ultimaCorridaRegistrada(slug())
     case 'nuevo-id':
       return nuevoIdCorrida(slug())
     case 'marca':

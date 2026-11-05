@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { competidoresActivos, listarCorridas, listarMarcas } from "@competitor-seeker/core";
+import { competidoresActivos, enPeriodo, listarCorridas, listarMarcas } from "@competitor-seeker/core";
+import { PeriodoSelector } from "@/components/app/periodo/PeriodoSelector";
+import { periodoDeRequest } from "@/lib/periodo-servidor";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { CorridasView } from "@/components/app/runs/CorridasView";
@@ -32,8 +34,9 @@ function SinMarcas(): React.ReactElement {
 }
 
 /** Lee cookies y archivos: va dentro de Suspense (cacheComponents). */
-async function CorridasContenido(): Promise<React.ReactElement> {
+async function CorridasContenido({ searchParams }: { searchParams: PageProps<"/corridas">["searchParams"] }): Promise<React.ReactElement> {
   await connection();
+  const periodo = await periodoDeRequest(searchParams);
   const marcas = listarMarcas();
   if (marcas.length === 0) return <SinMarcas />;
   const activa = (await marcaActiva(marcas)) ?? marcas[0]!;
@@ -41,21 +44,28 @@ async function CorridasContenido(): Promise<React.ReactElement> {
     const activos = competidoresActivos(m);
     return { slug: m.slug, nombre: m.nombre, competidores: activos.length, perfilesIg: activos.filter((c) => c.instagram).length };
   });
-  const { corridas, invalidas } = listarCorridas(activa.slug);
+  const { corridas: todas, invalidas } = listarCorridas(activa.slug);
+  // Las pendientes de confirmación se muestran siempre: requieren acción aunque estén fuera del periodo.
+  const corridas = todas.filter((c) => enPeriodo(c.fecha, periodo) || c.estado === "pendiente-confirmacion");
   const { enCurso } = estadoRunner();
 
   return (
     <div className="flex flex-col gap-4">
       <CorridasView apify={apifyParaUi()} enCurso={enCurso} marcaInicial={activa.slug} marcas={marcasUi} />
-      <RunHistoryTable corridas={corridas} invalidas={invalidas.length} />
+      <RunHistoryTable
+        acciones={<PeriodoSelector periodo={periodo} />}
+        corridas={corridas}
+        filtradas={todas.length - corridas.length}
+        invalidas={invalidas.length}
+      />
     </div>
   );
 }
 
-export default function CorridasPage(): React.ReactElement {
+export default function CorridasPage({ searchParams }: PageProps<"/corridas">): React.ReactElement {
   return (
     <Suspense fallback={<Loading />}>
-      <CorridasContenido />
+      <CorridasContenido searchParams={searchParams} />
     </Suspense>
   );
 }

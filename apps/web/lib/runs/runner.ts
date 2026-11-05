@@ -27,6 +27,7 @@ import {
   procesoVivo,
   pull,
   promptCorrida,
+  ultimaCorridaIgRegistrada,
   ultimaCorridaRegistrada,
   type ContenidoLock,
   type Corrida,
@@ -263,7 +264,7 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
     limpiarStream(marca.slug, corridaId);
     const controller = new AbortController();
     const proceso = lanzarClaude({
-      prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, corridaId, apify }),
+      prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, ultimaCorridaIg: ultimaCorridaIgRegistrada(marca.slug), corridaId, apify }),
       allowedTools: allowedToolsCorrida,
       disallowedTools: disallowedToolsCorrida,
       jsonSchema: esquemaSalidaCorrida,

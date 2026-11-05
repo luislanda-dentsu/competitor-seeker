@@ -61,10 +61,11 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 ```
 1. lee marcas/<slug>/marca.json → competidores activos  (no existe → avisa y detente)
 2. ultimaCorrida = scripts/cs ultima-corrida <slug>      (null → primera corrida: últimas ~4 semanas)
+   ultimaCorridaIg = scripts/cs ultima-corrida <slug> --fuente ig  (inicio de la ventana de Instagram)
 2b. apify = el que te dieron en el prompt (la app ya lo decidió con la usuaria) o, si no, scripts/cs apify-uso --json
 3. corridaId = el que te dieron o scripts/cs nuevo-id <slug>
 4. Workflow scriptPath .claude/workflows/corrida.js — SIEMPRE por scriptPath (por nombre puede resolver un snapshot viejo)
-   args: { marca, fechaCorrida (hoy), ultimaCorrida, corridaId, apify: {habilitado, resultsLimit, motivo?},
+   args: { marca, fechaCorrida (hoy), ultimaCorrida, ultimaCorridaIg, corridaId, apify: {habilitado, resultsLimit, motivo?},
            competidores: [{nombre, url}] }
    └─ paralelo: rastreador-ig (todos los perfiles, navegador con sesión) + N rastreadores web + rastreador-apify (si habilitado)
       → analista (schema) → verificador (soul.md) → reintento con objeciones, máx. 3
@@ -88,7 +89,7 @@ El rastreador-ig usa el **MCP chrome-devtools** (`mcp__chrome-devtools__*`, defi
 Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicado si está abierto (SingletonLock) y, si IG pide login, rehaga `scripts/chrome-ig.sh login`. Challenge/captcha → la corrida sigue solo con web (+Apify); no se reintenta en bucle.
 
 ## Apify
-`rastreador-apify` usa `mcp__apify__apify--instagram-scraper` (free tier $5/mes, ≈$0.0027/resultado). Solo entra si `scripts/cs apify-uso` lo habilita (presupuestos y umbrales en `config.json`; token en `data/secrets.json` o `APIFY_TOKEN`). El coste estimado de cada corrida queda en `corridas/<id>.json`.
+**Apify es la única fuente de cifras** (likes, comentarios, vistas, seguidores; decisión del owner 2026-11-04): el navegador solo aporta existencia, URL, fecha, formato y caption, y el workflow descarta cualquier cifra suya. Sin Apify, los posts quedan sin cifras (ER «—»), nunca con cifras del navegador. `rastreador-apify` usa `mcp__apify__apify--instagram-scraper` (free tier $5/mes, ≈$0.0027/resultado). Solo entra si `scripts/cs apify-uso` lo habilita (presupuestos y umbrales en `config.json`; token en `data/secrets.json` o `APIFY_TOKEN`). El coste estimado de cada corrida queda en `corridas/<id>.json`.
 
 ## Build & Run
 - `npm install` · `cp .env.example .env.local` (rellena `CLAUDE_BIN` absoluto si hace falta) · una vez: `scripts/chrome-ig.sh login` (perfil dedicado con IG logueado) y cerrar esa ventana
@@ -115,4 +116,5 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 - El campo `marca` de cada Entrada es el **nombre del competidor** (herencia del v1); la marca-carpeta es `slug`. La UI nunca lo llama "marca".
 - `Workflow` por nombre puede resolver un snapshot viejo: siempre `scriptPath`.
 - En `claude -p --permission-mode dontAsk`, `Bash` se deniega salvo que vaya en `--allowedTools` (`Bash(scripts/cs *)`); con un JSON largo en la línea (heredoc o here-string) el filtro también deniega → `--desde-workflow <archivo>`.
+- El login del perfil dedicado debe hacerse con `scripts/chrome-ig.sh login` (lanza Chrome con `--use-mock-keychain --password-store=basic`, como Puppeteer); un login con Chrome normal cifra las cookies con el llavero real y el MCP no ve la sesión.
 - chrome-devtools-mcp: `--isolated` y `--user-data-dir` son excluyentes (no los combines). Si el perfil dedicado está abierto en otra ventana, el MCP no puede lanzar Chrome → `SESIÓN NO DISPONIBLE`. Los tools solo aparecen si el servidor está aprobado (`enabledMcpjsonServers` en `.claude/settings.json`).

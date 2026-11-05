@@ -36,11 +36,24 @@ function apifyUsd(c: Corrida): string {
 }
 
 /** Histórico de corridas de la marca. Tabla en ≥lg, cards por debajo. */
-export function RunHistoryTable({ corridas, invalidas = 0 }: { corridas: readonly Corrida[]; invalidas?: number }): React.ReactElement {
+export function RunHistoryTable({
+  corridas,
+  invalidas = 0,
+  acciones,
+  filtradas = 0,
+}: {
+  corridas: readonly Corrida[];
+  invalidas?: number;
+  /** Controles en la cabecera (p. ej. el selector de periodo). */
+  acciones?: React.ReactNode;
+  /** Corridas ocultas por el periodo (para el estado vacío). */
+  filtradas?: number;
+}): React.ReactElement {
   return (
     <Card className="rounded-lg">
-      <CardHeader>
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3">
         <CardTitle className="t-label">Histórico de corridas</CardTitle>
+        {acciones}
         {invalidas > 0 && (
           <p className="text-xs text-s-no-funciona">
             {invalidas} {invalidas === 1 ? "archivo de corrida ilegible" : "archivos de corrida ilegibles"} en <code>corridas/</code>.
@@ -51,8 +64,12 @@ export function RunHistoryTable({ corridas, invalidas = 0 }: { corridas: readonl
         {corridas.length === 0 ? (
           <Empty className="py-10 md:py-12">
             <EmptyHeader>
-              <EmptyTitle className="text-base font-medium">Sin corridas todavía</EmptyTitle>
-              <EmptyDescription>Lanza la primera con «Correr ahora». El histórico aparecerá aquí.</EmptyDescription>
+              <EmptyTitle className="text-base font-medium">{filtradas > 0 ? "Sin corridas en este periodo" : "Sin corridas todavía"}</EmptyTitle>
+              <EmptyDescription>
+                {filtradas > 0
+                  ? `Hay ${filtradas} ${filtradas === 1 ? "corrida" : "corridas"} fuera del periodo. Amplía el rango para verlas.`
+                  : "Lanza la primera con «Correr ahora». El histórico aparecerá aquí."}
+              </EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : (
