@@ -1,0 +1,397 @@
+{
+  "id": "2026-11-13-1240-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-13",
+  "ultimaCorrida": "2026-11-13",
+  "tipo": "historica",
+  "ventana": {
+    "desde": "2025-11-01",
+    "hasta": "2025-12-31"
+  },
+  "inicio": "2026-11-13T16:46:26.699Z",
+  "fin": "2026-11-13T16:46:26.699Z",
+  "duracionMs": 0,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 2,
+  "objeciones": [],
+  "fuentes": [
+    "web",
+    "ig",
+    "apify"
+  ],
+  "apify": {
+    "resultados": 20,
+    "costeEstimadoUsd": 0.054,
+    "incluido": true,
+    "omitido": false,
+    "runId": "dxaIekZEEV24Afos2"
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-11-18",
+      "movimiento": "Aniversario 23: carrusel (\"23 años creciendo con la guía de Dios...\") y reel de celebración del vigésimo tercer aniversario, ambos el 2025-11-18.",
+      "senal": "nuevo",
+      "lectura": "Contenido institucional de marca; el reel del aniversario queda en 4744 vistas, muy por debajo de los reels de producto del periodo.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 409,
+        "comentarios": 7,
+        "vistas": 4744,
+        "posts": 2
+      },
+      "id": "40983e375a294130",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-11-21",
+      "movimiento": "Carrusel sobre la participación de Antonio Jorge en panel del Mercado de Valores Summit 2025, con agradecimiento a @revistamercado.",
+      "senal": "nuevo",
+      "lectura": "Posicionamiento de la dirección general en eventos del mercado; tracción baja (80 likes, 0 comentarios).",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 80,
+        "comentarios": 0,
+        "posts": 1
+      },
+      "id": "7ded34dee8357539",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-11-26",
+      "movimiento": "Revista Mercado publicó una nota sobre el Mercado de Valores Summit 2025 donde Antonio Jorge, director general de Excel, fue panelista en \"Ideas para que Grandes Empresas, Pymes y Emprendedores Salgan al Mercado\"; cita: \"La demanda está; lo que falta es facilitar costos y tiempos para que más emisores se animen\".",
+      "senal": "nuevo",
+      "lectura": "Cobertura editorial que respalda el contenido social del mismo evento; sin tracción medida. No se encontraron campañas, comunicados ni lanzamientos web de Excel en la ventana.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "6990e651484b82b4",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-11-22",
+      "movimiento": "Carrusel con el encendido y la bendición del árbol navideño con el equipo.",
+      "senal": "nuevo",
+      "lectura": "Contenido de cultura interna; rendimiento moderado (137 likes, 0 comentarios).",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 137,
+        "comentarios": 0,
+        "posts": 1
+      },
+      "id": "0a66c607ae32c191",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-11-26",
+      "movimiento": "Tres publicaciones de reconocimientos del 24 al 26 de noviembre: imagen sobre un reconocimiento (24-nov), carrusel de @asonahoresrd como transacción del año (25-nov) y carrusel de Antonio Jorge Top 10 en 40 Under 40 y Priscila Comas People to Watch de @revistamercado (26-nov).",
+      "senal": "nuevo",
+      "lectura": "Bloque de premios y menciones en tres días consecutivos; la imagen del 24-nov y el carrusel del 26-nov superan los 250 likes.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 658,
+        "comentarios": 41,
+        "posts": 3
+      },
+      "id": "b9307cfe3e50aa68",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-12-11",
+      "movimiento": "Cuatro publicaciones sobre el Fondo Dinámico Excel: imagen del 4-dic, reel del 11-dic (\"4 razones...\", \"Comenta Dinámico\"), carrusel del 19-dic (Fondo Abierto Dinámico en Dólares) y carrusel del 26-dic (Fondo Dinámico Pesos).",
+      "senal": "nuevo",
+      "lectura": "Es la línea de contenido con mayor tracción del periodo: el reel del 11-dic suma 1241 likes, 453 comentarios y 348355 vistas, y la imagen del 4-dic 620 likes y 321 comentarios.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 2054,
+        "comentarios": 786,
+        "vistas": 348355,
+        "posts": 4
+      },
+      "id": "dcb0068c5308bf44",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-12-12",
+      "movimiento": "Carrusel del lanzamiento, junto a @barnamanagementschool, del libro Desbloqueando la Inteligencia Artificial.",
+      "senal": "nuevo",
+      "lectura": "Tema ajeno a producto financiero; tracción baja (80 likes, 2 comentarios).",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 80,
+        "comentarios": 2,
+        "posts": 1
+      },
+      "id": "b734e282687a0667",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-12-18",
+      "movimiento": "Reel con el paso a paso para realizar aportes en los Fondos Abiertos Excel desde Excel Móvil.",
+      "senal": "nuevo",
+      "lectura": "Contenido educativo de uso de la app; segundo reel del periodo en rendimiento (534 likes, 100 comentarios, 85189 vistas).",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 534,
+        "comentarios": 100,
+        "vistas": 85189,
+        "posts": 1
+      },
+      "id": "26d0e862c97caea2",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-12-31",
+      "movimiento": "Dos reels de cierre de año: mensaje navideño \"Felices Fiestas\" (24-dic) y despedida del año 2025 (31-dic).",
+      "senal": "nuevo",
+      "lectura": "Contenido estacional con vistas bajas (3639 y 4522) frente a los reels de producto.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 127,
+        "comentarios": 1,
+        "vistas": 8161,
+        "posts": 2
+      },
+      "id": "f0fdb2fce17d40ae",
+      "corrida": "2026-11-13-1240-parval-administrast"
+    }
+  ],
+  "publicaciones": [
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DS8ItylDvgZ/",
+      "fecha": "2025-12-31",
+      "formato": "reel",
+      "tema": "Cierre de año 2025: evolución, crecimiento y agradecimiento",
+      "likes": 75,
+      "comentarios": 0,
+      "vistas": 4522,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSuuavBkS_s/",
+      "fecha": "2025-12-26",
+      "formato": "carrusel",
+      "tema": "Fondo Dinámico Excel Pesos más flexible; gestión desde Excel Móvil",
+      "likes": 109,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSpn2ySDdo7/",
+      "fecha": "2025-12-24",
+      "formato": "reel",
+      "tema": "Felices Fiestas, mensaje navideño",
+      "likes": 52,
+      "comentarios": 1,
+      "vistas": 3639,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSdd10-DsES/",
+      "fecha": "2025-12-19",
+      "formato": "carrusel",
+      "tema": "Fondo Abierto Dinámico Excel en Dólares: renta variable, diversificación, disponibilidad",
+      "likes": 84,
+      "comentarios": 8,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSbBOlFDSPK/",
+      "fecha": "2025-12-18",
+      "formato": "reel",
+      "tema": "Aportes en Fondos Abiertos Excel paso a paso desde Excel Móvil",
+      "likes": 534,
+      "comentarios": 100,
+      "vistas": 85189,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSLSFF6jlvA/",
+      "fecha": "2025-12-12",
+      "formato": "carrusel",
+      "tema": "Lanzamiento con @barnamanagementschool del libro sobre Inteligencia Artificial",
+      "likes": 80,
+      "comentarios": 2,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSH5J_aDUri/",
+      "fecha": "2025-12-11",
+      "formato": "reel",
+      "tema": "4 razones para invertir en el Fondo Dinámico Excel; comenta Dinámico para recibir información",
+      "likes": 1241,
+      "comentarios": 453,
+      "vistas": 348355,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DR2N97CjaQi/",
+      "fecha": "2025-12-04",
+      "formato": "imagen",
+      "tema": "Fondo Dinámico Excel: renta variable, plazo de 60 días, liquidez y diversificación",
+      "likes": 620,
+      "comentarios": 321,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRiPhAiDaW8/",
+      "fecha": "2025-11-26",
+      "formato": "carrusel",
+      "tema": "Antonio Jorge Top 10 en 40 Under 40 y Priscila Comas People to Watch (@revistamercado)",
+      "likes": 265,
+      "comentarios": 14,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRfnpzmDsVe/",
+      "fecha": "2025-11-25",
+      "formato": "carrusel",
+      "tema": "Reconocimiento de @asonahoresrd como estructurador, gestor e inversionista de la transacción del año",
+      "likes": 137,
+      "comentarios": 2,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRcKn0_DTeD/",
+      "fecha": "2025-11-24",
+      "formato": "imagen",
+      "tema": "Reconocimiento que refleja coherencia entre visión, estrategia, resultados e impacto",
+      "likes": 256,
+      "comentarios": 25,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRW75qvDf-g/",
+      "fecha": "2025-11-22",
+      "formato": "carrusel",
+      "tema": "Encendido y bendición del árbol navideño con el equipo",
+      "likes": 137,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRVKuAsDpy2/",
+      "fecha": "2025-11-21",
+      "formato": "carrusel",
+      "tema": "Antonio Jorge en panel del Mercado de Valores Summit 2025 de @revistamercado",
+      "likes": 80,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRNTjp1jjH2/",
+      "fecha": "2025-11-18",
+      "formato": "carrusel",
+      "tema": "23 años creciendo con la guía de Dios, la fuerza del equipo y la confianza de clientes",
+      "likes": 267,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRNq7pJjVZp/",
+      "fecha": "2025-11-18",
+      "formato": "reel",
+      "tema": "Celebración del vigésimo tercer aniversario de Excel",
+      "likes": 142,
+      "comentarios": 1,
+      "vistas": 4744,
+      "fuente": "apify"
+    }
+  ],
+  "perfiles": [],
+  "lecturas": [
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "resumen": [
+        "15 publicaciones en la ventana 2025-11-01 a 2025-12-31: 5 reels, 8 carruseles y 2 imágenes; 4079 likes, 937 comentarios y 446449 vistas en total (Apify, cifras de hoy).",
+        "Noviembre: aniversario 23 (carrusel y reel del 18-nov), panel en el Mercado de Valores Summit 2025 (21-nov), árbol navideño (22-nov) y tres publicaciones de reconocimientos del 24 al 26-nov.",
+        "Diciembre: cuatro publicaciones del Fondo Dinámico Excel (imagen 4-dic con 620 likes y 321 comentarios; reel 11-dic con 1241 likes, 453 comentarios y 348355 vistas; carruseles 19 y 26-dic), libro de IA con @barnamanagementschool (12-dic) y reel de aportes desde Excel Móvil (18-dic: 534 likes, 85189 vistas).",
+        "Cierre de año con reels de Felices Fiestas (24-dic) y despedida de 2025 (31-dic), con 3639 y 4522 vistas.",
+        "Web: Revista Mercado fechó el 2025-11-26 una nota del Mercado de Valores Summit 2025 con Antonio Jorge como panelista; no se hallaron otras campañas, comunicados ni lanzamientos web en la ventana."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Diciembre concentra el contenido de producto en el Fondo Dinámico Excel (imagen, reel y dos carruseles) y es el que más tracción recibe; el reel incluye llamado \"Comenta Dinámico\".",
+          "Noviembre prioriza contenido institucional y de reputación: aniversario, panel del Summit y tres publicaciones de reconocimientos en días consecutivos."
+        ],
+        "pilares": [
+          "Fondos de inversión (Fondo Dinámico Excel, Fondos Abiertos)",
+          "Excel Móvil como canal de operación",
+          "Reconocimientos y presencia de la dirección en eventos",
+          "Cultura y fechas institucionales (aniversario, Navidad, cierre de año)"
+        ],
+        "formatosYCadencia": "Predominan los carruseles (8 de 15), seguidos de reels (5) e imágenes (2). 15 publicaciones en dos meses; la cadencia es mayor en la segunda quincena de noviembre (7 publicaciones del 18 al 26-nov) y en diciembre se reparte entre producto y cierre de año. Los reels de producto concentran las vistas.",
+        "implicaciones": [
+          "El contenido de fondos en reel y con llamado a comentar es el que más interacción tuvo en el periodo; vigilar si lo mantienen.",
+          "Los reels institucionales y estacionales rinden muy por debajo de los de producto (3639 a 4744 vistas frente a 85189 y 348355)."
+        ],
+        "confianza": "alta",
+        "postsCitados": [
+          "https://www.instagram.com/p/DR2N97CjaQi/",
+          "https://www.instagram.com/p/DSH5J_aDUri/",
+          "https://www.instagram.com/p/DSdd10-DsES/",
+          "https://www.instagram.com/p/DSuuavBkS_s/",
+          "https://www.instagram.com/p/DSbBOlFDSPK/",
+          "https://www.instagram.com/p/DRNTjp1jjH2/",
+          "https://www.instagram.com/p/DRNq7pJjVZp/",
+          "https://www.instagram.com/p/DRVKuAsDpy2/",
+          "https://www.instagram.com/p/DRcKn0_DTeD/",
+          "https://www.instagram.com/p/DRfnpzmDsVe/",
+          "https://www.instagram.com/p/DRiPhAiDaW8/"
+        ]
+      }
+    }
+  ],
+  "modo": "terminal",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "ig": {
+    "sesion": "ok"
+  }
+}

@@ -11,7 +11,7 @@
   "inicio": "2026-11-13T16:10:38.194Z",
   "fin": "2026-11-13T16:25:43.280Z",
   "duracionMs": 905086,
-  "estado": "pendiente-confirmacion",
+  "estado": "registrada",
   "verificado": false,
   "intentos": 3,
   "objeciones": [
@@ -1360,5 +1360,9 @@
   "sessionId": "c39e8367-055a-4bf1-a5eb-ac50f49568eb",
   "ig": {
     "sesion": "ok"
+  },
+  "git": {
+    "pushed": false,
+    "error": "sin-red: fatal: unable to access 'https://github.com/luislanda-dentsu/competitor-seeker.git/': Could not resolve host: github.com\n"
   }
 }
