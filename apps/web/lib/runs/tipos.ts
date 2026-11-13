@@ -17,6 +17,31 @@ export interface ApifyUi {
   usdPorResultado: number;
 }
 
+/** Ventana de una corrida histórica (fechas `AAAA-MM-DD`; vacías mientras se eligen). */
+export interface VentanaUi {
+  desde: string;
+  hasta: string;
+}
+
+/** Lo que el lanzador manda para una corrida histórica. */
+export interface LanzarHistorica {
+  ventana: VentanaUi;
+  topePosts: number;
+}
+
+/** Respuesta de `GET /api/corridas/estimacion` (espejo de `EstimacionHistorica` del core). */
+export interface EstimacionHistoricaUi {
+  dias: number;
+  competidores: { competidor: string; cadencia: number; observada: boolean; postsEstimados: number }[];
+  postsEstimados: number;
+  costeEstimadoUsd: number;
+  topePosts: number;
+  costeMaximoUsd: number;
+  restanteMensualUsd: number | null;
+  /** El tope se bajó para no pasar del presupuesto mensual restante. */
+  limitadoPorPresupuesto: boolean;
+}
+
 export interface CorridaActiva {
   corridaId: string;
   marca: string;

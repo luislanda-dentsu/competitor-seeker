@@ -65,8 +65,8 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 2b. apify = el que te dieron en el prompt (la app ya lo decidió con la usuaria) o, si no, scripts/cs apify-uso --json
 3. corridaId = el que te dieron o scripts/cs nuevo-id <slug>
 4. Workflow scriptPath .claude/workflows/corrida.js — SIEMPRE por scriptPath (por nombre puede resolver un snapshot viejo)
-   args: { marca, fechaCorrida (hoy), ultimaCorrida, ultimaCorridaIg, corridaId, apify: {habilitado, resultsLimit, motivo?},
-           competidores: [{nombre, url}] }
+   args: { marca, fechaCorrida (hoy), ultimaCorrida, ultimaCorridaIg, corridaId, apify: {habilitado, resultsLimit, motivo?, topePosts?},
+           ventana?: {desde, hasta} (solo corrida histórica), competidores: [{nombre, url}] }
    └─ paralelo: rastreador-ig (todos los perfiles, navegador con sesión) + N rastreadores web + rastreador-apify (si habilitado)
       → analista (schema) → verificador (soul.md) → reintento con objeciones, máx. 3
    Devuelve { entradas, verificado, intentos, objeciones?, apify?, ig?, publicaciones, perfiles, lecturas }
@@ -80,6 +80,9 @@ Una corrida siempre es PARA UNA MARCA. Si no te la indican y hay varias en `marc
 ```
 
 Si el workflow no está disponible, ejecuta el grafo a mano: rastreadores en paralelo (varias llamadas Agent en un solo mensaje), analista y verificador con el mismo bucle acotado, y registra igual con `scripts/cs registrar`.
+
+## Corrida histórica (periodo pasado)
+Desde Corridas → «Periodo pasado» (o el prompt con `ventana`). El rastreador-ig baja por el grid y entrega las URLs de la ventana; Apify se consulta **solo con esas URLs** (un resultado por URL, hasta `topePosts`, sin seguidores) en vez de todo lo publicado hasta hoy. La app estima posts/coste (`GET /api/corridas/estimacion`) y pide confirmación antes de lanzar. Se registra con `tipo: "historica"` + `ventana`: no mueve `ultimaCorrida` ni la tarjeta «Última corrida». Sin sesión de IG no gasta Apify. Ventana máx. 92 días, terminada antes de hoy.
 
 ## Modo headless
 Si el prompt dice **MODO HEADLESS** (la app web lanzó la corrida con `claude -p`): nadie puede responder preguntas → nunca uses AskUserQuestion; no uses Write/Edit; registra siempre con `scripts/cs registrar … --desde-workflow <output_file>` (`--pendiente` si el verificador no aprobó tras 3 intentos); no re-decidas Apify: viene decidido en el prompt; si Instagram reporta `SESIÓN NO DISPONIBLE`, sigue con web (+Apify) y déjalo en el JSON (`ig.sesion: "no-disponible"`); termina devolviendo el JSON pedido.

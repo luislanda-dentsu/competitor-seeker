@@ -4,6 +4,8 @@ export interface ApifyPrompt {
   habilitado: boolean
   resultsLimit: number
   motivo?: string
+  /** Corrida histórica: máximo de URLs de posts que se mandan a Apify (confirmado por la usuaria). */
+  topePosts?: number
 }
 
 export interface DatosPromptCorrida {
@@ -14,6 +16,8 @@ export interface DatosPromptCorrida {
   ultimaCorridaIg?: string | null
   corridaId: string
   apify: ApifyPrompt
+  /** Corrida histórica: ventana pasada a rastrear (fechas locales inclusivas). */
+  ventana?: { desde: string; hasta: string }
 }
 
 // Verificado (Fase 3, Claude Code 2.1.317): en `--permission-mode dontAsk` la
@@ -67,8 +71,16 @@ export function promptCorrida(d: DatosPromptCorrida): string {
   const estadoApify = d.apify.habilitado
     ? `Apify HABILITADO (resultsLimit ${d.apify.resultsLimit} por perfil).`
     : `Apify DESHABILITADO${d.apify.motivo ? ` (${d.apify.motivo})` : ''}: no lances el rastreador-apify.`
+  const historica = d.ventana
+    ? [
+        `CORRIDA HISTÓRICA: rastrea SOLO la ventana del ${d.ventana.desde} al ${d.ventana.hasta} (no lo reciente). ` +
+          `Pasa \`ventana: ${JSON.stringify(d.ventana)}\` en los args del workflow; el workflow se encarga del resto ` +
+          `(Instagram localiza los posts de la ventana y Apify se consulta solo con esas URLs, hasta ${d.apify.topePosts ?? 0}).`,
+      ]
+    : []
   return [
     `Ejecuta una corrida de Competitor-Seeker para la marca "${d.marca}".`,
+    ...historica,
     `Fecha de la corrida: ${d.fechaCorrida}. Última corrida registrada: ${d.ultimaCorrida ?? 'ninguna (primera corrida)'}. ` +
       `Última corrida con Instagram inspeccionado: ${d.ultimaCorridaIg ?? 'ninguna'}. corridaId: ${d.corridaId}.`,
     estadoApify,
@@ -76,7 +88,8 @@ export function promptCorrida(d: DatosPromptCorrida): string {
     'MODO HEADLESS: nadie puede responder preguntas; no uses AskUserQuestion ni esperes confirmación.',
     'El Workflow corre en segundo plano y te notifica al terminar: espera esa notificación sin programar despertadores ni monitores, y termina en cuanto registres y devuelvas el JSON.',
     `Sigue el grafo de CLAUDE.md lanzando el workflow .claude/workflows/corrida.js por scriptPath con args ` +
-      `{ marca, fechaCorrida, ultimaCorrida, ultimaCorridaIg: ${JSON.stringify(d.ultimaCorridaIg ?? null)}, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, competidores }.`,
+      `{ marca, fechaCorrida, ultimaCorrida, ultimaCorridaIg: ${JSON.stringify(d.ultimaCorridaIg ?? null)}, corridaId: "${d.corridaId}", apify: ${JSON.stringify(d.apify)}, ` +
+      `${d.ventana ? `ventana: ${JSON.stringify(d.ventana)}, ` : ''}competidores }.`,
     `La decisión de Apify ya está tomada (${d.apify.habilitado ? 'habilitado' : 'omitido'}${d.apify.motivo ? `, motivo: ${d.apify.motivo}` : ''}): ` +
       'no la re-decidas; no consultes `scripts/cs apify-uso` ni cambies `apify.habilitado` al pasarlo al workflow.',
     `Registra SIEMPRE con \`scripts/cs registrar --marca ${d.marca} --corrida-id ${d.corridaId} --modo ui --desde-workflow <ruta>\` ` +

@@ -310,3 +310,156 @@ describe('regresión corrida 2026-11-04 16:03 (parval)', () => {
     expect(r.publicaciones!.find((p) => p.url === IN)!.likes).toBeUndefined()
   })
 })
+
+describe('corrida histórica (v2.3)', () => {
+  const VENTANA = { desde: '2025-11-01', hasta: '2025-12-31' }
+  const ARGS = {
+    marca: 'parval', fechaCorrida: '2026-11-13', ultimaCorrida: '2026-11-04', corridaId: 'h1',
+    apify: { habilitado: true, resultsLimit: 12, topePosts: 2 },
+    ventana: VENTANA,
+    competidores: [{ nombre: 'Alpha', url: 'https://www.instagram.com/alpha/' }],
+  }
+
+  function agenteHistorico(o: { sinSesion?: boolean; capturas: { tipo: string; prompt: string }[] }): Agente {
+    return async (prompt, opc) => {
+      o.capturas.push({ tipo: opc.agentType, prompt })
+      switch (opc.agentType) {
+        case 'rastreador-ig':
+          return o.sinSesion
+            ? { hallazgos: 'MARCA: Alpha\nSESIÓN NO DISPONIBLE (login)', publicaciones: [], perfiles: [] }
+            : {
+                hallazgos: 'Alpha: 3 URLs en la ventana',
+                publicaciones: [{ competidor: 'Alpha', url: 'https://www.instagram.com/p/P1/', fecha: '2025-12-20', fechaHora: '2025-12-20T15:00:00.000Z', formato: 'imagen' }],
+                perfiles: [],
+                urlsVentana: [
+                  { competidor: 'Alpha', url: 'https://www.instagram.com/p/P1/?img_index=1' },
+                  { competidor: 'Alpha', url: 'https://www.instagram.com/p/P2/' },
+                  { competidor: 'Alpha', url: 'https://www.instagram.com/reel/P3/' },
+                ],
+              }
+        case 'rastreador-apify':
+          return {
+            hallazgos: 'Apify: 2 posts',
+            resultados: 2,
+            runId: 'run-h',
+            publicaciones: [
+              { competidor: 'Alpha', url: 'https://www.instagram.com/p/P1/', fecha: '2025-12-20', fechaHora: '2025-12-20T15:00:00.000Z', formato: 'imagen', likes: 50, comentarios: 2 },
+              // Margen del grid: fuera de la ventana → se descarta.
+              { competidor: 'Alpha', url: 'https://www.instagram.com/p/P2/', fecha: '2026-01-02', fechaHora: '2026-01-02T15:00:00.000Z', formato: 'reel', likes: 9 },
+            ],
+            perfiles: [],
+          }
+        case 'rastreador':
+          return 'Web: nota de prensa de diciembre 2025'
+        case 'analista':
+          return {
+            entradas: [
+              { marca: 'Alpha', fecha: '2025-12-20', movimiento: 'Post de cierre de año', senal: 'nuevo', lectura: 'x', fuentes: ['apify'] },
+              { marca: 'Alpha', fecha: '2026-11-13', movimiento: 'Sin rastro web', senal: 'sin-datos', lectura: 'y' },
+            ],
+            lecturas: [{ competidor: 'Alpha', resumen: ['Un post en la ventana'] }],
+          }
+        case 'verificador':
+          return { valido: true, objeciones: [] }
+        default:
+          throw new Error(`agentType inesperado: ${opc.agentType}`)
+      }
+    }
+  }
+
+  it('Apify va DESPUÉS de IG, solo con las URLs de la ventana, con tope y sin details', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const r = await correrWorkflow(ARGS, agenteHistorico({ capturas }))
+    const orden = capturas.map((c) => c.tipo)
+    expect(orden.indexOf('rastreador-apify')).toBeGreaterThan(orden.indexOf('rastreador-ig'))
+    const pApify = capturas.find((c) => c.tipo === 'rastreador-apify')!.prompt
+    expect(pApify).toContain('MODO POSTS POR URL')
+    expect(pApify).toContain('https://www.instagram.com/p/P1/ https://www.instagram.com/p/P2/')
+    expect(pApify).not.toContain('P3') // tope 2
+    expect(pApify).not.toContain('?img_index')
+    expect(pApify).toContain('NO hagas la llamada de details')
+    expect(pApify).not.toContain('onlyPostsNewerThan:')
+    expect(capturas.find((c) => c.tipo === 'rastreador-ig')!.prompt).toContain('MODO HISTÓRICO')
+    expect(capturas.find((c) => c.tipo === 'rastreador')!.prompt).toContain('del 2025-11-01 al 2025-12-31')
+
+    const res = ResultadoWorkflow.parse(r)
+    expect(res.ventana).toEqual(VENTANA)
+    expect(res.publicaciones?.map((p) => p.url)).toEqual(['https://www.instagram.com/p/P1/'])
+    expect(res.publicaciones?.[0]).toMatchObject({ likes: 50, fuente: 'apify' })
+    expect(res.perfiles).toEqual([])
+    expect(res.apify).toMatchObject({ incluido: true, resultados: 2, runId: 'run-h' })
+    // La entrada fuera de la ventana se ancla al último día (no pasa por el estado actual).
+    expect(res.entradas.map((e) => e.fecha)).toEqual(['2025-12-20', '2025-12-31'])
+  })
+
+  it('el tope se reparte por turnos entre competidores y las URLs se rehacen desde el código', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const dos = {
+      ...ARGS,
+      apify: { habilitado: true, resultsLimit: 12, topePosts: 3 },
+      competidores: [
+        { nombre: 'Alpha', url: 'https://www.instagram.com/alpha/' },
+        { nombre: 'Bravo', url: 'https://www.instagram.com/bravo/' },
+      ],
+    }
+    const base = agenteHistorico({ capturas })
+    const r = await correrWorkflow(dos, async (prompt, o) => {
+      if (o.agentType === 'rastreador-ig') {
+        capturas.push({ tipo: o.agentType, prompt })
+        return {
+          hallazgos: 'ok',
+          publicaciones: [],
+          perfiles: [],
+          urlsVentana: [
+            { competidor: 'Alpha', url: 'https://www.instagram.com/alpha/p/A1/' },
+            { competidor: 'Alpha', url: 'https://www.instagram.com/alpha/reel/A2/' },
+            { competidor: 'Alpha', url: 'https://www.instagram.com/p/A3/' },
+            { competidor: 'Alpha', url: 'https://www.instagram.com/p/A4/' },
+            { competidor: 'Bravo', url: 'https://www.instagram.com/bravo/p/B1/' },
+            { competidor: 'Desconocido', url: 'https://www.instagram.com/p/X1/' },
+          ],
+        }
+      }
+      return base(prompt, o)
+    })
+    const pApify = capturas.find((c) => c.tipo === 'rastreador-apify')!.prompt
+    expect(pApify).toContain('(3): https://www.instagram.com/p/A1/ https://www.instagram.com/p/B1/ https://www.instagram.com/p/A2/.')
+    expect(pApify).not.toContain('X1')
+    expect(String((r as { entradas: unknown[] }).entradas.length)).toBe('2')
+    const analista = capturas.find((c) => c.tipo === 'analista')!.prompt
+    expect(analista).toContain('solo se consultaron 2 de 4 de Alpha')
+  })
+
+  it('sin sesión de Instagram no se gasta Apify y se dice por qué', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const r = ResultadoWorkflow.parse(await correrWorkflow(ARGS, agenteHistorico({ sinSesion: true, capturas })))
+    expect(capturas.some((c) => c.tipo === 'rastreador-apify')).toBe(false)
+    expect(r.apify).toMatchObject({ incluido: false, omitido: true, resultados: 0 })
+    expect(r.apify?.motivo).toMatch(/sesión de Instagram no disponible/)
+    expect(r.ig?.sesion).toBe('no-disponible')
+    expect(capturas.find((c) => c.tipo === 'analista')!.prompt).toContain('Apify no se consultó')
+  })
+
+  it('sin tope confirmado tampoco llama a Apify', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const r = ResultadoWorkflow.parse(
+      await correrWorkflow({ ...ARGS, apify: { habilitado: true, resultsLimit: 12 } }, agenteHistorico({ capturas })),
+    )
+    expect(capturas.some((c) => c.tipo === 'rastreador-apify')).toBe(false)
+    expect(r.apify?.motivo).toMatch(/tope/)
+  })
+
+  it('una corrida normal sigue llamando a Apify por perfil y sin ventana en el resultado', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const { ventana: _v, ...normal } = ARGS
+    const base = agenteFalso(() => ({ valido: true, objeciones: [] }))
+    const r = ResultadoWorkflow.parse(
+      await correrWorkflow(normal, async (prompt, o) => {
+        capturas.push({ tipo: o.agentType, prompt })
+        return base(prompt, o)
+      }),
+    )
+    expect(capturas.find((c) => c.tipo === 'rastreador-apify')!.prompt).toContain('onlyPostsNewerThan:')
+    expect(r.ventana).toBeUndefined()
+  })
+})

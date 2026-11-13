@@ -1,5 +1,5 @@
 // Indicadores puros sobre entradas y corridas (sin I/O).
-import { ultimaCorridaObjeto } from './corridas.ts'
+import { esHistorica, ultimaCorridaObjeto } from './corridas.ts'
 import type { Corrida } from './schemas/corrida.ts'
 import type { Entrada, Senal } from './schemas/entrada.ts'
 
@@ -45,9 +45,10 @@ export interface KpisMarca {
   ultimaCorrida: Corrida | null
 }
 
+/** Corridas registradas normales en orden cronológico (las históricas miran el pasado: no son la cadencia de corridas). */
 function corridasRegistradasOrdenadas(corridas: readonly Corrida[]): Corrida[] {
   return corridas
-    .filter((c) => c.estado === 'registrada')
+    .filter((c) => c.estado === 'registrada' && !esHistorica(c))
     .slice()
     .sort((a, b) => (a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : a.inicio < b.inicio ? -1 : a.inicio > b.inicio ? 1 : 0))
 }

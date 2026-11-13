@@ -235,6 +235,7 @@ function registrarConLock(
     ...(r.publicaciones ? { publicaciones: r.publicaciones } : {}),
     ...(r.perfiles ? { perfiles: r.perfiles } : {}),
     ...(r.lecturas ? { lecturas: r.lecturas } : {}),
+    ...(r.ventana ? { tipo: 'historica' as const, ventana: r.ventana } : {}),
   })
 
   if (estado !== 'registrada') {

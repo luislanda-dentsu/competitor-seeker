@@ -11,7 +11,7 @@ import { RunConsoleView, useCronometro } from "@/components/app/runs/RunConsole"
 import { RunLauncher } from "@/components/app/runs/RunLauncher";
 import { RunSummary } from "@/components/app/runs/RunSummary";
 import type { ResumenFin } from "@/lib/runs/consola";
-import { rutaApiCorrida, type ApifyUi, type CorridaActiva, type MarcaUi } from "@/lib/runs/tipos";
+import { rutaApiCorrida, type ApifyUi, type CorridaActiva, type LanzarHistorica, type MarcaUi } from "@/lib/runs/tipos";
 import { useCorridaStream } from "@/lib/use-sse";
 
 export interface CorridasViewProps {
@@ -97,7 +97,7 @@ export function CorridasView({ marcas, marcaInicial, apify, enCurso }: CorridasV
   const [error, setError] = useState<{ mensaje: string; enCurso?: CorridaActiva } | null>(null);
   const [dialogo, setDialogo] = useState(false);
 
-  const lanzar = async (marca: string, incluirApify: boolean) => {
+  const lanzar = async (marca: string, incluirApify: boolean, historica?: LanzarHistorica) => {
     setLanzando(true);
     setError(null);
     setFin(null);
@@ -105,7 +105,7 @@ export function CorridasView({ marcas, marcaInicial, apify, enCurso }: CorridasV
       const res = await fetch("/api/corridas", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ marca, incluirApify }),
+        body: JSON.stringify({ marca, incluirApify, ...(historica ? { ventana: historica.ventana, topePosts: historica.topePosts } : {}) }),
       });
       const cuerpo = (await res.json().catch(() => ({}))) as Partial<CorridaActiva> & { error?: string; enCurso?: CorridaActiva };
       if (res.status === 409) {
@@ -142,7 +142,7 @@ export function CorridasView({ marcas, marcaInicial, apify, enCurso }: CorridasV
 
   return (
     <div className="flex flex-col gap-4">
-      <RunLauncher apify={apify} lanzando={lanzando} marcaInicial={marcaInicial} marcas={marcas} ocupado={ocupado} onLanzar={(m, a) => void lanzar(m, a)} />
+      <RunLauncher apify={apify} lanzando={lanzando} marcaInicial={marcaInicial} marcas={marcas} ocupado={ocupado} onLanzar={(m, a, h) => void lanzar(m, a, h)} />
 
       {error && (
         <Alert variant="error">

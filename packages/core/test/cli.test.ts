@@ -65,6 +65,23 @@ describe('cs registrar', () => {
     expect(JSON.stringify(leerLog('k').items)).not.toContain('instagram.com/p/A1')
   })
 
+  it('una corrida histórica (ventana en el resultado) se registra como tal y no mueve ultima-corrida', async () => {
+    await registrar('2026-11-01-0900-mac')
+    const historica = JSON.stringify({
+      entradas: [{ ...e1, fecha: '2025-12-10' }],
+      verificado: true,
+      intentos: 1,
+      ig: { sesion: 'ok' },
+      ventana: { desde: '2025-11-01', hasta: '2025-12-31' },
+    })
+    await registrar('2026-11-13-0900-mac', [], historica)
+    const c = leerCorrida('k', '2026-11-13-0900-mac')
+    expect(c.tipo).toBe('historica')
+    expect(c.ventana).toEqual({ desde: '2025-11-01', hasta: '2025-12-31' })
+    expect(await ejecutar(['ultima-corrida', 'k'])).toBe('2026-11-01')
+    expect(await ejecutar(['ultima-corrida', 'k', '--fuente', 'ig'])).toBe('2026-11-01')
+  })
+
   it('ultima-corrida --fuente ig ignora las corridas sin sesión de Instagram', async () => {
     const sinIg = JSON.stringify({ entradas: [e1], verificado: true, intentos: 1, ig: { sesion: 'no-disponible' } })
     await registrar('2026-11-01-0900-mac')

@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { existeMarca } from "@competitor-seeker/core";
-import { CorridaEnCurso, lanzarCorrida } from "@/lib/runs/runner";
+import { estimarHistorica } from "@/lib/runs/historica";
+import { CorridaEnCurso, lanzarCorrida, type OpcionesLanzar } from "@/lib/runs/runner";
 
-/** POST /api/corridas `{ marca, incluirApify }` → `{ corridaId }` · 409 si hay una en curso. */
+/**
+ * POST /api/corridas `{ marca, incluirApify, ventana?: {desde, hasta}, topePosts? }` → `{ corridaId }` · 409 si hay una en curso.
+ * Con `ventana` es una corrida histórica: el tope de posts de Apify nunca pasa del que calcula el servidor.
+ */
 export async function POST(request: Request): Promise<Response> {
-  let cuerpo: { marca?: unknown; incluirApify?: unknown };
+  let cuerpo: { marca?: unknown; incluirApify?: unknown; ventana?: unknown; topePosts?: unknown };
   try {
     cuerpo = (await request.json()) as typeof cuerpo;
   } catch {
@@ -15,8 +19,20 @@ export async function POST(request: Request): Promise<Response> {
   if (!existeMarca(marca)) return NextResponse.json({ error: `La marca "${marca}" no existe` }, { status: 404 });
   const incluirApify = cuerpo.incluirApify === true;
 
+  let historica: OpcionesLanzar["historica"];
+  if (cuerpo.ventana !== undefined && cuerpo.ventana !== null) {
+    const v = typeof cuerpo.ventana === "object" ? (cuerpo.ventana as { desde?: unknown; hasta?: unknown }) : {};
+    const est = await estimarHistorica(marca, v);
+    if (!est.ok) return NextResponse.json({ error: est.error }, { status: 400 });
+    const pedido = typeof cuerpo.topePosts === "number" && Number.isInteger(cuerpo.topePosts) ? cuerpo.topePosts : est.estimacion.topePosts;
+    historica = {
+      ventana: { desde: v.desde as string, hasta: v.hasta as string },
+      topePosts: Math.max(0, Math.min(pedido, est.estimacion.topePosts)),
+    };
+  }
+
   try {
-    const r = await lanzarCorrida({ marca, incluirApify });
+    const r = await lanzarCorrida({ marca, incluirApify, ...(historica ? { historica } : {}) });
     return NextResponse.json(r, { status: 201 });
   } catch (e) {
     if (e instanceof CorridaEnCurso) {
