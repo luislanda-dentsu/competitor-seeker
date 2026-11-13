@@ -9,12 +9,32 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import type { ArtefactoUi, Feedback, MensajeUi } from "@/lib/chat/tipos";
 import { cn } from "@/lib/utils";
 
-/** Indicador "Pensando…" (ShinyText de React Bits; estático con prefers-reduced-motion). */
-export function Pensando({ texto }: { texto: string }): React.ReactElement {
+/** Tres puntos en ola: el asistente está escribiendo (CSS `cs-typing-dot`; estáticos con reduced-motion). */
+function TypingDots(): React.ReactElement {
+  return (
+    <span aria-hidden="true" className="flex h-7 items-center gap-1 rounded-pill bg-card px-3 shadow-xs">
+      <span className="cs-typing-dot size-1.5 rounded-full bg-fg-muted" />
+      <span className="cs-typing-dot size-1.5 rounded-full bg-fg-muted" />
+      <span className="cs-typing-dot size-1.5 rounded-full bg-fg-muted" />
+    </span>
+  );
+}
+
+/**
+ * Indicador de escritura del asistente: puntos animados y, si hay, la fase en
+ * curso ("Pensando…", "Buscando en el log…") con ShinyText. Entra con un fade suave.
+ */
+export function Pensando({ texto }: { texto?: string | null }): React.ReactElement {
   const reducido = useMediaQuery("(prefers-reduced-motion: reduce)");
   return (
-    <div aria-live="polite" className="flex h-7 items-center text-sm" role="status">
-      <ShinyText className="text-sm" color="var(--fg-muted)" disabled={reducido} shineColor="var(--fg)" speed={2.4} text={texto} />
+    <div
+      aria-label={texto ?? "El asistente está escribiendo"}
+      aria-live="polite"
+      className="flex h-7 items-center gap-2.5 text-sm motion-safe:animate-[cs-entrada_240ms_cubic-bezier(0.22,1,0.36,1)_both]"
+      role="status"
+    >
+      <TypingDots />
+      {texto && <ShinyText className="text-sm" color="var(--fg-muted)" disabled={reducido} shineColor="var(--fg)" speed={2.4} text={texto} />}
     </div>
   );
 }
@@ -47,7 +67,7 @@ export function ChatMessage({ mensaje, indice, ultimo, generando, pensando, onFe
   return (
     <div className="group flex flex-col gap-2" tabIndex={-1}>
       {mensaje.texto !== "" && <Markdown texto={mensaje.texto} />}
-      {enCurso && pensando && <Pensando texto={pensando} />}
+      {enCurso && (pensando || mensaje.texto === "") && <Pensando texto={pensando} />}
       {mensaje.artefacto && (
         <div>
           <Button className="gap-1.5 rounded-pill text-fg-muted" onClick={() => onVerArtefacto(mensaje.artefacto!)} size="xs" variant="outline">
