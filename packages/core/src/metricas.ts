@@ -146,16 +146,47 @@ function cifra(valores: readonly number[], legado: readonly { total: number; pos
   return { total, promedio: n ? redondear(base / n, 1) : null, n }
 }
 
+/** Intervalo de fechas cubierto por las corridas (inclusivo). */
+interface Intervalo {
+  desde: string
+  hasta: string
+}
+
 /**
- * Días observados del periodo: empieza en el más tardío entre `p.desde` y el inicio de la
- * cobertura (lo que rastreó la primera corrida), para no diluir la cadencia en días sin datos.
+ * Días observados del periodo: solo los que cubrió alguna corrida (las normales desde su
+ * cobertura hasta hoy; cada histórica, su ventana), para no diluir la cadencia en días sin
+ * datos (p. ej. el hueco entre una histórica de 2025 y la primera corrida normal).
  */
-function diasPeriodo(p: Periodo, posts: readonly PostConEr[], hoy: string, coberturaDesde: string | null): number | null {
+function diasPeriodo(p: Periodo, posts: readonly PostConEr[], hoy: string, cobertura: readonly Intervalo[]): number | null {
   const fin = p.hasta ?? hoy
-  const candidatos = [p.desde, coberturaDesde].filter((x): x is string => x !== null)
-  const inicio = candidatos.length ? candidatos.sort().at(-1)! : posts.at(-1)?.fecha ?? null
-  if (!inicio || inicio > fin) return null
-  return Math.max(1, Math.round((Date.parse(fin) - Date.parse(inicio)) / DIA_MS) + 1)
+  if (cobertura.length === 0) {
+    const inicio = p.desde ?? posts.at(-1)?.fecha ?? null
+    if (!inicio || inicio > fin) return null
+    return Math.max(1, Math.round((Date.parse(fin) - Date.parse(inicio)) / DIA_MS) + 1)
+  }
+  // Unión de intervalos recortada al periodo.
+  const tramos = cobertura
+    .map((i) => ({ desde: p.desde && p.desde > i.desde ? p.desde : i.desde, hasta: fin < i.hasta ? fin : i.hasta }))
+    .filter((i) => i.desde <= i.hasta)
+    .sort((a, b) => a.desde.localeCompare(b.desde))
+  if (tramos.length === 0) return null
+  let dias = 0
+  let actual = { ...tramos[0]! }
+  const contar = (i: Intervalo) => Math.round((Date.parse(i.hasta) - Date.parse(i.desde)) / DIA_MS) + 1
+  for (const t of tramos.slice(1)) {
+    if (Date.parse(t.desde) <= Date.parse(actual.hasta) + DIA_MS) {
+      if (t.hasta > actual.hasta) actual.hasta = t.hasta
+    } else {
+      dias += contar(actual)
+      actual = { ...t }
+    }
+  }
+  return Math.max(1, dias + contar(actual))
+}
+
+/** Fecha a la que pertenece lo que trae una corrida: la de la corrida o, si es histórica, el fin de su ventana. */
+function fechaEfectiva(c: Corrida): string {
+  return c.tipo === 'historica' && c.ventana ? c.ventana.hasta : c.fecha
 }
 
 export interface OpcionesMetricas {
@@ -242,8 +273,10 @@ export function metricasCompetidor(
   const referencia = antes?.s ?? (enRango.length > 1 ? enRango[0]!.s : null)
   const delta = actual !== null && referencia !== null ? actual - referencia : null
 
-  // 4. Serie y lecturas por corrida del periodo.
-  const corridasPeriodo = corridas.filter((c) => enPeriodo(c.fecha, periodo))
+  // 4. Serie y lecturas por corrida del periodo (una histórica cuenta en la fecha de su ventana).
+  const corridasPeriodo = corridas
+    .filter((c) => enPeriodo(fechaEfectiva(c), periodo))
+    .sort((a, b) => fechaEfectiva(a).localeCompare(fechaEfectiva(b)) || a.inicio.localeCompare(b.inicio))
   const serie: PuntoSerieCompetidor[] = corridasPeriodo
     .filter((c) => c.competidores.includes(competidor) || c.publicaciones?.some((p) => p.competidor === competidor))
     .map((c) => {
@@ -251,7 +284,7 @@ export function metricasCompetidor(
       const propios = (c.publicaciones ?? []).filter((p) => p.competidor === competidor)
       return {
         corrida: c.id,
-        fecha: c.fecha,
+        fecha: fechaEfectiva(c),
         seguidores: s,
         posts: propios.length,
         erPromedio: promedio(propios.flatMap((p) => {
@@ -264,7 +297,7 @@ export function metricasCompetidor(
     .flatMap((c) =>
       (c.lecturas ?? [])
         .filter((l) => l.competidor === competidor)
-        .map((l) => ({ corrida: c.id, fecha: c.fecha, resumen: l.resumen, ...(l.estrategia ? { estrategia: l.estrategia } : {}) })),
+        .map((l) => ({ corrida: c.id, fecha: fechaEfectiva(c), resumen: l.resumen, ...(l.estrategia ? { estrategia: l.estrategia } : {}) })),
     )
     .reverse()
 
@@ -275,13 +308,12 @@ export function metricasCompetidor(
 
   const normales = corridas.filter((c) => c.tipo !== 'historica')
   const primera = normales.find((c) => c.competidores.includes(competidor)) ?? normales[0]
-  const coberturaNormal = primera ? primera.ultimaCorrida ?? restarDias(primera.fecha, DIAS_PRIMERA_CORRIDA) : null
-  // Una corrida histórica cubre su ventana: un periodo dentro de ella cuenta sus días, no se descarta.
-  const desdeHistoricas = corridas
-    .filter((c) => c.tipo === 'historica' && c.ventana && c.competidores.includes(competidor))
-    .map((c) => c.ventana!.desde)
-  const coberturaDesde = [coberturaNormal, ...desdeHistoricas].filter((x): x is string => x !== null).sort()[0] ?? null
-  const dias = diasPeriodo(periodo, publicaciones, hoy, coberturaDesde)
+  const tramosCubiertos: Intervalo[] = primera ? [{ desde: primera.ultimaCorrida ?? restarDias(primera.fecha, DIAS_PRIMERA_CORRIDA), hasta: hoy }] : []
+  // Cada corrida histórica cubre su ventana (y solo su ventana).
+  for (const c of corridas) {
+    if (c.tipo === 'historica' && c.ventana && c.competidores.includes(competidor)) tramosCubiertos.push({ ...c.ventana })
+  }
+  const dias = diasPeriodo(periodo, publicaciones, hoy, tramosCubiertos)
   const vistas = valores('vistas')
   const cobertura: Cobertura = publicaciones.length ? (legado.length ? 'parcial' : 'completa') : legado.length ? 'parcial' : 'sin-datos'
 

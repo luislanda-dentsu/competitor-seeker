@@ -22,7 +22,7 @@ export async function POST(request: Request): Promise<Response> {
   let historica: OpcionesLanzar["historica"];
   if (cuerpo.ventana !== undefined && cuerpo.ventana !== null) {
     const v = typeof cuerpo.ventana === "object" ? (cuerpo.ventana as { desde?: unknown; hasta?: unknown }) : {};
-    const est = estimarHistorica(marca, v);
+    const est = await estimarHistorica(marca, v);
     if (!est.ok) return NextResponse.json({ error: est.error }, { status: 400 });
     const pedido = typeof cuerpo.topePosts === "number" && Number.isInteger(cuerpo.topePosts) ? cuerpo.topePosts : est.estimacion.topePosts;
     historica = {

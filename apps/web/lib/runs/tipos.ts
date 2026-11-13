@@ -37,6 +37,9 @@ export interface EstimacionHistoricaUi {
   costeEstimadoUsd: number;
   topePosts: number;
   costeMaximoUsd: number;
+  restanteMensualUsd: number | null;
+  /** El tope se bajó para no pasar del presupuesto mensual restante. */
+  limitadoPorPresupuesto: boolean;
 }
 
 export interface CorridaActiva {

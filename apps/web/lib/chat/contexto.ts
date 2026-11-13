@@ -99,7 +99,8 @@ export function serializarRendimiento(marca: Marca, corridas: readonly Corrida[]
 export function serializarContexto(p: PiezasContexto): Contexto {
   const { marca, corridas, soul, entradas } = p;
   const { lineas, incluidas } = seleccionarEntradas(entradas, p.topeEntradas, p.topeCaracteres);
-  const registradas = corridas.filter((c) => c.estado === "registrada");
+  // Igual que `ultimaCorridaRegistrada`: una histórica mira el pasado y no es «la última corrida».
+  const registradas = corridas.filter((c) => c.estado === "registrada" && c.tipo !== "historica");
   const ultimaCorrida = registradas.length ? registradas.map((c) => c.fecha).sort().at(-1)! : null;
 
   const competidores = marca.competidores.length

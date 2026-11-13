@@ -392,12 +392,50 @@ describe('corrida histórica (v2.3)', () => {
     expect(res.entradas.map((e) => e.fecha)).toEqual(['2025-12-20', '2025-12-31'])
   })
 
+  it('el tope se reparte por turnos entre competidores y las URLs se rehacen desde el código', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const dos = {
+      ...ARGS,
+      apify: { habilitado: true, resultsLimit: 12, topePosts: 3 },
+      competidores: [
+        { nombre: 'Alpha', url: 'https://www.instagram.com/alpha/' },
+        { nombre: 'Bravo', url: 'https://www.instagram.com/bravo/' },
+      ],
+    }
+    const base = agenteHistorico({ capturas })
+    const r = await correrWorkflow(dos, async (prompt, o) => {
+      if (o.agentType === 'rastreador-ig') {
+        capturas.push({ tipo: o.agentType, prompt })
+        return {
+          hallazgos: 'ok',
+          publicaciones: [],
+          perfiles: [],
+          urlsVentana: [
+            { competidor: 'Alpha', url: 'https://www.instagram.com/alpha/p/A1/' },
+            { competidor: 'Alpha', url: 'https://www.instagram.com/alpha/reel/A2/' },
+            { competidor: 'Alpha', url: 'https://www.instagram.com/p/A3/' },
+            { competidor: 'Alpha', url: 'https://www.instagram.com/p/A4/' },
+            { competidor: 'Bravo', url: 'https://www.instagram.com/bravo/p/B1/' },
+            { competidor: 'Desconocido', url: 'https://www.instagram.com/p/X1/' },
+          ],
+        }
+      }
+      return base(prompt, o)
+    })
+    const pApify = capturas.find((c) => c.tipo === 'rastreador-apify')!.prompt
+    expect(pApify).toContain('(3): https://www.instagram.com/p/A1/ https://www.instagram.com/p/B1/ https://www.instagram.com/p/A2/.')
+    expect(pApify).not.toContain('X1')
+    expect(String((r as { entradas: unknown[] }).entradas.length)).toBe('2')
+    const analista = capturas.find((c) => c.tipo === 'analista')!.prompt
+    expect(analista).toContain('solo se consultaron 2 de 4 de Alpha')
+  })
+
   it('sin sesión de Instagram no se gasta Apify y se dice por qué', async () => {
     const capturas: { tipo: string; prompt: string }[] = []
     const r = ResultadoWorkflow.parse(await correrWorkflow(ARGS, agenteHistorico({ sinSesion: true, capturas })))
     expect(capturas.some((c) => c.tipo === 'rastreador-apify')).toBe(false)
     expect(r.apify).toMatchObject({ incluido: false, omitido: true, resultados: 0 })
-    expect(r.apify?.motivo).toMatch(/URLs/)
+    expect(r.apify?.motivo).toMatch(/sesión de Instagram no disponible/)
     expect(r.ig?.sesion).toBe('no-disponible')
     expect(capturas.find((c) => c.tipo === 'analista')!.prompt).toContain('Apify no se consultó')
   })

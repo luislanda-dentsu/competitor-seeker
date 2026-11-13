@@ -96,11 +96,11 @@ export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, on
           <div className="flex flex-col gap-1.5">
             <span className="t-label">Periodo</span>
             <label className="flex h-8 items-center gap-2.5 text-sm" htmlFor={idHistorica}>
-              <Switch checked={historica} disabled={ocupado} id={idHistorica} onCheckedChange={(v) => setHistorica(v)} />
+              <Switch checked={historica} disabled={ocupado || lanzando} id={idHistorica} onCheckedChange={(v) => setHistorica(v)} />
               <span className="text-fg">Periodo pasado</span>
             </label>
             {historica ? (
-              <VentanaFields disabled={ocupado} max={ayerLocal()} onChange={setVentana} ventana={ventana} />
+              <VentanaFields disabled={ocupado || lanzando} max={ayerLocal()} onChange={setVentana} ventana={ventana} />
             ) : (
               <span className="text-xs text-fg-muted">Desde la última corrida hasta hoy.</span>
             )}
@@ -112,7 +112,7 @@ export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, on
               <Switch
                 aria-describedby={`${idApify}-hint`}
                 checked={incluirApify && apify.disponible}
-                disabled={!apify.disponible || ocupado}
+                disabled={!apify.disponible || ocupado || lanzando}
                 id={idApify}
                 onCheckedChange={(v) => setIncluirApify(v)}
               />

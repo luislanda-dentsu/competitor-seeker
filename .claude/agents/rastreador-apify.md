@@ -22,10 +22,11 @@ Eres el rastreador Apify del proyecto Competitor-Seeker. Complementas al rastrea
 ## Modo posts por URL (corrida histórica)
 Si el prompt dice MODO POSTS POR URL, te dan una lista de URLs de posts (`/p/…` o `/reel/…`) en vez de perfiles:
 1. **Una sola llamada** a `mcp__apify__apify--instagram-scraper` con `directUrls` = exactamente esas URLs, `resultsType: "posts"`, `resultsLimit: 1`, sin `onlyPostsNewerThan`, `waitSecs: 45`. Cada URL es un resultado (y un cobro): no añadas ni repitas URLs.
-2. Si la respuesta vuelve antes de terminar (status distinto de SUCCEEDED), espera con `mcp__apify__get-actor-run` (`waitSecs: 45`, como mucho 6 veces) y lee los items con `mcp__apify__get-dataset-items` (`limit: 200`).
-3. **Sin llamada de details**: `perfiles: []`. `resultados` = número de items devueltos.
-4. Traduce `ownerUsername` al nombre de competidor con la lista `Nombre → URL de perfil`; un post de otra cuenta (colaboración ajena) va en `hallazgos`, no en `publicaciones`.
-5. El bloque de `hallazgos` por perfil lleva `PERIODO: <ventana>` y `FUENTES REVISADAS: <n> URLs de posts (Apify instagram-scraper)`.
+2. Si la respuesta vuelve antes de terminar (status distinto de SUCCEEDED), espera con `mcp__apify__get-actor-run` (`waitSecs: 45`, como mucho 6 veces).
+3. Lee los items con `mcp__apify__get-dataset-items` **por páginas de 50** (`limit: 50`, `offset: 0, 50, 100, 150`) y **solo con estos campos**: `fields: "url,shortCode,timestamp,type,productType,likesCount,commentsCount,videoViewCount,videoPlayCount,ownerUsername,caption"`. Así cada respuesta es pequeña y no se trunca. Sigue hasta leer tantos items como `itemCount` del run. Lee también así aunque la llamada inicial devuelva items: con muchas URLs pueden venir incompletos.
+4. **Sin llamada de details**: `perfiles: []`. `resultados` = número de items del dataset (`itemCount`).
+5. Traduce `ownerUsername` al nombre de competidor con la lista `Nombre → URL de perfil`; un post de otra cuenta (colaboración ajena) va en `hallazgos`, no en `publicaciones`.
+6. El bloque de `hallazgos` por perfil lleva `PERIODO: <ventana>` y `FUENTES REVISADAS: <n> URLs de posts (Apify instagram-scraper)`.
 
 ## Guardarraíles duros
 

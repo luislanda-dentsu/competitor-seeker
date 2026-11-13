@@ -9,6 +9,8 @@ import type { Corrida, VentanaCorrida } from './schemas/corrida.ts'
 export const CADENCIA_POR_DEFECTO = 0.5
 /** Margen sobre la estimación para el tope de URLs que se mandan a Apify. */
 export const MARGEN_TOPE = 1.5
+/** URLs extra por perfil que el navegador entrega fuera de la ventana: hasta 3 fijados + 1 de margen a cada lado. */
+export const EXTRA_POR_PERFIL = 5
 export const TOPE_MIN_POSTS = 20
 /** Máximo de URLs por corrida histórica (una lectura de dataset de Apify trae hasta 200). */
 export const TOPE_MAX_POSTS = 200
@@ -44,11 +46,14 @@ function redondearUsd(n: number): number {
   return Math.round(n * 100) / 100
 }
 
-/** Posts/día de un competidor según los posts de Apify ya registrados (sin duplicados). */
+/**
+ * Posts/día de un competidor según los posts de Apify de las corridas NORMALES (sin duplicados).
+ * Las históricas se excluyen: su ventana deja un hueco hasta hoy que hundiría la cadencia.
+ */
 function cadenciaObservada(corridas: readonly Corrida[], competidor: string): number | null {
   const fechas = new Map<string, string>()
   for (const c of corridas) {
-    if (c.estado !== 'registrada') continue
+    if (c.estado !== 'registrada' || c.tipo === 'historica') continue
     for (const p of c.publicaciones ?? []) {
       if (p.competidor !== competidor || p.fuente !== 'apify') continue
       fechas.set(clavePublicacion(p.url), p.fecha)
@@ -77,14 +82,16 @@ export function estimarCorridaHistorica(
     return { competidor, cadencia: Math.round(cadencia * 100) / 100, observada: obs !== null, postsEstimados: Math.ceil(cadencia * dias) }
   })
   const postsEstimados = competidores.reduce((a, c) => a + c.postsEstimados, 0)
+  const extra = EXTRA_POR_PERFIL * competidores.length
   const topePosts = competidores.length === 0
     ? 0
-    : Math.min(TOPE_MAX_POSTS, Math.max(TOPE_MIN_POSTS, Math.ceil(postsEstimados * MARGEN_TOPE)))
+    : Math.min(TOPE_MAX_POSTS, Math.max(TOPE_MIN_POSTS, Math.ceil(postsEstimados * MARGEN_TOPE) + extra))
   return {
     dias,
     competidores,
     postsEstimados,
-    costeEstimadoUsd: redondearUsd(Math.min(postsEstimados, topePosts) * usdPorResultado),
+    // Se cobran también los fijados y los márgenes que entrega el navegador.
+    costeEstimadoUsd: redondearUsd(Math.min(postsEstimados + extra, topePosts) * usdPorResultado),
     topePosts,
     costeMaximoUsd: redondearUsd(topePosts * usdPorResultado),
   }

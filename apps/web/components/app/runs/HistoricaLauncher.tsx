@@ -144,6 +144,13 @@ export function ConfirmHistoricaDialog({
                 <dt className="text-fg-muted">Coste máximo (tope de {estimacion.topePosts} posts)</dt>
                 <dd className="font-mono tabular-nums text-fg">{fmtUsd(estimacion.costeMaximoUsd)}</dd>
               </dl>
+              {estimacion.limitadoPorPresupuesto && (
+                <p className="text-xs text-s-confuso">
+                  El tope se bajó a {estimacion.topePosts} posts para no pasar del presupuesto mensual restante
+                  {estimacion.restanteMensualUsd !== null ? ` (${fmtUsd(estimacion.restanteMensualUsd)})` : ""}: algunos posts de la
+                  ventana pueden quedar sin cifras.
+                </p>
+              )}
               {estimacion.competidores.some((c) => !c.observada) && (
                 <p className="text-xs text-fg-muted">
                   Sin historial de Apify para{" "}

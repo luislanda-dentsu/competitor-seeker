@@ -49,9 +49,20 @@ describe('estimarCorridaHistorica', () => {
       { competidor: B, cadencia: 0.5, observada: false, postsEstimados: 31 },
     ])
     expect(e.postsEstimados).toBe(92)
-    expect(e.topePosts).toBe(138)
-    expect(e.costeEstimadoUsd).toBe(0.25)
-    expect(e.costeMaximoUsd).toBe(0.37)
+    // 92 × 1,5 + 5 extra por perfil (fijados y márgenes).
+    expect(e.topePosts).toBe(148)
+    expect(e.costeEstimadoUsd).toBe(0.28)
+    expect(e.costeMaximoUsd).toBe(0.4)
+  })
+
+  it('una histórica previa no hunde la cadencia de la siguiente estimación', () => {
+    const recientes = Array.from({ length: 10 }, (_, i) => post(A, `a${i}`, `2026-11-${String(i + 1).padStart(2, '0')}`))
+    const viejos = [post(A, 'v1', '2025-11-05'), post(A, 'v2', '2025-12-05')]
+    const corridas = [
+      corrida({ id: 'n1', fecha: '2026-11-10', publicaciones: recientes }),
+      corrida({ id: 'h1', fecha: '2026-11-13', tipo: 'historica', ventana: VENTANA, publicaciones: viejos }),
+    ]
+    expect(estimarCorridaHistorica(corridas, [A], VENTANA).competidores[0]!.cadencia).toBe(1)
   })
 
   it('el tope queda entre el mínimo y el máximo', () => {
@@ -116,6 +127,39 @@ describe('métricas de un periodo cubierto por una histórica', () => {
     expect(m.posts).toBe(2)
     expect(m.likes.total).toBe(40)
     expect(m.cadenciaSemanal).toBe(0.2)
+  })
+})
+
+describe('métricas: el hueco entre la histórica y las normales no cuenta', () => {
+  const normal = corrida({
+    id: 'n',
+    fecha: '2026-11-04',
+    ultimaCorrida: '2026-10-29',
+    publicaciones: [post(A, 'n1', '2026-11-01')],
+  })
+  const historica = corrida({
+    id: 'h',
+    fecha: '2026-11-13',
+    tipo: 'historica',
+    ventana: { desde: '2025-12-01', hasta: '2025-12-07' },
+    publicaciones: [post(A, 'h1', '2025-12-03')],
+    lecturas: [{ competidor: A, resumen: ['Diciembre 2025'] }],
+  })
+
+  it('«todo» cuenta solo los días cubiertos (7 de la ventana + 2026-10-29 → hoy)', () => {
+    const m = metricasCompetidor([normal, historica], A, { hoy: '2026-11-04' })
+    expect(m.posts).toBe(2)
+    // 7 + 7 = 14 días → 2 posts / 14 × 7 = 1 por semana (no 2 / ~339 días).
+    expect(m.cadenciaSemanal).toBe(1)
+  })
+
+  it('la serie y las lecturas de la histórica llevan la fecha de su ventana, en orden', () => {
+    const m = metricasCompetidor([historica, normal], A, { hoy: '2026-11-13' })
+    expect(m.serie.map((p) => [p.corrida, p.fecha])).toEqual([['h', '2025-12-07'], ['n', '2026-11-04']])
+    expect(m.lecturas[0]?.fecha).toBe('2025-12-07')
+    // Un periodo reciente no trae la lectura de 2025.
+    const reciente = metricasCompetidor([historica, normal], A, { periodo: { desde: '2026-10-01', hasta: '2026-11-13' }, hoy: '2026-11-13' })
+    expect(reciente.lecturas).toEqual([])
   })
 })
 

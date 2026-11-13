@@ -354,22 +354,44 @@ const rastreos = await parallel(tareas)
 // Corrida histórica: Apify DESPUÉS de Instagram, solo con las URLs de la ventana y con tope.
 if (historica && perfilesIG.length && apifyCfg.habilitado) {
   const tope = Number.isInteger(apifyCfg.topePosts) && apifyCfg.topePosts > 0 ? apifyCfg.topePosts : 0
-  const vistos = new Map()
+  // URLs por competidor, sin duplicados y reconstruidas desde el código del post
+  // (el grid da /<usuario>/p/<id>/; Apify espera https://www.instagram.com/p/<id>/).
+  const porCompetidor = new Map(perfilesIG.map(c => [c.nombre, []]))
+  const vistos = new Set()
   const candidatas = [
+    ...((datosIG && datosIG.publicaciones) || []).map(normalizarFecha).filter(p => enVentana(p.fecha)),
     ...((datosIG && datosIG.urlsVentana) || []),
-    ...((datosIG && datosIG.publicaciones) || []).filter(p => enVentana(p.fecha)),
   ]
   for (const u of candidatas) {
-    if (!u || !u.url || !u.competidor) continue
+    if (!u || !u.url || !porCompetidor.has(u.competidor)) continue
     const k = clavePost(u.url)
     if (!k.startsWith('ig:') || vistos.has(k)) continue
-    vistos.set(k, { competidor: u.competidor, url: u.url.replace(/[?#].*$/, '') })
+    vistos.add(k)
+    porCompetidor.get(u.competidor).push({ competidor: u.competidor, url: `https://www.instagram.com/p/${k.slice(3)}/` })
   }
-  const todas = [...vistos.values()]
-  const urls = todas.slice(0, tope)
-  if (todas.length > urls.length) log(`Apify: ${todas.length} URLs en la ventana, se envían ${urls.length} (tope confirmado)`)
+  // El tope se reparte por turnos: un competidor prolífico no deja a los demás sin cifras.
+  const urls = []
+  const listas = [...porCompetidor.values()]
+  for (let i = 0; urls.length < tope && listas.some(l => i < l.length); i++) {
+    for (const l of listas) if (i < l.length && urls.length < tope) urls.push(l[i])
+  }
+  const recortes = [...porCompetidor.entries()]
+    .map(([nombre, l]) => [nombre, l.length, urls.filter(u => u.competidor === nombre).length])
+    .filter(([, total, enviadas]) => enviadas < total)
+  if (recortes.length) log(`Apify: tope de ${tope} URLs; recortados ${recortes.map(([n, t, e]) => `${n} ${e}/${t}`).join(', ')}`)
+  const notaRecorte = recortes.length
+    ? ` Tope de ${tope} URLs alcanzado: solo se consultaron ${recortes.map(([n, t, e]) => `${e} de ${t} de ${n}`).join(', ')}; los demás posts de la ventana quedan sin cifras.`
+    : ''
   if (urls.length === 0) {
-    apifyInfo = { incluido: false, omitido: true, resultados: 0, costeEstimadoUsd: 0, motivo: tope === 0 ? 'sin tope de posts confirmado' : 'el navegador no entregó URLs de la ventana' }
+    const sinSesion = datosIG && /SESI[ÓO]N NO DISPONIBLE/i.test(datosIG.hallazgos || '')
+    const motivo = tope === 0
+      ? 'sin tope de posts confirmado'
+      : !datosIG
+        ? 'el rastreador de Instagram no respondió: sin URLs de la ventana'
+        : sinSesion
+          ? 'sesión de Instagram no disponible: sin URLs de la ventana'
+          : 'el navegador no entregó URLs de la ventana'
+    apifyInfo = { incluido: false, omitido: true, resultados: 0, costeEstimadoUsd: 0, motivo }
     log(`Apify omitido: ${apifyInfo.motivo}`)
   } else {
     const r = await agent(
@@ -382,7 +404,7 @@ if (historica && perfilesIG.length && apifyCfg.habilitado) {
       `Devuelve hallazgos, resultados, runId y publicaciones (con "fechaHora" = timestamp del post) según tu formato de salida.`,
       { label: 'rastreo-apify:ventana', phase: 'Rastreo', agentType: 'rastreador-apify', schema: APIFY_SCHEMA }
     ).then(alRecibirApify).catch(e => { log(`Apify falló: ${e && e.message ? e.message : e}`); return null })
-    if (r) rastreos.push(r)
+    if (r) rastreos.push({ ...r, hallazgos: r.hallazgos + notaRecorte })
   }
 }
 
