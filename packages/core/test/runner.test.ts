@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { argsClaude, lanzarClaude, MOCK_STREAM } from '../src/claude/runner.ts'
+import { argsClaude, entornoClaude, ESPERA_SEGUNDO_PLANO_MS, lanzarClaude, MOCK_STREAM } from '../src/claude/runner.ts'
 import type { EventoStream } from '../src/claude/stream-json.ts'
 import { resumirEventos } from '../src/claude/stream-json.ts'
 import { promptAsistente } from '../src/claude/prompts.ts'
@@ -86,5 +86,15 @@ describe('argsClaude', () => {
     const args = argsClaude({ prompt: 'p', jsonSchema: { type: 'object' }, name: 'n' })
     expect(args[args.indexOf('--json-schema') + 1]).toBe('{"type":"object"}')
     expect(args[args.indexOf('--name') + 1]).toBe('n')
+  })
+})
+
+describe('entornoClaude', () => {
+  it('fija un techo de espera de 60 min para las tareas en segundo plano de `claude -p`', () => {
+    expect(entornoClaude({ PATH: '/bin' })).toEqual({ PATH: '/bin', CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: String(ESPERA_SEGUNDO_PLANO_MS) })
+    expect(ESPERA_SEGUNDO_PLANO_MS).toBe(3_600_000)
+  })
+  it('respeta un valor ya fijado en el entorno', () => {
+    expect(entornoClaude({ CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: '0' }).CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS).toBe('0')
   })
 })
