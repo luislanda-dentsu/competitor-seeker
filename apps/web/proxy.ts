@@ -1,49 +1,46 @@
+import { buscarUsuario, cargarEnv } from "@competitor-seeker/core";
 import { NextResponse, type NextRequest } from "next/server";
-// Rutas relativas (no `@/`): así vitest carga el proxy sin alias (slugs.test.ts).
-import { MARCA_COOKIE } from "./lib/brand-cookie";
-import { resolverMarcaActiva, slugsDeCompetidores } from "./lib/data/slugs";
+// Rutas relativas (no `@/`): el proxy se carga sin alias.
+import { decidirAcceso, modoAcceso, type Decision } from "./lib/acceso";
+import { auth } from "./lib/auth";
+import { esFichaCompetidor, proxyCompetidor } from "./lib/proxy-competidores";
 
-/** Slug decodificado, o null si el segmento trae un porcentaje malformado. */
-function decodificarSlug(segmento: string): string | null {
-  try {
-    return decodeURIComponent(segmento);
-  } catch {
-    return null;
+function aplicar(request: NextRequest, d: Decision): NextResponse {
+  if (d.tipo === "redirigir") return NextResponse.redirect(new URL(d.a, request.nextUrl));
+  if (d.tipo === "error") {
+    if (request.nextUrl.pathname.startsWith("/api/")) return NextResponse.json({ error: d.mensaje }, { status: d.status });
+    return new NextResponse(`${d.mensaje}\n`, { status: d.status, headers: { "content-type": "text/plain; charset=utf-8" } });
   }
+  return esFichaCompetidor(request.nextUrl.pathname) ? proxyCompetidor(request) : NextResponse.next();
 }
 
+function decidir(request: NextRequest, email: string | null): NextResponse {
+  const { pathname, search } = request.nextUrl;
+  return aplicar(
+    request,
+    decidirAcceso({
+      pathname,
+      search,
+      modo: modoAcceso(cargarEnv()),
+      email,
+      permitido: buscarUsuario(email) !== null,
+      viaPuerta: request.headers.has("cf-connecting-ip") || request.headers.has("cf-ray"),
+    }),
+  );
+}
+
+const conSesion = auth((request) => decidir(request, request.auth?.user?.email ?? null));
+
 /**
- * Proxy (Node.js) para /competidores/[slug]: si el slug no existe en la
- * marca activa, reescribe a una ruta inexistente para que Next responda con
- * un 404 REAL. Con Cache Components la decisión no puede tomarse en la
- * página: su shell estático ya se envió con 200 cuando la isla dinámica
- * llama a notFound(). Las páginas siguen llamando a notFound() como red.
- *
- * Si `marca.json` no se puede leer, deja pasar: la página mostrará su
- * `error.tsx` (un fallo de lectura no es un 404).
+ * Puerta de toda la app: sin sesión válida y en la lista de acceso no se sirve nada
+ * (falla cerrado si la auth no está configurada). Luego, el 404 real de /competidores/[slug].
  */
-export function proxy(request: NextRequest): NextResponse {
-  const segmento = request.nextUrl.pathname.split("/")[2];
-  if (!segmento) return NextResponse.next();
-  const slug = decodificarSlug(segmento);
-  if (slug !== null) {
-    const marca = resolverMarcaActiva(request.cookies.get(MARCA_COOKIE)?.value);
-    if (marca) {
-      let slugs: Set<string>;
-      try {
-        slugs = slugsDeCompetidores(marca);
-      } catch {
-        return NextResponse.next();
-      }
-      if (slugs.has(slug)) return NextResponse.next();
-    }
-  }
-  // Dos segmentos bajo /competidores: no casa con [slug] ni con ninguna ruta.
-  const destino = request.nextUrl.clone();
-  destino.pathname = "/competidores/_/no-encontrado";
-  return NextResponse.rewrite(destino);
+export function proxy(request: NextRequest, ctx: unknown): Promise<Response> | Response {
+  if (modoAcceso(cargarEnv()) !== "google") return decidir(request, null);
+  return (conSesion as unknown as (r: NextRequest, c: unknown) => Promise<Response>)(request, ctx);
 }
 
 export const config = {
-  matcher: ["/competidores/:slug"],
+  // Todo menos los estáticos de Next (los estáticos no llevan datos).
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

@@ -72,3 +72,8 @@ export function rutaDataArchivo(...partes: string[]): string {
 export function rutaConfig(): string {
   return path.join(repoRoot(), 'config.json')
 }
+
+/** Lista de acceso (sí se sincroniza por git: las dos Macs sirven a los mismos usuarios). */
+export function rutaUsuarios(): string {
+  return path.join(repoRoot(), 'usuarios.json')
+}

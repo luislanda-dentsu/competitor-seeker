@@ -73,7 +73,7 @@ function git(): SimpleGit {
   return simpleGit(repoRoot(), { timeout: { block: 30_000 } })
 }
 
-const RUTAS_DATOS = ['marcas/', 'config.json']
+const RUTAS_DATOS = ['marcas/', 'config.json', 'usuarios.json']
 
 /**
  * El sync solo opera en la rama de datos (`CS_GIT_RAMA`, main) y sin código sin commitear:
@@ -112,7 +112,7 @@ async function conReintentoLock<T>(fn: () => Promise<T>): Promise<T> {
 /** Rutas que viajan por git y existen en disco o están rastreadas. */
 function rutasSync(): string[] {
   const raiz = repoRoot()
-  return ['marcas', 'config.json'].filter((p) => fs.existsSync(path.join(raiz, p)))
+  return ['marcas', 'config.json', 'usuarios.json'].filter((p) => fs.existsSync(path.join(raiz, p)))
 }
 
 // Una sola operación git a la vez dentro del proceso.

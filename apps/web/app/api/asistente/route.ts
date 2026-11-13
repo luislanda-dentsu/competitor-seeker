@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { borrarChat, esIdChatValido, existeMarca, guardarChat, leerChat, listarMarcas } from "@competitor-seeker/core";
 import { ChatNoEncontrado, ChatOcupado, responderChat, validarMensaje } from "@/lib/chat/runner";
 
@@ -34,6 +35,8 @@ function marcaDelChat(chatId: string): string | null {
  * la conexión, el proceso `claude` recibe SIGTERM.
  */
 export async function POST(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   let cuerpo: { marca?: unknown; mensaje?: unknown; chatId?: unknown; regenerar?: unknown };
   try {
     cuerpo = (await request.json()) as typeof cuerpo;
@@ -60,6 +63,8 @@ export async function POST(request: Request): Promise<Response> {
 
 /** DELETE /api/asistente?chatId=&marca= → `{ borrado }`. */
 export async function DELETE(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   const url = new URL(request.url);
   const chatId = url.searchParams.get("chatId") ?? "";
   if (!esIdChatValido(chatId)) return NextResponse.json({ error: "chatId inválido" }, { status: 400 });
@@ -76,6 +81,8 @@ export async function DELETE(request: Request): Promise<Response> {
 
 /** PATCH /api/asistente `{ marca, chatId, indice, feedback: 'up'|'down'|null }` → guarda el feedback del mensaje. */
 export async function PATCH(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   let cuerpo: { marca?: unknown; chatId?: unknown; indice?: unknown; feedback?: unknown };
   try {
     cuerpo = (await request.json()) as typeof cuerpo;

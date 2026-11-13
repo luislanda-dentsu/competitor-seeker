@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { z } from "zod";
 import { commitYPush, estadoSync, pull } from "@competitor-seeker/core";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
@@ -13,6 +14,8 @@ export async function GET(): Promise<Response> {
 
 /** POST /api/sync `{ accion: 'pull' | 'push' }` → resultado + estado actualizado. Siempre manual. */
 export async function POST(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   const { datos, respuesta } = await leerCuerpo(request, CuerpoSync);
   if (respuesta) return respuesta;
   try {

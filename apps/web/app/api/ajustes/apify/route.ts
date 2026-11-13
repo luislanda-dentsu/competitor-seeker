@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { guardarSecrets, invalidarCacheUso, leerSecretsArchivo } from "@competitor-seeker/core";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
 import { estadoToken } from "@/lib/settings/datos";
@@ -12,6 +13,8 @@ export async function GET(): Promise<Response> {
 
 /** PUT /api/ajustes/apify `{ token }` → guarda en data/secrets.json (0600) e invalida la caché de uso. */
 export async function PUT(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario({ admin: true });
+  if (usuario instanceof Response) return usuario;
   const { datos, respuesta } = await leerCuerpo(request, CuerpoToken);
   if (respuesta) return respuesta;
   try {
@@ -25,6 +28,8 @@ export async function PUT(request: Request): Promise<Response> {
 
 /** DELETE /api/ajustes/apify → quita el token del archivo (no toca `APIFY_TOKEN` del entorno). */
 export async function DELETE(): Promise<Response> {
+  const usuario = await exigirUsuario({ admin: true });
+  if (usuario instanceof Response) return usuario;
   try {
     const resto = { ...leerSecretsArchivo() };
     delete resto.apifyToken;

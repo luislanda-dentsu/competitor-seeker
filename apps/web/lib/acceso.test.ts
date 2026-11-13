@@ -1,0 +1,55 @@
+import { describe, expect, it } from "vitest";
+import { decidirAcceso, destinoSeguro, modoAcceso, type PeticionAcceso } from "./acceso";
+
+const SECRETO = "x".repeat(32);
+const base: PeticionAcceso = { pathname: "/", search: "", modo: "google", email: null, permitido: false, viaPuerta: true };
+
+describe("modoAcceso", () => {
+  it("falla cerrado si falta cualquier pieza de Google", () => {
+    expect(modoAcceso({ CS_AUTH: "on" })).toBe("sin-configurar");
+    expect(modoAcceso({ CS_AUTH: "on", AUTH_SECRET: SECRETO, AUTH_GOOGLE_ID: "id" })).toBe("sin-configurar");
+    expect(modoAcceso({ CS_AUTH: "on", AUTH_SECRET: SECRETO, AUTH_GOOGLE_ID: "id", AUTH_GOOGLE_SECRET: "s" })).toBe("google");
+    expect(modoAcceso({ CS_AUTH: "off" })).toBe("abierto-local");
+  });
+});
+
+describe("decidirAcceso", () => {
+  it("sin configurar no sirve nada, ni la entrada", () => {
+    expect(decidirAcceso({ ...base, modo: "sin-configurar", pathname: "/entrar" })).toMatchObject({ tipo: "error", status: 503 });
+  });
+
+  it("modo abierto solo en local: lo que llega por la puerta se rechaza", () => {
+    expect(decidirAcceso({ ...base, modo: "abierto-local", viaPuerta: false })).toEqual({ tipo: "pasar" });
+    expect(decidirAcceso({ ...base, modo: "abierto-local", viaPuerta: true, pathname: "/api/corridas" })).toMatchObject({ status: 503 });
+  });
+
+  it("sin sesión: páginas → /entrar con destino; API → 401; rutas públicas pasan", () => {
+    expect(decidirAcceso({ ...base, pathname: "/corridas", search: "?x=1" })).toEqual({ tipo: "redirigir", a: "/entrar?desde=%2Fcorridas%3Fx%3D1" });
+    expect(decidirAcceso(base)).toEqual({ tipo: "redirigir", a: "/entrar" });
+    expect(decidirAcceso({ ...base, pathname: "/api/corridas" })).toMatchObject({ status: 401 });
+    for (const p of ["/entrar", "/entrar/sin-acceso", "/api/auth/callback/google", "/api/salud"]) {
+      expect(decidirAcceso({ ...base, pathname: p })).toEqual({ tipo: "pasar" });
+    }
+  });
+
+  it("con sesión pero fuera de la lista: 403 / sin-acceso; dentro: pasa", () => {
+    expect(decidirAcceso({ ...base, email: "x@y.com", pathname: "/api/asistente" })).toMatchObject({ status: 403 });
+    expect(decidirAcceso({ ...base, email: "x@y.com", pathname: "/corridas" })).toEqual({ tipo: "redirigir", a: "/entrar/sin-acceso" });
+    expect(decidirAcceso({ ...base, email: "x@y.com", permitido: true, pathname: "/api/corridas" })).toEqual({ tipo: "pasar" });
+  });
+
+  it("/api/authX no es pública", () => {
+    expect(decidirAcceso({ ...base, pathname: "/api/authx" })).toMatchObject({ status: 401 });
+    expect(decidirAcceso({ ...base, pathname: "/entrarx" })).toMatchObject({ tipo: "redirigir" });
+  });
+});
+
+describe("destinoSeguro", () => {
+  it("solo rutas internas", () => {
+    expect(destinoSeguro("/corridas?p=1")).toBe("/corridas?p=1");
+    expect(destinoSeguro("//evil.com")).toBe("/");
+    expect(destinoSeguro("https://evil.com")).toBe("/");
+    expect(destinoSeguro("/\\evil.com")).toBe("/");
+    expect(destinoSeguro(null)).toBe("/");
+  });
+});

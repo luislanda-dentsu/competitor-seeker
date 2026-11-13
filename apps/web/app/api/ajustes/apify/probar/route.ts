@@ -1,4 +1,5 @@
 import { consultarLimites, guardarCacheUso, huellaToken, leerSecrets } from "@competitor-seeker/core";
+import { exigirUsuario } from "@/lib/sesion";
 import { errorJson, okJson } from "@/lib/settings/api";
 
 /** Mensaje legible según el fallo de la API de Apify. */
@@ -11,6 +12,8 @@ function describirFallo(e: unknown): string {
 
 /** POST /api/ajustes/apify/probar → `{ ok, ciclo, mensual }` con el token guardado. */
 export async function POST(): Promise<Response> {
+  const usuario = await exigirUsuario({ admin: true });
+  if (usuario instanceof Response) return usuario;
   const token = leerSecrets().apifyToken;
   if (!token) return errorJson("No hay token de Apify configurado.", 409);
   try {

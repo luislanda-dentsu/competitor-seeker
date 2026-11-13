@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { confirmarCorrida } from "@/lib/runs/confirmar";
 import { buscarCorrida } from "@/lib/runs/consulta";
 import { esIdCorridaValido, esSlugMarcaValido } from "@/lib/runs/rutas";
@@ -7,6 +8,8 @@ type Ctx = { params: Promise<{ marca: string; id: string }> };
 
 /** POST /api/corridas/[marca]/[id]/confirmar `{ accion: 'registrar' | 'descartar' }` → vía `scripts/cs confirmar`. */
 export async function POST(request: Request, { params }: Ctx): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   const { marca, id } = await params;
   if (!esSlugMarcaValido(marca)) return NextResponse.json({ error: "Marca inválida" }, { status: 400 });
   if (!esIdCorridaValido(id)) return NextResponse.json({ error: "Id inválido" }, { status: 400 });

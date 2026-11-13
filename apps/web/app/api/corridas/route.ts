@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { existeMarca } from "@competitor-seeker/core";
 import { estimarHistorica } from "@/lib/runs/historica";
 import { CorridaEnCurso, lanzarCorrida, type OpcionesLanzar } from "@/lib/runs/runner";
@@ -8,6 +9,8 @@ import { CorridaEnCurso, lanzarCorrida, type OpcionesLanzar } from "@/lib/runs/r
  * Con `ventana` es una corrida histórica: el tope de posts de Apify nunca pasa del que calcula el servidor.
  */
 export async function POST(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   let cuerpo: { marca?: unknown; incluirApify?: unknown; ventana?: unknown; topePosts?: unknown };
   try {
     cuerpo = (await request.json()) as typeof cuerpo;
