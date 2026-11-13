@@ -2,7 +2,6 @@ import { Suspense, type ReactNode } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PageTitleProvider } from "@/components/app/shell/PageTitle";
 import { SectionScope } from "@/components/app/shell/SectionScope";
-import { ShellSegunRuta } from "@/components/app/shell/ShellSegunRuta";
 import { Sidebar } from "@/components/app/shell/Sidebar";
 import { Topbar } from "@/components/app/shell/Topbar";
 import { cargarContextoMarca } from "@/lib/brand";
@@ -26,22 +25,17 @@ export function AppShell({ children }: { children: ReactNode }): React.ReactElem
         <Suspense fallback={null}>
           <SectionScope />
         </Suspense>
-        <ShellSegunRuta
-          conShell={
-            <div className="min-h-dvh bg-canvas">
-              <div className="grid min-h-dvh grid-cols-1 lg:grid-cols-[232px_minmax(0,1fr)] lg:sb-collapsed:grid-cols-[76px_minmax(0,1fr)]">
-                <Sidebar />
-                <div className="flex min-w-0 flex-col">
-                  <Topbar />
-                  <main className="mx-auto w-full min-w-0 max-w-[1680px] flex-1 px-4 pt-2 pb-6 sm:px-6 lg:px-8" id="contenido">
-                    {children}
-                  </main>
-                </div>
-              </div>
+        <div className="min-h-dvh bg-canvas">
+          <div className="grid min-h-dvh grid-cols-1 lg:grid-cols-[232px_minmax(0,1fr)] lg:sb-collapsed:grid-cols-[76px_minmax(0,1fr)]">
+            <Sidebar />
+            <div className="flex min-w-0 flex-col">
+              <Topbar />
+              <main className="mx-auto w-full min-w-0 max-w-[1680px] flex-1 px-4 pt-2 pb-6 sm:px-6 lg:px-8" id="contenido">
+                {children}
+              </main>
             </div>
-          }
-          sinShell={<main className="min-h-dvh bg-canvas" id="contenido">{children}</main>}
-        />
+          </div>
+        </div>
       </PageTitleProvider>
       </BrandProvider>
     </TooltipProvider>

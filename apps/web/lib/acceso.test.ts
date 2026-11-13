@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decidirAcceso, destinoSeguro, modoAcceso, type PeticionAcceso } from "./acceso";
+import { decidirAcceso, destinoSeguro, modoAcceso, secretoValido, type PeticionAcceso } from "./acceso";
 
 const SECRETO = "x".repeat(32);
 const base: PeticionAcceso = { pathname: "/", search: "", modo: "google", email: null, permitido: false, viaPuerta: true };
@@ -51,5 +51,21 @@ describe("destinoSeguro", () => {
     expect(destinoSeguro("https://evil.com")).toBe("/");
     expect(destinoSeguro("/\\evil.com")).toBe("/");
     expect(destinoSeguro(null)).toBe("/");
+  });
+});
+
+describe("consulta interna entre Macs", () => {
+  it("el secreto solo abre el estado de corridas", () => {
+    expect(decidirAcceso({ ...base, interno: true, pathname: "/api/corridas/estado" })).toEqual({ tipo: "pasar" });
+    expect(decidirAcceso({ ...base, interno: true, pathname: "/api/corridas" })).toMatchObject({ status: 401 });
+    expect(decidirAcceso({ ...base, interno: true, pathname: "/" })).toMatchObject({ tipo: "redirigir" });
+  });
+  it("secretoValido exige coincidencia exacta y un secreto configurado", () => {
+    const s = "a".repeat(40);
+    expect(secretoValido(s, s)).toBe(true);
+    expect(secretoValido("b".repeat(40), s)).toBe(false);
+    expect(secretoValido(s.slice(1), s)).toBe(false);
+    expect(secretoValido(null, s)).toBe(false);
+    expect(secretoValido("", undefined)).toBe(false);
   });
 });

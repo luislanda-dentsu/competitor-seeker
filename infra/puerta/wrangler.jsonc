@@ -1,0 +1,15 @@
+// Puerta web: https://competitorseeker.luislandadentsu.workers.dev (cuenta de Cloudflare de Orbit).
+// Despliegue: npx wrangler deploy (desde esta carpeta). Ver docs/setup-mac.md.
+{
+  "name": "competitorseeker",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  // Sin URLs de vista previa: el login de Google solo acepta la URL canónica.
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  // Un servicio VPC por Mac (túnel propio → localhost:3030). MAC_COMPANERA se añade al configurar su Mac.
+  "vpc_services": [
+    { "binding": "MAC_LUIS", "service_id": "REEMPLAZAR_MAC_LUIS" }
+  ]
+}

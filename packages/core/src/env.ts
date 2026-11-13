@@ -33,6 +33,10 @@ export const Env = z.object({
   /** Primer admin: entra siempre como admin aunque `usuarios.json` esté vacío. */
   CS_ADMIN_EMAIL: z.string().email().optional(),
   CS_AUTH: z.enum(['on', 'off']).default('on'),
+  /** Qué Mac es esta para la puerta de Cloudflare (binding del Worker). */
+  CS_MAC: z.enum(['MAC_LUIS', 'MAC_COMPANERA']).optional(),
+  /** Secreto compartido Mac ↔ Worker para consultar si la otra Mac tiene una corrida en curso. */
+  CS_SECRETO_INTERNO: z.string().min(32).optional(),
 })
 
 export type Env = z.infer<typeof Env>

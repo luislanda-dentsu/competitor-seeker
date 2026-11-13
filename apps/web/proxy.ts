@@ -1,7 +1,7 @@
 import { buscarUsuario, cargarEnv } from "@competitor-seeker/core";
 import { NextResponse, type NextRequest } from "next/server";
 // Rutas relativas (no `@/`): el proxy se carga sin alias.
-import { decidirAcceso, modoAcceso, type Decision } from "./lib/acceso";
+import { decidirAcceso, modoAcceso, secretoValido, type Decision } from "./lib/acceso";
 import { auth } from "./lib/auth";
 import { esFichaCompetidor, proxyCompetidor } from "./lib/proxy-competidores";
 
@@ -16,15 +16,17 @@ function aplicar(request: NextRequest, d: Decision): NextResponse {
 
 function decidir(request: NextRequest, email: string | null): NextResponse {
   const { pathname, search } = request.nextUrl;
+  const env = cargarEnv();
   return aplicar(
     request,
     decidirAcceso({
       pathname,
       search,
-      modo: modoAcceso(cargarEnv()),
+      modo: modoAcceso(env),
       email,
       permitido: buscarUsuario(email) !== null,
       viaPuerta: request.headers.has("cf-connecting-ip") || request.headers.has("cf-ray"),
+      interno: secretoValido(request.headers.get("x-cs-interno"), env.CS_SECRETO_INTERNO),
     }),
   );
 }
