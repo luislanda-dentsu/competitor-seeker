@@ -159,6 +159,19 @@ export function matarGrupo(pid: number | undefined, senal: NodeJS.Signals = 'SIG
   }
 }
 
+/**
+ * `claude -p` detiene las tareas en segundo plano 10 min después del último turno
+ * (corrida histórica parval 2026-11-13 11:40: el workflow murió con Apify ya pagado,
+ * mientras el agente escribía el resultado). El orquestador espera la notificación del
+ * workflow sin turnos intermedios, así que el techo debe cubrir la corrida entera.
+ */
+export const ESPERA_SEGUNDO_PLANO_MS = 60 * 60 * 1000
+
+/** Entorno del proceso hijo: el de la app más el techo de espera (si no viene fijado). */
+export function entornoClaude(base: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
+  return { ...base, CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: base.CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS ?? String(ESPERA_SEGUNDO_PLANO_MS) }
+}
+
 export function lanzarClaude(o: OpcionesClaude): ProcesoClaude {
   const env = cargarEnv()
   const modo = o.runner ?? env.CS_RUNNER
@@ -172,7 +185,7 @@ function lanzarReal(o: OpcionesClaude, args: string[], bin: string): ProcesoClau
   const volcado = abrirVolcado(o.volcarA)
   // `detached`: el hijo lidera su propio grupo de procesos para poder cancelar
   // el árbol entero (claude + subagentes + navegador) con `process.kill(-pid)`.
-  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: process.env, detached: true })
+  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: entornoClaude(), detached: true })
   let resto = ''
   const stderr: string[] = []
 
