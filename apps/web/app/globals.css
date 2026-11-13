@@ -232,9 +232,9 @@
    @theme inline — expone los tokens como utilidades de Tailwind
    ============================================================ */
 @theme inline {
-  --font-sans: var(--font-gotham), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  /* Cifras en Gotham (tabulares): font-mono ya no es monoespaciada; el código usa --font-code. */
-  --font-mono: var(--font-gotham), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Cifras en Poppins (tabulares): font-mono ya no es monoespaciada; el código usa --font-code. */
+  --font-mono: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-code: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
   --font-heading: var(--font-sans);
 
@@ -446,7 +446,7 @@
 }
 
 /* ============================================================
-   Utilidades tipográficas (Gotham: Book 400 texto · Medium 500 énfasis)
+   Utilidades tipográficas (Poppins: 400 texto · 500 énfasis)
    ============================================================ */
 @utility t-page {
   font-size: 28px;
