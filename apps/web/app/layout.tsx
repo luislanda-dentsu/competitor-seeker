@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist_Mono, Poppins } from "next/font/google";
 import { AppShell } from "@/components/app/shell/AppShell";
 import { ThemeScript } from "@/components/app/shell/ThemeScript";
 import "./globals.css";
 
-// Gotham (AMGC): Book para el texto, Medium como «semibold», Bold puntual.
-const gotham = localFont({
-  variable: "--font-gotham",
+// Poppins: 400 texto, 500 énfasis, 600 semibold, 700 bold; 300 puntual.
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
-  src: [
-    { path: "./fonts/Gotham-Book.otf", weight: "400", style: "normal" },
-    { path: "./fonts/Gotham-BookItalic.otf", weight: "400", style: "italic" },
-    { path: "./fonts/Gotham-Medium.otf", weight: "500", style: "normal" },
-    { path: "./fonts/Gotham-Medium.otf", weight: "600", style: "normal" },
-    { path: "./fonts/Gotham-Bold.otf", weight: "700", style: "normal" },
-  ],
 });
 
 const geistMono = Geist_Mono({
@@ -35,7 +30,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      className={`${gotham.variable} ${geistMono.variable} h-full`}
+      className={`${poppins.variable} ${geistMono.variable} h-full`}
       lang="es"
       suppressHydrationWarning
     >
