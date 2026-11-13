@@ -175,7 +175,7 @@ export function ChatView({ marca, marcaNombre, chat, sugerencias, sinEntradas }:
                         />
                       </li>
                     ))}
-                    {generando && pensando && mensajes.at(-1)?.rol !== "asistente" && (
+                    {generando && mensajes.at(-1)?.rol !== "asistente" && (
                       <li>
                         <Pensando texto={pensando} />
                       </li>
