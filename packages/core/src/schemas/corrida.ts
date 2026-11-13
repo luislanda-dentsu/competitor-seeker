@@ -30,11 +30,25 @@ export type ApifyCorrida = z.infer<typeof ApifyCorrida>
 export const SesionIg = z.enum(['ok', 'no-disponible', 'no-usado', 'error', 'desconocido'])
 export type SesionIg = z.infer<typeof SesionIg>
 
+/** `historica`: corrida sobre una ventana pasada; no mueve `ultimaCorrida` ni cuenta como «última corrida». */
+export const TipoCorrida = z.enum(['normal', 'historica'])
+export type TipoCorrida = z.infer<typeof TipoCorrida>
+
+/** Rango inclusivo de fechas locales que cubre una corrida histórica. */
+export const VentanaCorrida = z
+  .object({ desde: FechaISO, hasta: FechaISO })
+  .refine((v) => v.desde <= v.hasta, { message: 'ventana: desde > hasta' })
+export type VentanaCorrida = z.infer<typeof VentanaCorrida>
+
 export const Corrida = z.object({
   id: z.string().min(1),
   marca: z.string().min(1),
   fecha: FechaISO,
   ultimaCorrida: FechaISO.nullable(),
+  /** Ausente = `normal` (corridas anteriores a v2.3). */
+  tipo: TipoCorrida.optional(),
+  /** Solo en corridas históricas. */
+  ventana: VentanaCorrida.optional(),
   inicio: z.string().min(1),
   fin: z.string().optional(),
   duracionMs: z.number().nonnegative().optional(),
@@ -86,5 +100,7 @@ export const ResultadoWorkflow = z.object({
   publicaciones: listaTolerante(Publicacion).optional(),
   perfiles: listaTolerante(PerfilSnapshot).optional(),
   lecturas: listaTolerante(LecturaCompetidor).optional(),
+  /** Corrida histórica: el workflow devuelve la ventana que rastreó. */
+  ventana: VentanaCorrida.optional(),
 })
 export type ResultadoWorkflow = z.infer<typeof ResultadoWorkflow>

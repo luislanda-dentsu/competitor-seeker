@@ -84,3 +84,23 @@ Base: auditoría del código de Orbit (`~/Claude/Projects/orbit`, 2026-11-05). L
 
 ## Siguiente (separado, core)
 - [x] `fix/seguidores-apify`: las métricas solo cuentan seguidores con `fuente: 'apify'` (corrida parval 2026-11-04-1603 tiene snapshots del navegador)
+
+## v2.3 — Corrida histórica (`feat/corrida-historica`, 2026-11-13)
+Objetivo: lanzar desde la app una corrida sobre un periodo pasado (p. ej. nov–dic 2025) con lo cualitativo y las métricas de Apify (oficial), pagando solo los posts de la ventana.
+Diseño: el navegador (rastreador-ig) recorre el grid hasta la ventana y entrega las URLs de esos posts; Apify oficial se consulta SOLO con esas URLs (verificado: 2 URLs → 2 resultados cobrados, con likes/comentarios/fecha). Sin seguidores (no relevantes).
+- [x] Core: `Corrida.tipo` (`normal|historica`) + `ventana {desde, hasta}`; `ultimaCorrida*` y KPI «última corrida» ignoran las históricas; cobertura de métricas incluye las ventanas históricas
+- [x] Core: estimación de coste por ventana (cadencia por competidor de los posts de Apify ya registrados) + tope de posts
+- [x] Prompt + workflow: modo histórico (IG → URLs de la ventana → Apify por URL, con tope; web con la ventana; «nuevo» = dentro de la ventana; publicaciones filtradas a la ventana)
+- [x] Agentes: rastreador-ig (modo histórico: recorrer grid, localizar límites, `urlsVentana`) y rastreador-apify (modo por URL, sin details)
+- [x] API `POST /api/corridas` acepta `ventana` + tope (validado); `GET /api/corridas/estimacion`
+- [x] UI: «Periodo pasado» en el lanzador (desde/hasta) con estimación y confirmación de coste antes de lanzar; etiqueta «histórica» en el historial
+- [x] Tests (225 en verde), typecheck, lint
+- [ ] Revisión independiente
+- [ ] Verificación real: lanzar Parval 2025-11-01 → 2025-12-31 desde la app (la owner)
+
+Criterios de aceptación:
+1. Lanzar Parval 2025-11-01 → 2025-12-31 registra publicaciones con fecha dentro de esa ventana, con cifras de Apify.
+2. Antes de lanzar, la app muestra posts estimados, coste estimado y coste máximo, y pide confirmación.
+3. Apify nunca recibe más URLs que el tope confirmado; no se hace la llamada de seguidores.
+4. Tras la histórica, la siguiente corrida normal sigue empezando en la última corrida normal (no se mueve la ventana) y la tarjeta «Última corrida» no cambia.
+5. Si el navegador no tiene sesión, la corrida sigue solo con web, sin gastar Apify, y lo dice.

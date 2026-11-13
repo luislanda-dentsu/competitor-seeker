@@ -273,8 +273,14 @@ export function metricasCompetidor(
     .sort((a, b) => (b.er ?? -1) - (a.er ?? -1) || ((b.likes ?? 0) + (b.comentarios ?? 0)) - ((a.likes ?? 0) + (a.comentarios ?? 0)) || (b.vistas ?? 0) - (a.vistas ?? 0))
     .slice(0, 3)
 
-  const primera = corridas.find((c) => c.competidores.includes(competidor)) ?? corridas[0]
-  const coberturaDesde = primera ? primera.ultimaCorrida ?? restarDias(primera.fecha, DIAS_PRIMERA_CORRIDA) : null
+  const normales = corridas.filter((c) => c.tipo !== 'historica')
+  const primera = normales.find((c) => c.competidores.includes(competidor)) ?? normales[0]
+  const coberturaNormal = primera ? primera.ultimaCorrida ?? restarDias(primera.fecha, DIAS_PRIMERA_CORRIDA) : null
+  // Una corrida histórica cubre su ventana: un periodo dentro de ella cuenta sus días, no se descarta.
+  const desdeHistoricas = corridas
+    .filter((c) => c.tipo === 'historica' && c.ventana && c.competidores.includes(competidor))
+    .map((c) => c.ventana!.desde)
+  const coberturaDesde = [coberturaNormal, ...desdeHistoricas].filter((x): x is string => x !== null).sort()[0] ?? null
   const dias = diasPeriodo(periodo, publicaciones, hoy, coberturaDesde)
   const vistas = valores('vistas')
   const cobertura: Cobertura = publicaciones.length ? (legado.length ? 'parcial' : 'completa') : legado.length ? 'parcial' : 'sin-datos'

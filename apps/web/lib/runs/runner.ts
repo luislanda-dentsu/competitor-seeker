@@ -49,6 +49,8 @@ export class CorridaEnCurso extends Error {
 export interface OpcionesLanzar {
   marca: string;
   incluirApify: boolean;
+  /** Corrida histórica: ventana pasada (ya validada) y tope de posts confirmado para Apify. */
+  historica?: { ventana: { desde: string; hasta: string }; topePosts: number };
 }
 
 export interface ResultadoLanzar {
@@ -234,7 +236,8 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
   const ahora = new Date();
   const inicio = ahora.toISOString();
   try {
-    const apify = await decidirApifyParaCorrida(o.incluirApify);
+    const decision = await decidirApifyParaCorrida(o.incluirApify);
+    const apify = o.historica ? { ...decision, topePosts: o.historica.topePosts } : decision;
     // Fase 6: traer lo de la otra Mac antes de calcular `ultimaCorrida`. Con conflicto la corrida sigue.
     try {
       // Tope de 15 s: una red lenta no deja el lanzamiento colgado (la corrida sigue con lo local).
@@ -248,6 +251,7 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
       marca: marca.slug,
       fecha: fechaLocal(ahora),
       ultimaCorrida,
+      ...(o.historica ? { tipo: "historica" as const, ventana: o.historica.ventana } : {}),
       inicio,
       estado: "en-curso",
       verificado: false,
@@ -264,7 +268,7 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
     limpiarStream(marca.slug, corridaId);
     const controller = new AbortController();
     const proceso = lanzarClaude({
-      prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, ultimaCorridaIg: ultimaCorridaIgRegistrada(marca.slug), corridaId, apify }),
+      prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, ultimaCorridaIg: ultimaCorridaIgRegistrada(marca.slug), corridaId, apify, ...(o.historica ? { ventana: o.historica.ventana } : {}) }),
       allowedTools: allowedToolsCorrida,
       disallowedTools: disallowedToolsCorrida,
       jsonSchema: esquemaSalidaCorrida,

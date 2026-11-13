@@ -97,9 +97,19 @@ export function guardarCorrida(corrida: Corrida): Corrida {
   return valida
 }
 
-/** Mayor `fecha` entre las corridas `registrada`, o null si no hay ninguna. */
+/** Una corrida histórica mira una ventana pasada: no cuenta para «última corrida» ni para la ventana de la siguiente. */
+export function esHistorica(c: Pick<Corrida, 'tipo'>): boolean {
+  return c.tipo === 'historica'
+}
+
+/** Corridas `registrada` normales (las que definen la ventana de la siguiente corrida). */
+function registradasNormales(corridas: readonly Corrida[]): Corrida[] {
+  return corridas.filter((c) => c.estado === 'registrada' && !esHistorica(c))
+}
+
+/** Mayor `fecha` entre las corridas `registrada` normales, o null si no hay ninguna. */
 export function ultimaCorridaRegistrada(slug: string): FechaISO | null {
-  const registradas = listarCorridas(slug).corridas.filter((c) => c.estado === 'registrada')
+  const registradas = registradasNormales(listarCorridas(slug).corridas)
   if (registradas.length === 0) return null
   return registradas.reduce<string>((max, c) => (c.fecha > max ? c.fecha : max), registradas[0]!.fecha)
 }
@@ -110,14 +120,14 @@ export function ultimaCorridaRegistrada(slug: string): FechaISO | null {
  * no tuvieron sesión, sus posts nunca se vieron y siguen siendo "nuevos".
  */
 export function ultimaCorridaIgRegistrada(slug: string): FechaISO | null {
-  const conIg = listarCorridas(slug).corridas.filter((c) => c.estado === 'registrada' && c.ig?.sesion === 'ok')
+  const conIg = registradasNormales(listarCorridas(slug).corridas).filter((c) => c.ig?.sesion === 'ok')
   if (conIg.length === 0) return null
   return conIg.reduce<string>((max, c) => (c.fecha > max ? c.fecha : max), conIg[0]!.fecha)
 }
 
-/** Corrida `registrada` más reciente (por fecha, luego inicio), o null. */
+/** Corrida `registrada` normal más reciente (por fecha, luego inicio), o null. Ignora las históricas. */
 export function ultimaCorridaObjeto(corridas: readonly Corrida[]): Corrida | null {
-  const registradas = corridas.filter((c) => c.estado === 'registrada')
+  const registradas = registradasNormales(corridas)
   if (registradas.length === 0) return null
   return registradas.reduce((mejor, c) => {
     if (c.fecha > mejor.fecha) return c

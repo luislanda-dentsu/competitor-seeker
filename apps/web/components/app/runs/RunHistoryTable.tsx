@@ -30,6 +30,16 @@ function Verificado({ ok }: { ok: boolean }): React.ReactElement {
   );
 }
 
+/** Etiqueta de una corrida histórica: «periodo 2025-11-01 → 2025-12-31». */
+function Historica({ c }: { c: Corrida }): React.ReactElement | null {
+  if (c.tipo !== "historica" || !c.ventana) return null;
+  return (
+    <Badge className="ms-2" variant="info">
+      periodo {c.ventana.desde} → {c.ventana.hasta}
+    </Badge>
+  );
+}
+
 function apifyUsd(c: Corrida): string {
   if (!c.apify || c.apify.omitido) return "—";
   return `$${(c.apify.costeEstimadoUsd ?? 0).toFixed(2)}`;
@@ -97,6 +107,7 @@ export function RunHistoryTable({
                           {fmtFecha(c.fecha)}
                         </Link>
                         <span className="ms-2 font-mono text-xs text-fg-muted">{horaDe(c.inicio)}</span>
+                        <Historica c={c} />
                       </TableCell>
                       <TableCell>
                         <EstadoBadge estado={c.estado} />
@@ -124,6 +135,7 @@ export function RunHistoryTable({
                     <Link className="font-medium text-fg underline-offset-4 hover:underline" href={rutaUiCorrida(c.marca, c.id)}>
                       {fmtFecha(c.fecha)} <span className="font-mono text-xs text-fg-muted">{horaDe(c.inicio)}</span>
                     </Link>
+                    <Historica c={c} />
                     <EstadoBadge estado={c.estado} />
                   </div>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
