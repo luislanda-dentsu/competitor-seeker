@@ -32,5 +32,8 @@
   "modo": "ui",
   "maquina": "Administrastors-MacBook-Air.local",
   "sessionId": "d6e7fe2b-817f-4139-b1be-7780594d2e20",
+  "git": {
+    "pushed": true
+  },
   "error": "el orquestador terminó (código 0) sin registrar la corrida: {\"corridaId\":\"2026-11-13-1140-parval-administrast\",\"estado\":\"en-curso-sin-registrar\",\"verificado\":false,\"intentos\":0,\"entradas\":0,\"igSesion\":\"desconocida\"}"
 }

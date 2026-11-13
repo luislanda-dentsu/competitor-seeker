@@ -1,0 +1,1364 @@
+{
+  "id": "2026-11-13-1210-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-13",
+  "ultimaCorrida": "2026-11-13",
+  "tipo": "historica",
+  "ventana": {
+    "desde": "2025-11-01",
+    "hasta": "2025-12-31"
+  },
+  "inicio": "2026-11-13T16:10:38.194Z",
+  "fin": "2026-11-13T16:25:43.280Z",
+  "duracionMs": 905086,
+  "estado": "pendiente-confirmacion",
+  "verificado": false,
+  "intentos": 3,
+  "objeciones": [
+    {
+      "marca": "United Capital (lectura, estrategia.formatosYCadencia)",
+      "problema": "Dice \"huecos de hasta una semana entre posts\". Las fechas de DATOS ESTRUCTURADOS muestran huecos mayores: 2025-11-06 a 2025-11-18 son 12 días, y 2025-12-11 a 2025-12-19 son 8. La cadencia está mal descrita frente a la evidencia. Corregir a \"hasta ~12 días\" o quitar la afirmación."
+    },
+    {
+      "marca": "CCI Puesto de Bolsa (lectura, estrategia.formatosYCadencia)",
+      "problema": "Afirma \"publicación casi diaria en noviembre\". Los datos listan 18 posts en noviembre (fechas 3, 4, 5, 5, 7, 9, 11, 12, 14, 17, 21, 21, 24, 25, 26, 27, 28 y 29), es decir, 17 días distintos de 30 y con huecos de 2 a 4 días. \"Casi diaria\" no se sostiene; usar el recuento real."
+    }
+  ],
+  "fuentes": [
+    "web",
+    "ig",
+    "apify"
+  ],
+  "apify": {
+    "resultados": 133,
+    "costeEstimadoUsd": 0.3591,
+    "incluido": true,
+    "omitido": false,
+    "runId": "6YLzaOrBNe4eh3sgY"
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [
+    {
+      "marca": "Interval",
+      "fecha": "2025-11-24",
+      "movimiento": "Reel «En Interval convertimos las oportunidades en logros» publicado el 2025-11-24.",
+      "senal": "nuevo",
+      "lectura": "Es el post con más likes y vistas del lote de Interval en la ventana.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 1573,
+        "comentarios": 36,
+        "vistas": 58654
+      },
+      "id": "83c5b55d77f5f825",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2025-11-17",
+      "movimiento": "Reel sobre metas planificadas (luna de miel en Corea y Japón) publicado el 2025-11-17.",
+      "senal": "nuevo",
+      "lectura": "Contenido de metas personales con la segunda cifra de likes del lote de Interval.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 739,
+        "comentarios": 24,
+        "vistas": 43090
+      },
+      "id": "64fac5539e65fd94",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2025-11-14",
+      "movimiento": "Reel y carrusel (2025-11-14 y 2025-11-13) sobre «The Power Table»: liderazgo, decisiones financieras y autonomía económica de mujeres.",
+      "senal": "nuevo",
+      "lectura": "Serie de dos formatos sobre un mismo tema; el reel tuvo más alcance que el carrusel.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 297,
+        "comentarios": 9,
+        "vistas": 35183
+      },
+      "id": "676f64975cc19f9a",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2025-12-03",
+      "movimiento": "Reel «Invertir tu doble sueldo para empezar 2026» publicado el 2025-12-03, seguido el 2025-12-04 de un carrusel sobre decisiones con tu monto.",
+      "senal": "nuevo",
+      "lectura": "Contenido de producto estacional en diciembre; el carrusel del día siguiente tuvo 22 comentarios con 67 likes.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 194,
+        "comentarios": 35,
+        "vistas": 13991
+      },
+      "id": "8d7956b47f2f11e3",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2025-12-11",
+      "movimiento": "Carrusel del 2025-12-11 sobre el quinto año consecutivo como Mayor Negociador en Renta Fija; la nota de elDinero del 2025-12-15 reporta el reconocimiento en los Premios BVRD 2025 recibido por Nelson M. Guerrero.",
+      "senal": "nuevo",
+      "lectura": "Interval comunica el reconocimiento en Instagram y en prensa económica.",
+      "fuentes": [
+        "apify",
+        "web"
+      ],
+      "metricas": {
+        "likes": 184,
+        "comentarios": 11
+      },
+      "id": "d6e15f4247b0f79d",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2025-11-21",
+      "movimiento": "Reel del 2025-11-21 sobre la primera emisión de acciones de CCI en el Summit 2025; la nota de Revista Mercado del 2025-11-26 recoge el anuncio de José Antonio Fonseca de emitir acciones preferentes estructuradas por BHD y Parval, sin montos ni fecha.",
+      "senal": "nuevo",
+      "lectura": "CCI anunció públicamente la apertura de capital; IG y prensa coinciden en el hecho, sin detalle de la emisión.",
+      "fuentes": [
+        "apify",
+        "web"
+      ],
+      "metricas": {
+        "likes": 90,
+        "comentarios": 0,
+        "vistas": 3571
+      },
+      "id": "674b8427f38702be",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2025-12-22",
+      "movimiento": "Carrusel del 2025-12-22 sobre la Primera Emisión de Bonos Corporativos CCI, 11% anual en DOP.",
+      "senal": "nuevo",
+      "lectura": "Primer post de producto de renta fija propia con la tasa en el titular.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 276,
+        "comentarios": 19
+      },
+      "id": "c33ecbb7019fded6",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2025-11-26",
+      "movimiento": "Carrusel de la beca Avanza Sin Límites (maestría en top 20 mundial con empleo garantizado) el 2025-11-26; la beca reaparece el 2025-11-05 y el 2025-12-11 (ganador y edición 2026).",
+      "senal": "nuevo",
+      "lectura": "El carrusel de la beca es el de más likes del lote de CCI y el tema se repite en tres fechas.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 508,
+        "comentarios": 26
+      },
+      "id": "e9567230f1e3234d",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2025-11-03",
+      "movimiento": "Reel sobre la certificación Great Place to Work 2025 con 94 puntos, publicado el 2025-11-03.",
+      "senal": "nuevo",
+      "lectura": "Es el reel con más vistas y comentarios del lote de CCI.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 395,
+        "comentarios": 39,
+        "vistas": 10788
+      },
+      "id": "56051ddc41ff4a16",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2025-12-10",
+      "movimiento": "Carruseles de papeles comerciales (6.ª emisión el 2025-11-05, 9% a 124 días; 7.ª el 2025-12-10, 8.7% a 90 días) y subastas de notas del Banco Central (2025-11-21, 11-28, 12-05 y 12-12).",
+      "senal": "nuevo",
+      "lectura": "Oferta de renta fija comunicada con tasa y plazo en carruseles, con likes entre 66 y 110 en la serie visible.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 66,
+        "comentarios": 3
+      },
+      "id": "18a6ff39bc5eebdf",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-11-26",
+      "movimiento": "Revista Mercado publicó el 2025-11-26 una nota del Mercado de Valores Summit 2025 con Antonio Jorge, director general, en el panel sobre salida de grandes empresas, pymes y emprendedores al mercado.",
+      "senal": "nuevo",
+      "lectura": "Presencia de vocería en prensa en la ventana; sin evidencia de publicaciones propias.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "7ed436b7b3966cba",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2025-12-31",
+      "movimiento": "Instagram excel_rd: el grid no muestra posts entre 2025-11-01 y 2025-12-31; el más reciente visible es del 2025-10-20 y Apify confirma que las 3 URLs entregadas son anteriores a la ventana.",
+      "senal": "sin-datos",
+      "lectura": "Sin publicaciones propias detectadas en la ventana; el grid cargó 48 URLs de los 880 posts que indica la bio.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "id": "1c1236e94531002f",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2025-11-20",
+      "movimiento": "Campaña «doble sueldo» en carruseles, imágenes y reels entre el 2025-11-20 y el 2025-12-08, incluida la imagen del 2025-11-28 que pide comentar «doble».",
+      "senal": "nuevo",
+      "lectura": "Tema recurrente en el periodo; la imagen de comentario generó 42 comentarios con 30 likes.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 30,
+        "comentarios": 42
+      },
+      "id": "41625484cba79df5",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2025-12-02",
+      "movimiento": "Reel «¿Dónde está mi doble sueldo? Plan para crecer tu dinero» publicado el 2025-12-02.",
+      "senal": "nuevo",
+      "lectura": "Es el reel de doble sueldo con más vistas del lote de Alpha.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 106,
+        "comentarios": 5,
+        "vistas": 10722
+      },
+      "id": "7a02c5c19cb670ba",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2025-12-12",
+      "movimiento": "Imagen del 2025-12-12 sobre el Premio ARM de la Bolsa de Valores RD; Acento reportó el premio el 2025-12-15 como tercero de la firma en esa categoría.",
+      "senal": "nuevo",
+      "lectura": "Alpha difunde el premio en IG y prensa.",
+      "fuentes": [
+        "apify",
+        "web"
+      ],
+      "metricas": {
+        "likes": 159,
+        "comentarios": 2
+      },
+      "id": "8a5f356ea86af6a8",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2025-11-17",
+      "movimiento": "Reel de la fiesta anual Black & White del equipo Alpha, 2025-11-17.",
+      "senal": "nuevo",
+      "lectura": "Es el post con más likes del lote de Alpha; cultura de equipo con buen rendimiento relativo.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 225,
+        "comentarios": 0,
+        "vistas": 7483
+      },
+      "id": "b1f918fd574206e9",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2025-12-03",
+      "movimiento": "Carrusel «Alpha Wrapped 2025» el 2025-12-03 y carrusel del 2025-12-18 que invita a hacerse cliente para recibir el Wrapped; reels de la App Alpha el 2025-11-28 y el 2025-12-17.",
+      "senal": "nuevo",
+      "lectura": "La app y el Wrapped aparecen como productos promocionados en varias fechas.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 68,
+        "comentarios": 4
+      },
+      "id": "d24cb687dd4e26ca",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2025-11-13",
+      "movimiento": "Desayuno «Perspectivas Económicas y Tendencias del Mercado de Valores 2025-2026» con Santiago Camarena; fecha y contenido provienen de un resumen de buscador, sin abrir la nota original.",
+      "senal": "confuso",
+      "lectura": "El hecho y la fecha no están verificados en fuente primaria.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "8d06c84c9f1924e9",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2025-11-03",
+      "movimiento": "Reel «Invierte tu doble sueldo con propósito» publicado el 2025-11-03.",
+      "senal": "nuevo",
+      "lectura": "Es el post con más likes y vistas del lote de United Capital y la cifra de vistas más alta del conjunto de marcas.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 332,
+        "comentarios": 10,
+        "vistas": 590043
+      },
+      "id": "8bf0349d8e5cc13c",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2025-11-18",
+      "movimiento": "Carrusel del cóctel por la emisión de bonos indexados al ETF SPY (2025-11-18) y carrusel del Premio BVRD 2025 Transacción Innovadora por esos bonos (2025-12-11).",
+      "senal": "nuevo",
+      "lectura": "Dos posts de hitos del mismo producto; el cóctel tuvo 291 likes.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 291,
+        "comentarios": 6
+      },
+      "id": "1c2c63f9d8da7833",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2025-11-21",
+      "movimiento": "Máster Final del United Capital Pádel Tour 2025 del 2025-11-21 al 23 en Padel Social Club, con patrocinadores Banreservas, Heineken, Arajet y Volvo; cobertura de CDN del 2025-11-26.",
+      "senal": "nuevo",
+      "lectura": "Evento propio con patrocinadores y cobertura de prensa; anuncian la edición 2026 sin fecha.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "0cb3643ea9af6a6d",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2025-11-21",
+      "movimiento": "Revista Mercado publicó el 2025-11-21 un reportaje de marca sobre United Capital que resume productos en euros, onboarding digital, asistente Capi, programas educativos y oficinas, sin fechas de lanzamiento en la ventana.",
+      "senal": "confuso",
+      "lectura": "La publicación está en la ventana, pero el reportaje recoge iniciativas previas y no evidencia un movimiento nuevo.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "dba4bbf1c8cdba03",
+      "corrida": "2026-11-13-1210-parval-administrast"
+    }
+  ],
+  "publicaciones": [
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DSsFkwqEYn3/",
+      "fecha": "2025-12-25",
+      "formato": "carrusel",
+      "tema": "Mensaje de fiestas del equipo Alpha",
+      "likes": 32,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DSa10ifkuFq/",
+      "fecha": "2025-12-18",
+      "formato": "carrusel",
+      "tema": "Carrusel de camino del inversionista, hazte cliente y recibe tu Wrapped",
+      "likes": 35,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DSXzqLkEdgG/",
+      "fecha": "2025-12-17",
+      "formato": "reel",
+      "tema": "Tu portafolio siempre contigo en la App Alpha",
+      "likes": 28,
+      "comentarios": 3,
+      "vistas": 1998,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DSKnmGFEafl/",
+      "fecha": "2025-12-12",
+      "formato": "imagen",
+      "tema": "Premio de Autorregulación del Mercado (ARM) de la Bolsa de Valores RD",
+      "likes": 159,
+      "comentarios": 2,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DSA3Rufkg4w/",
+      "fecha": "2025-12-08",
+      "formato": "imagen",
+      "tema": "Invierte tu doble sueldo: tus metas tienen un carrito",
+      "likes": 29,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DR427CLkXVA/",
+      "fecha": "2025-12-05",
+      "formato": "reel",
+      "tema": "Doble sueldo con el Corredor de Valores Ricardo Rojas",
+      "likes": 40,
+      "comentarios": 2,
+      "vistas": 3705,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DR5gUlokrZC/",
+      "fecha": "2025-12-05",
+      "formato": "carrusel",
+      "tema": "Inicio de la Navidad con el equipo Alpha",
+      "likes": 138,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DR0Tv9uEgBK/",
+      "fecha": "2025-12-03",
+      "formato": "carrusel",
+      "tema": "Alpha Wrapped 2025",
+      "likes": 68,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRxtwN2EpSc/",
+      "fecha": "2025-12-02",
+      "formato": "reel",
+      "tema": "¿Dónde está mi doble sueldo? Plan para crecer tu dinero",
+      "likes": 106,
+      "comentarios": 5,
+      "vistas": 10722,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRvDscWEoIU/",
+      "fecha": "2025-12-01",
+      "formato": "reel",
+      "tema": "Clip del podcast Mientras Invertimos sobre deudas",
+      "likes": 123,
+      "comentarios": 2,
+      "vistas": 10420,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRmyFMckaO4/",
+      "fecha": "2025-11-28",
+      "formato": "reel",
+      "tema": "Abrir cuenta digital en la App Alpha en minutos",
+      "likes": 56,
+      "comentarios": 4,
+      "vistas": 2171,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRnY2OxkhsC/",
+      "fecha": "2025-11-28",
+      "formato": "imagen",
+      "tema": "Comenta 'doble' y te mostramos cuánto podría generar",
+      "likes": 30,
+      "comentarios": 42,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRhgSRzER50/",
+      "fecha": "2025-11-26",
+      "formato": "carrusel",
+      "tema": "Black Friday con propósito y visión de futuro",
+      "likes": 30,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRiCeJqkk7w/",
+      "fecha": "2025-11-26",
+      "formato": "reel",
+      "tema": "Invierte en tu futuro para seguir disfrutando lo que te apasiona",
+      "likes": 165,
+      "comentarios": 0,
+      "vistas": 6363,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRfb6mhkrEQ/",
+      "fecha": "2025-11-25",
+      "formato": "imagen",
+      "tema": "Tu doble sueldo como oportunidad de inversión",
+      "likes": 54,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRcsci0EWfJ/",
+      "fecha": "2025-11-24",
+      "formato": "imagen",
+      "tema": "Santiago Camarena #84 en ranking de líderes Merco",
+      "likes": 188,
+      "comentarios": 14,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRUrldeEamn/",
+      "fecha": "2025-11-21",
+      "formato": "reel",
+      "tema": "Black Friday: busca rentabilidad en vez de cashback",
+      "likes": 102,
+      "comentarios": 2,
+      "vistas": 4433,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRSQDCkkVFW/",
+      "fecha": "2025-11-20",
+      "formato": "carrusel",
+      "tema": "Tu doble: transfórmalo en inversión",
+      "likes": 162,
+      "comentarios": 13,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRSzJJYku4G/",
+      "fecha": "2025-11-20",
+      "formato": "carrusel",
+      "tema": "Santiago Camarena en panel del Mercado de Valores Summit 2025",
+      "likes": 159,
+      "comentarios": 2,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRNs13Qkmk2/",
+      "fecha": "2025-11-18",
+      "formato": "reel",
+      "tema": "Avance episodio Mientras Invertimos: ¿Y ahora en qué invierto?",
+      "likes": 39,
+      "comentarios": 1,
+      "vistas": 2348,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DRK4e9Ekqou/",
+      "fecha": "2025-11-17",
+      "formato": "reel",
+      "tema": "Fiesta anual Black & White del equipo Alpha",
+      "likes": 225,
+      "comentarios": 0,
+      "vistas": 7483,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DQ7QZH8ks9U/",
+      "fecha": "2025-11-11",
+      "formato": "carrusel",
+      "tema": "Inversiones que te dejan ser: metas sin culpa",
+      "likes": 48,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DQ7kowgkhFn/",
+      "fecha": "2025-11-11",
+      "formato": "carrusel",
+      "tema": "Geraldine Rahn en Torneo de Pádel ANJE 2025",
+      "likes": 120,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DQwhf2cEeai/",
+      "fecha": "2025-11-07",
+      "formato": "carrusel",
+      "tema": "Cada jugada cuenta: inversión y los Gigantes",
+      "likes": 186,
+      "comentarios": 3,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DQsKd1oEiWb/",
+      "fecha": "2025-11-05",
+      "formato": "carrusel",
+      "tema": "10.º Congreso Grupo Rizek y reconocimiento a líderes de Alpha",
+      "likes": 92,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSkuZAWgETG/",
+      "fecha": "2025-12-22",
+      "formato": "carrusel",
+      "tema": "Primera Emisión de Bonos Corporativos CCI, 11% anual en DOP",
+      "likes": 276,
+      "comentarios": 19,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSadvtlABT8/",
+      "fecha": "2025-12-18",
+      "formato": "reel",
+      "tema": "Fiesta de Navidad 2025 en CCI",
+      "likes": 179,
+      "comentarios": 16,
+      "vistas": 6083,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSTQ_iSEjeK/",
+      "fecha": "2025-12-15",
+      "formato": "reel",
+      "tema": "Taller 'El Lenguaje del Dinero' de Melissa Polanco",
+      "likes": 77,
+      "comentarios": 4,
+      "vistas": 3377,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSK2g9kAI7t/",
+      "fecha": "2025-12-12",
+      "formato": "carrusel",
+      "tema": "Subasta Competitiva de Notas del Banco Central",
+      "likes": 110,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSJJ-02AISm/",
+      "fecha": "2025-12-11",
+      "formato": "reel",
+      "tema": "Ganador de la beca Avanza Sin Límites 2025; abre edición 2026",
+      "likes": 89,
+      "comentarios": 5,
+      "vistas": 3383,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DSGSY6rElDE/",
+      "fecha": "2025-12-10",
+      "formato": "carrusel",
+      "tema": "Séptima Emisión de Papeles Comerciales, descuento 8.7% a 90 días",
+      "likes": 66,
+      "comentarios": 3,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DR41JuqEsZF/",
+      "fecha": "2025-12-05",
+      "formato": "carrusel",
+      "tema": "Subasta Competitiva de Notas del Banco Central",
+      "likes": 89,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DR0NI05khjH/",
+      "fecha": "2025-12-03",
+      "formato": "carrusel",
+      "tema": "Programa de Alta Dirección en Finanzas con Barna Management School",
+      "likes": 189,
+      "comentarios": 9,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRpMdcbAK6h/",
+      "fecha": "2025-11-29",
+      "formato": "reel",
+      "tema": "Santiago Run Club y Coffee Party",
+      "likes": 91,
+      "comentarios": 2,
+      "vistas": 6520,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRmtch_kkVV/",
+      "fecha": "2025-11-28",
+      "formato": "carrusel",
+      "tema": "Subasta de Notas BCRD con cupón 8.5%, 9.25% y 9.5%",
+      "likes": 108,
+      "comentarios": 9,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRkc1jpkRes/",
+      "fecha": "2025-11-27",
+      "formato": "reel",
+      "tema": "Feliz Día de Acción de Gracias",
+      "likes": 153,
+      "comentarios": 12,
+      "vistas": 4771,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRixGPggKRx/",
+      "fecha": "2025-11-26",
+      "formato": "carrusel",
+      "tema": "Beca Avanza Sin Límites: maestría en top 20 mundial con empleo garantizado",
+      "likes": 508,
+      "comentarios": 26,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRfy1cwkkHN/",
+      "fecha": "2025-11-25",
+      "formato": "imagen",
+      "tema": "Artículo: la línea entre invertir y apostar",
+      "likes": 96,
+      "comentarios": 15,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRdTEjIABBS/",
+      "fecha": "2025-11-24",
+      "formato": "carrusel",
+      "tema": "1er Foro Económico CCI en La Vega con Ecoanalítica",
+      "likes": 161,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRUeuEXAPt2/",
+      "fecha": "2025-11-21",
+      "formato": "reel",
+      "tema": "Summit 2025: primera emisión de acciones de CCI Puesto de Bolsa",
+      "likes": 90,
+      "comentarios": 0,
+      "vistas": 3571,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRUw1AvEkpT/",
+      "fecha": "2025-11-21",
+      "formato": "carrusel",
+      "tema": "Subasta Competitiva de Notas del Banco Central 8.5% y 9.25%",
+      "likes": 71,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRKcW15ABq6/",
+      "fecha": "2025-11-17",
+      "formato": "reel",
+      "tema": "Inicio de temporada navideña con desayuno en CCI",
+      "likes": 159,
+      "comentarios": 2,
+      "vistas": 4065,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DRDMWM0kus_/",
+      "fecha": "2025-11-14",
+      "formato": "imagen",
+      "tema": "Cóctel de navidad 'El Mercado nos Une 2025'",
+      "likes": 76,
+      "comentarios": 3,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQ-RY3VErUD/",
+      "fecha": "2025-11-12",
+      "formato": "reel",
+      "tema": "Panel 40 Under 40, VP de Tesorería José Antonio Cendón",
+      "likes": 103,
+      "comentarios": 0,
+      "vistas": 2955,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQ74StMgNo1/",
+      "fecha": "2025-11-11",
+      "formato": "reel",
+      "tema": "40 Under 40: talento joven y liderazgo",
+      "likes": 205,
+      "comentarios": 18,
+      "vistas": 5809,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQ2ax7KkoWf/",
+      "fecha": "2025-11-09",
+      "formato": "reel",
+      "tema": "Cierre Torneo de Golf Mitre 2025",
+      "likes": 121,
+      "comentarios": 11,
+      "vistas": 3161,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQwuKLNgNaw/",
+      "fecha": "2025-11-07",
+      "formato": "reel",
+      "tema": "Primer día Torneo de Golf Mitre 18",
+      "likes": 96,
+      "comentarios": 5,
+      "vistas": 4070,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQrIsfxjRIC/",
+      "fecha": "2025-11-05",
+      "formato": "carrusel",
+      "tema": "Sexta Emisión de Papeles Comerciales CCI, descuento 9% a 124 días",
+      "likes": 88,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQsw4BEACad/",
+      "fecha": "2025-11-05",
+      "formato": "reel",
+      "tema": "Beca Avanza Sin Límites CCI para maestría",
+      "likes": 105,
+      "comentarios": 3,
+      "vistas": 2988,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQqE2qhgGOo/",
+      "fecha": "2025-11-04",
+      "formato": "reel",
+      "tema": "Capacitación anual de Prevención de Lavado de Activos (PLAyFT)",
+      "likes": 155,
+      "comentarios": 1,
+      "vistas": 3907,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DQnTl2tADJG/",
+      "fecha": "2025-11-03",
+      "formato": "reel",
+      "tema": "Certificación Great Place to Work 2025 con 94 puntos",
+      "likes": 395,
+      "comentarios": 39,
+      "vistas": 10788,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DSklf-dEZmO/",
+      "fecha": "2025-12-22",
+      "formato": "reel",
+      "tema": "Gracias por permitirnos formar parte de tu 2025",
+      "likes": 50,
+      "comentarios": 6,
+      "vistas": 3006,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DSIUYTTEZL5/",
+      "fecha": "2025-12-11",
+      "formato": "carrusel",
+      "tema": "Quinto año consecutivo como Mayor Negociador en Renta Fija",
+      "likes": 184,
+      "comentarios": 11,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DSFrJ5-kdxC/",
+      "fecha": "2025-12-10",
+      "formato": "carrusel",
+      "tema": "Fiesta de Navidad Interval 2025",
+      "likes": 282,
+      "comentarios": 8,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DR2QRlsEcwF/",
+      "fecha": "2025-12-04",
+      "formato": "carrusel",
+      "tema": "Convertir el monto en decisiones que aporten tranquilidad hoy y resultados mañana",
+      "likes": 67,
+      "comentarios": 22,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRzqGYCkSZm/",
+      "fecha": "2025-12-03",
+      "formato": "reel",
+      "tema": "Invertir tu doble sueldo para empezar 2026",
+      "likes": 194,
+      "comentarios": 35,
+      "vistas": 13991,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRj0-QZkVPa/",
+      "fecha": "2025-11-27",
+      "formato": "reel",
+      "tema": "Día de Acción de Gracias",
+      "likes": 219,
+      "comentarios": 16,
+      "vistas": 6702,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRcfx6VET7o/",
+      "fecha": "2025-11-24",
+      "formato": "reel",
+      "tema": "En Interval convertimos las oportunidades en logros",
+      "likes": 1573,
+      "comentarios": 36,
+      "vistas": 58654,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRSxzmpgUOT/",
+      "fecha": "2025-11-20",
+      "formato": "carrusel",
+      "tema": "Participación en Mercado de Valores Summit 2025 de Revista Mercado",
+      "likes": 150,
+      "comentarios": 8,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRKhcD4Ed5y/",
+      "fecha": "2025-11-17",
+      "formato": "reel",
+      "tema": "Metas planificadas: luna de miel en Corea y Japón",
+      "likes": 739,
+      "comentarios": 24,
+      "vistas": 43090,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRDGHr2gfIZ/",
+      "fecha": "2025-11-14",
+      "formato": "reel",
+      "tema": "The Power Table: liderazgo y autonomía financiera de mujeres",
+      "likes": 297,
+      "comentarios": 9,
+      "vistas": 35183,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DRAP23UkdQf/",
+      "fecha": "2025-11-13",
+      "formato": "carrusel",
+      "tema": "The Power Table: mujeres, decisiones financieras y autonomía económica",
+      "likes": 112,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DQmgXm0keGr/",
+      "fecha": "2025-11-03",
+      "formato": "carrusel",
+      "tema": "Congreso 'El nuevo paradigma empresarial: seguridad e innovación estratégica'",
+      "likes": 113,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DS7aHtfEfFM/",
+      "fecha": "2025-12-31",
+      "formato": "reel",
+      "tema": "Feliz Año Nuevo 2026",
+      "likes": 80,
+      "comentarios": 11,
+      "vistas": 2824,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DSpdsS9EWgq/",
+      "fecha": "2025-12-24",
+      "formato": "reel",
+      "tema": "Mensaje de Feliz Navidad",
+      "likes": 67,
+      "comentarios": 1,
+      "vistas": 2282,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DScygQsEbBP/",
+      "fecha": "2025-12-19",
+      "formato": "reel",
+      "tema": "Fiesta de Navidad de United Capital",
+      "likes": 91,
+      "comentarios": 12,
+      "vistas": 3161,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DSIGzEZEf2v/",
+      "fecha": "2025-12-11",
+      "formato": "carrusel",
+      "tema": "Premio BVRD 2025 Transacción Innovadora por bonos indexados al SPY",
+      "likes": 137,
+      "comentarios": 9,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DR4my0GiQFP/",
+      "fecha": "2025-12-05",
+      "formato": "carrusel",
+      "tema": "Doble sueldo como primer paso hacia tu plan",
+      "likes": 32,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DRxMgipkRnd/",
+      "fecha": "2025-12-02",
+      "formato": "carrusel",
+      "tema": "Bienvenida a la Navidad en equipo",
+      "likes": 150,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DRlH_A9jX8v/",
+      "fecha": "2025-11-27",
+      "formato": "carrusel",
+      "tema": "Thanksgiving 2025 con el equipo",
+      "likes": 80,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DRSr4WgkwPD/",
+      "fecha": "2025-11-20",
+      "formato": "carrusel",
+      "tema": "Panel de CEOs en Mercado de Valores Summit 2025 moderado por Javier Tejada",
+      "likes": 121,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DRQLQT1E0ji/",
+      "fecha": "2025-11-19",
+      "formato": "carrusel",
+      "tema": "Colaboradores con los Gigantes del Cibao en el play",
+      "likes": 187,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DRN-4mwjXwq/",
+      "fecha": "2025-11-18",
+      "formato": "carrusel",
+      "tema": "Cóctel por emisión de Bonos Corporativos indexados al ETF SPY",
+      "likes": 291,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DQtvEmakei7/",
+      "fecha": "2025-11-06",
+      "formato": "imagen",
+      "tema": "Día de la Constitución Dominicana",
+      "likes": 18,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DQt7h42CiDy/",
+      "fecha": "2025-11-06",
+      "formato": "reel",
+      "tema": "Colaboradora Rashelly Almonte: beauty vlogging",
+      "likes": 163,
+      "comentarios": 37,
+      "vistas": 4899,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DQmmpFUEoAs/",
+      "fecha": "2025-11-03",
+      "formato": "reel",
+      "tema": "Invierte tu doble sueldo con propósito",
+      "likes": 332,
+      "comentarios": 10,
+      "vistas": 590043,
+      "fuente": "apify"
+    }
+  ],
+  "perfiles": [],
+  "lecturas": [
+    {
+      "competidor": "Interval",
+      "resumen": [
+        "12 publicaciones en la ventana, 7 en noviembre (3, 13, 14, 17, 20, 24 y 27) y 5 en diciembre (3, 4, 10, 11 y 22); formatos: 6 reels y 6 carruseles.",
+        "Totales de Apify: 3980 likes, 182 comentarios y 160626 vistas (solo reels).",
+        "Temas: The Power Table (13 y 14 de noviembre), metas personales (luna de miel), doble sueldo (3 y 4 de diciembre), Mercado de Valores Summit, premio de Mayor Negociador en Renta Fija y fiesta de Navidad.",
+        "Mayor rendimiento: reel del 2025-11-24 con 1573 likes y 58654 vistas.",
+        "Prensa: elDinero, 2025-12-15, reconocimiento por quinto año consecutivo en los Premios BVRD 2025."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Interval comunica planificación financiera ligada a metas personales: reel de luna de miel, doble sueldo y decisiones con tu monto.",
+          "Interval difunde reconocimientos y presencia institucional: Summit, congreso y Premio de Mayor Negociador en Renta Fija."
+        ],
+        "pilares": [
+          "Metas personales y planificación",
+          "Mujeres y autonomía financiera (The Power Table)",
+          "Reconocimientos y eventos institucionales",
+          "Cultura y fechas de temporada"
+        ],
+        "formatosYCadencia": "Mezcla equilibrada de reels y carruseles (6 y 6); 7 posts en noviembre (3, 13, 14, 17, 20, 24 y 27) y 5 en diciembre (3, 4, 10, 11 y 22). Los reels concentran las vistas.",
+        "implicaciones": [
+          "Los reels de metas personales y de The Power Table tuvieron más likes y vistas que los carruseles institucionales en el lote observado."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/DRKhcD4Ed5y/",
+          "https://www.instagram.com/p/DRzqGYCkSZm/",
+          "https://www.instagram.com/p/DR2QRlsEcwF/",
+          "https://www.instagram.com/p/DRDGHr2gfIZ/",
+          "https://www.instagram.com/p/DRAP23UkdQf/",
+          "https://www.instagram.com/p/DSIUYTTEZL5/",
+          "https://www.instagram.com/p/DRSxzmpgUOT/",
+          "https://www.instagram.com/p/DQmgXm0keGr/"
+        ]
+      }
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "resumen": [
+        "26 publicaciones en la ventana: 14 reels, 10 carruseles y 2 imágenes.",
+        "Totales de Apify: 3856 likes, 208 comentarios y 65448 vistas (solo reels).",
+        "Temas: papeles comerciales (6.ª y 7.ª emisión), subastas de notas del Banco Central, bonos corporativos 11% DOP, beca Avanza Sin Límites, Torneo de Golf Mitre, 40 Under 40 y eventos de fin de año.",
+        "Mayor likes: carrusel de la beca (508, 2025-11-26); mayor vistas y comentarios: reel Great Place to Work (10788 vistas, 39 comentarios).",
+        "Prensa: Revista Mercado, 2025-11-26, anuncio de emisión de acciones de CCI en el Summit."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "CCI publica con regularidad su oferta de renta fija con tasa y plazo: papeles comerciales, subastas de notas y bonos corporativos.",
+          "CCI muestra cultura y talento interno: Great Place to Work, 40 Under 40, capacitación y fiestas de fin de año.",
+          "CCI repite la beca Avanza Sin Límites en tres fechas."
+        ],
+        "pilares": [
+          "Renta fija y emisiones",
+          "Cultura y employer branding",
+          "Becas y educación",
+          "Eventos de mercado y deporte"
+        ],
+        "formatosYCadencia": "Reels predominantes (14 de 26) y carruseles para producto (10); publicación casi diaria en noviembre y espaciada en diciembre.",
+        "implicaciones": [
+          "Los carruseles de producto tuvieron entre 66 y 276 likes, mientras que la beca y Great Place to Work superaron los 390; vigilar el mensaje de emisión de acciones."
+        ],
+        "confianza": "alta",
+        "postsCitados": [
+          "https://www.instagram.com/p/DQrIsfxjRIC/",
+          "https://www.instagram.com/p/DSGSY6rElDE/",
+          "https://www.instagram.com/p/DRUw1AvEkpT/",
+          "https://www.instagram.com/p/DSkuZAWgETG/",
+          "https://www.instagram.com/p/DQnTl2tADJG/",
+          "https://www.instagram.com/p/DQ74StMgNo1/",
+          "https://www.instagram.com/p/DSadvtlABT8/",
+          "https://www.instagram.com/p/DQsw4BEACad/",
+          "https://www.instagram.com/p/DRixGPggKRx/",
+          "https://www.instagram.com/p/DSJJ-02AISm/",
+          "https://www.instagram.com/p/DRUeuEXAPt2/"
+        ]
+      }
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "resumen": [
+        "Sin publicaciones detectadas en el periodo; inspección: grid de excel_rd con 48 URLs cargadas, el más reciente del 2025-10-20; Apify con 0 publicaciones en la ventana.",
+        "Web: nota de Revista Mercado del 2025-11-26 con Antonio Jorge en el panel del Mercado de Valores Summit 2025.",
+        "Sitio oficial no consultable (error de certificado); sin campañas ni lanzamientos atribuibles en la ventana."
+      ]
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "resumen": [
+        "25 publicaciones en la ventana: 9 reels, 11 carruseles y 5 imágenes.",
+        "Totales de Apify: 2414 likes, 100 comentarios y 49643 vistas (solo reels).",
+        "Temas: campaña doble sueldo, Black Friday, Alpha Wrapped 2025, podcast Mientras Invertimos, ranking Merco, premio ARM y App Alpha.",
+        "Mayor likes: fiesta Black & White (225); mayor vistas: reel de doble sueldo (10722); mayor comentarios: imagen «comenta doble» (42 con 30 likes).",
+        "Prensa: Acento, 2025-12-15, premio ARM en los Premios BVRD 2025."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Alpha concentra contenido en la campaña doble sueldo en varios formatos, con un llamado a comentar «doble».",
+          "Alpha promociona su app y el Wrapped como producto.",
+          "Alpha muestra cultura de equipo y fiestas, que tuvieron buen rendimiento en likes."
+        ],
+        "pilares": [
+          "Doble sueldo",
+          "App Alpha y Wrapped",
+          "Podcast y educación",
+          "Reconocimientos y eventos",
+          "Cultura de equipo"
+        ],
+        "formatosYCadencia": "Carruseles predominantes (11 de 25), con 9 reels y 5 imágenes; publicación continua en noviembre y diciembre, con 2 posts el mismo día en varias fechas.",
+        "implicaciones": [
+          "El llamado a comentar generó comentarios con pocos likes; el contenido de equipo obtuvo más likes que los posts de producto."
+        ],
+        "confianza": "alta",
+        "postsCitados": [
+          "https://www.instagram.com/p/DRSQDCkkVFW/",
+          "https://www.instagram.com/p/DRfb6mhkrEQ/",
+          "https://www.instagram.com/p/DRnY2OxkhsC/",
+          "https://www.instagram.com/p/DRxtwN2EpSc/",
+          "https://www.instagram.com/p/DR427CLkXVA/",
+          "https://www.instagram.com/p/DSA3Rufkg4w/",
+          "https://www.instagram.com/p/DR0Tv9uEgBK/",
+          "https://www.instagram.com/p/DSa10ifkuFq/",
+          "https://www.instagram.com/p/DRmyFMckaO4/",
+          "https://www.instagram.com/p/DSXzqLkEdgG/",
+          "https://www.instagram.com/p/DRK4e9Ekqou/",
+          "https://www.instagram.com/p/DR5gUlokrZC/"
+        ]
+      }
+    },
+    {
+      "competidor": "United Capital",
+      "resumen": [
+        "13 publicaciones en la ventana: 5 reels, 7 carruseles y 1 imagen.",
+        "Totales de Apify: 1749 likes, 93 comentarios y 603209 vistas (solo reels).",
+        "Reel de doble sueldo del 2025-11-03: 332 likes y 590043 vistas, la cifra de vistas más alta del lote.",
+        "Temas: bonos indexados al ETF SPY (cóctel del 2025-11-18 y premio BVRD del 2025-12-11), Summit, Gigantes del Cibao y fiestas de fin de año.",
+        "Web: Máster Final del United Capital Pádel Tour (2025-11-21 al 23) con cobertura de CDN; reportaje de marca en Revista Mercado el 2025-11-21.",
+        "Doble sueldo también aparece en posts de Interval, Alpha y United Capital en la ventana."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "United Capital comunica los hitos de los bonos indexados al SPY en dos posts: cóctel de emisión y premio BVRD.",
+          "United Capital publica contenido de equipo y fiestas de temporada, con posts en noviembre y diciembre."
+        ],
+        "pilares": [
+          "Bonos indexados al SPY",
+          "Doble sueldo",
+          "Eventos de mercado (Summit)",
+          "Cultura de equipo y fechas de temporada"
+        ],
+        "formatosYCadencia": "Carruseles predominantes (7 de 13), 5 reels y 1 imagen; ritmo espaciado con huecos de hasta una semana entre posts.",
+        "implicaciones": [
+          "Un solo reel concentra casi todas las vistas del lote; vigilar si repite el formato de doble sueldo."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/DRN-4mwjXwq/",
+          "https://www.instagram.com/p/DSIGzEZEf2v/",
+          "https://www.instagram.com/p/DRlH_A9jX8v/",
+          "https://www.instagram.com/p/DRxMgipkRnd/",
+          "https://www.instagram.com/p/DScygQsEbBP/",
+          "https://www.instagram.com/p/DSpdsS9EWgq/",
+          "https://www.instagram.com/p/DS7aHtfEfFM/"
+        ]
+      }
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "c39e8367-055a-4bf1-a5eb-ac50f49568eb",
+  "ig": {
+    "sesion": "ok"
+  }
+}
