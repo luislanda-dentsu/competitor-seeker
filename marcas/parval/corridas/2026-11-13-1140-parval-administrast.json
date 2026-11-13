@@ -1,0 +1,36 @@
+{
+  "id": "2026-11-13-1140-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-13",
+  "ultimaCorrida": "2026-11-13",
+  "tipo": "historica",
+  "ventana": {
+    "desde": "2025-11-01",
+    "hasta": "2025-12-31"
+  },
+  "inicio": "2026-11-13T15:40:50.157Z",
+  "fin": "2026-11-13T15:51:04.821Z",
+  "duracionMs": 614664,
+  "estado": "error",
+  "verificado": false,
+  "intentos": 0,
+  "objeciones": [],
+  "fuentes": [],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "omitido": false
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "d6e7fe2b-817f-4139-b1be-7780594d2e20",
+  "error": "el orquestador terminó (código 0) sin registrar la corrida: {\"corridaId\":\"2026-11-13-1140-parval-administrast\",\"estado\":\"en-curso-sin-registrar\",\"verificado\":false,\"intentos\":0,\"entradas\":0,\"igSesion\":\"desconocida\"}"
+}

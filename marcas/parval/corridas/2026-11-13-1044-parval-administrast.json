@@ -789,5 +789,9 @@
   "sessionId": "c81239a0-6886-4a91-aa17-df1bd2426f89",
   "ig": {
     "sesion": "ok"
+  },
+  "git": {
+    "pushed": false,
+    "error": "sin-red: fatal: unable to access 'https://github.com/luislanda-dentsu/competitor-seeker.git/': Could not resolve host: github.com\n"
   }
 }
