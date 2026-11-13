@@ -2,5 +2,41 @@
   "slug": "banca",
   "nombre": "Banca",
   "creadaEn": "2026-11-13T18:21:25.949Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "banreservas",
+      "nombre": "Banreservas",
+      "url": "https://www.instagram.com/banreservasrd/",
+      "instagram": "banreservasrd",
+      "activo": true
+    },
+    {
+      "slug": "banco-bhd",
+      "nombre": "Banco BHD",
+      "url": "https://www.instagram.com/bancobhd/",
+      "instagram": "bancobhd",
+      "activo": true
+    },
+    {
+      "slug": "banco-popular",
+      "nombre": "Banco Popular",
+      "url": "https://www.instagram.com/popularenlinea/",
+      "instagram": "popularenlinea",
+      "activo": true
+    },
+    {
+      "slug": "scotiabank",
+      "nombre": "Scotiabank",
+      "url": "https://www.instagram.com/scotiabankdo/",
+      "instagram": "scotiabankdo",
+      "activo": true
+    },
+    {
+      "slug": "banco-santa-cruz",
+      "nombre": "Banco Santa Cruz",
+      "url": "https://www.instagram.com/bancosantacruzrd/",
+      "instagram": "bancosantacruzrd",
+      "activo": true
+    }
+  ]
 }
