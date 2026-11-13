@@ -90,6 +90,7 @@ export function Sidebar(): React.ReactElement {
   return (
     <aside
       aria-label="Barra lateral"
+      data-no-print
       className="tone-ink sticky top-2 m-2 me-0 hidden h-[calc(100dvh-1rem)] min-h-0 flex-col rounded-[var(--radius-card)] bg-card transition-[width] duration-200 ease-out lg:flex"
     >
       {/* Marca + colapsar */}

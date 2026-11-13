@@ -189,3 +189,40 @@ describe('prompt y registro de una histórica', () => {
     expect(r.ventana).toEqual(VENTANA)
   })
 })
+
+describe('una histórica rehecha sobre la misma ventana reemplaza a la anterior', () => {
+  const vieja = corrida({
+    id: 'h1',
+    fecha: '2026-11-13',
+    inicio: '2026-11-13T12:10:00Z',
+    tipo: 'historica',
+    ventana: VENTANA,
+    publicaciones: [post(B, 'b1', '2025-11-20')],
+    lecturas: [
+      { competidor: A, resumen: ['Sin publicaciones detectadas en el periodo'] },
+      { competidor: B, resumen: ['Bravo en 2025'] },
+    ],
+  })
+  const nueva = corrida({
+    id: 'h2',
+    fecha: '2026-11-13',
+    inicio: '2026-11-13T12:40:00Z',
+    tipo: 'historica',
+    ventana: VENTANA,
+    competidores: [A],
+    publicaciones: [post(A, 'a1', '2025-11-18', { likes: 10 })],
+    lecturas: [{ competidor: A, resumen: ['15 publicaciones en la ventana'] }],
+  })
+
+  it('el competidor rehecho solo conserva la lectura y el punto de serie nuevos', () => {
+    const m = metricasCompetidor([vieja, nueva], A, { periodo: VENTANA, hoy: '2026-11-13' })
+    expect(m.lecturas.map((l) => l.corrida)).toEqual(['h2'])
+    expect(m.serie.map((s) => s.corrida)).toEqual(['h2'])
+    expect(m.posts).toBe(1)
+  })
+
+  it('los demás competidores de la histórica vieja no se tocan', () => {
+    const m = metricasCompetidor([vieja, nueva], B, { periodo: VENTANA, hoy: '2026-11-13' })
+    expect(m.lecturas.map((l) => l.corrida)).toEqual(['h1'])
+  })
+})

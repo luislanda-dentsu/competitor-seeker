@@ -104,3 +104,11 @@ Criterios de aceptación:
 3. Apify nunca recibe más URLs que el tope confirmado; no se hace la llamada de seguidores.
 4. Tras la histórica, la siguiente corrida normal sigue empezando en la última corrida normal (no se mueve la ventana) y la tarjeta «Última corrida» no cambia.
 5. Si el navegador no tiene sesión, la corrida sigue solo con web, sin gastar Apify, y lo dice.
+
+## v2.4 — Informe PDF de competidores (2026-11-13)
+- [x] Competidores → «Exportar PDF»: abre `/informe?marca=…&<periodo>&imprimir=1` y lanza «Guardar como PDF» del navegador (sin dependencias).
+- [x] Portada con comparativo + una ficha por competidor (página nueva): Rendimiento, Publicaciones (tema completo + URL), Lectura, Estrategia (todas las lecturas, sin plegar), Movimientos y Evolución.
+- [x] Movimientos y Evolución acotados al periodo por la fecha de cada ENTRADA (una histórica de hoy trae entradas de 2025).
+- [x] Papel siempre en claro (tokens propios de `.informe`), shell oculto al imprimir, filas sin partir, cabeceras repetidas.
+- [x] Métricas: una histórica rehecha sobre la misma ventana reemplaza la lectura y el punto de serie de la anterior para ese competidor (Excel 12:10 vs 12:40).
+- [x] Verificado: PDF real de Parval 01/11–31/12/2025 (18 páginas) con Chrome headless; 235 tests, typecheck y lint en verde.
