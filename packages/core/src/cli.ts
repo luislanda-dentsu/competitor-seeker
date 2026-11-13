@@ -82,6 +82,32 @@ async function leerStdin(): Promise<string> {
 }
 
 /**
+ * La salida del Workflow vive en un directorio temporal (p. ej. /private/tmp/claude-<uid>/…/tasks/x.output).
+ * Cualquier otra ruta se rechaza: lo ejecutan agentes headless y no debe servir para leer
+ * archivos del repo o del usuario (.env.local, data/…). Resuelve symlinks antes de comprobar.
+ */
+function rutaSalidaWorkflow(ruta: string): string {
+  let real: string
+  try {
+    real = fs.realpathSync(ruta)
+  } catch (e) {
+    throw new Error(`No se pudo leer la salida del workflow en ${ruta}: ${(e as NodeJS.ErrnoException).code ?? 'no existe'}`)
+  }
+  const bases = [os.tmpdir(), '/tmp', '/private/tmp', '/var/folders', '/private/var/folders'].map((b) => {
+    try {
+      return fs.realpathSync(b)
+    } catch {
+      return b
+    }
+  })
+  const dentro = bases.some((b) => real.startsWith(b + path.sep))
+  if (!dentro || path.basename(real).startsWith('.env') || real.split(path.sep).includes('data')) {
+    throw new Error(`--desde-workflow solo acepta el archivo de salida del Workflow (directorio temporal), no ${ruta}`)
+  }
+  return real
+}
+
+/**
  * JSON del workflow, por orden de preferencia:
  * `--desde-workflow <ruta>` (archivo de salida del Workflow tool; toma `.result`),
  * `--json-b64 <base64>` o stdin.
@@ -90,11 +116,19 @@ async function leerJsonEntrada(a: ArgsCli): Promise<string> {
   const ruta = a.opciones['desde-workflow']
   if (ruta !== undefined) {
     if (typeof ruta !== 'string' || ruta.trim() === '') throw new Error('--desde-workflow requiere la ruta del archivo de salida del workflow')
+    const real = rutaSalidaWorkflow(ruta)
+    let texto: string
+    try {
+      texto = fs.readFileSync(real, 'utf8')
+    } catch (e) {
+      throw new Error(`No se pudo leer la salida del workflow en ${ruta}: ${(e as NodeJS.ErrnoException).code ?? 'error de lectura'}`)
+    }
     let crudo: unknown
     try {
-      crudo = JSON.parse(fs.readFileSync(ruta, 'utf8'))
-    } catch (e) {
-      throw new Error(`No se pudo leer la salida del workflow en ${ruta}: ${(e as Error).message}`)
+      crudo = JSON.parse(texto)
+    } catch {
+      // Sin extracto del contenido: este comando lo ejecutan agentes y no debe filtrar archivos.
+      throw new Error(`No se pudo leer la salida del workflow en ${ruta}: no es JSON válido`)
     }
     const resultado = crudo && typeof crudo === 'object' && 'result' in crudo ? (crudo as { result: unknown }).result : crudo
     return JSON.stringify(resultado)

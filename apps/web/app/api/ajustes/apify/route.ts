@@ -7,6 +7,8 @@ import { CuerpoToken } from "@/lib/settings/validacion";
 
 /** GET /api/ajustes/apify → `{ configurado, ultimos4? }`. Nunca devuelve el token. */
 export async function GET(): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   return okJson(estadoToken());
 }

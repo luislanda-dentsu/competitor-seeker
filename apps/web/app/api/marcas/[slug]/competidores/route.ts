@@ -15,6 +15,8 @@ function aUi(c: Competidor): CompetidorAjustes {
 
 /** GET /api/marcas/[slug]/competidores → `{ competidores }` (todos, activos o no). */
 export async function GET(_request: Request, { params }: Ctx): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   const { slug } = await params;
   if (!SLUG_RE.test(slug)) return errorJson("Slug inválido", 400);

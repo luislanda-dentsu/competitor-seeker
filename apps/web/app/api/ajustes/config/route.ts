@@ -7,6 +7,8 @@ import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
 
 /** GET /api/ajustes/config → `config.json` validado (con defaults). */
 export async function GET(): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   try {
     return okJson(leerConfig());

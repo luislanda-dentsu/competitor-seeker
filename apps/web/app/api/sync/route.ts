@@ -8,6 +8,8 @@ const CuerpoSync = z.object({ accion: z.enum(["pull", "push"]) });
 
 /** GET /api/sync → `EstadoSync` (remoto, rama, adelante/atrás, sucio, último pull/push, conflicto, error). */
 export async function GET(): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   return okJson(await estadoSync());
 }

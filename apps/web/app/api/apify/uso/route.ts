@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { evaluarUmbralesApify, leerConfig, obtenerUsoActual } from "@competitor-seeker/core";
 import { okJson } from "@/lib/settings/api";
 
@@ -8,6 +9,8 @@ import { okJson } from "@/lib/settings/api";
  * los umbrales y emite las notificaciones que toquen (una vez por periodo).
  */
 export async function GET(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   const forzar = new URL(request.url).searchParams.get("forzar") === "1";
   const estado = await obtenerUsoActual({ forzar });

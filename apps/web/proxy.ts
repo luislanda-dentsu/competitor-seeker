@@ -25,7 +25,8 @@ function decidir(request: NextRequest, email: string | null): NextResponse {
       modo: modoAcceso(env),
       email,
       permitido: buscarUsuario(email) !== null,
-      viaPuerta: request.headers.has("cf-connecting-ip") || request.headers.has("cf-ray"),
+      // La puerta siempre añade x-cs-puerta; Cloudflare añade cf-*. Cualquiera basta.
+      viaPuerta: ["x-cs-puerta", "cf-connecting-ip", "cf-ray"].some((h) => request.headers.has(h)),
       interno: secretoValido(request.headers.get("x-cs-interno"), env.CS_SECRETO_INTERNO),
     }),
   );

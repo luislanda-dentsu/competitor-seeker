@@ -10,6 +10,6 @@
   "observability": { "enabled": true },
   // Un servicio VPC por Mac (túnel propio → localhost:3030). MAC_COMPANERA se añade al configurar su Mac.
   "vpc_services": [
-    { "binding": "MAC_LUIS", "service_id": "REEMPLAZAR_MAC_LUIS" }
+    { "binding": "MAC_LUIS", "service_id": "01a1d699-556d-7dc0-9cb8-452a062b9e71" }
   ]
 }

@@ -21,6 +21,8 @@ function resumen(slug: string): MarcaAjustes[] {
 
 /** GET /api/marcas → `{ marcas }`. */
 export async function GET(): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   return okJson({ marcas: resumen("") });
 }

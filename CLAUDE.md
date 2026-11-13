@@ -96,7 +96,8 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 
 ## Build & Run
 - `npm install` · `cp .env.example .env.local` (rellena `CLAUDE_BIN` absoluto si hace falta) · una vez: `scripts/chrome-ig.sh login` (perfil dedicado con IG logueado) y cerrar esa ventana
-- `npm run dev` → http://localhost:3030 · `./scripts/cs --help`
+- Desarrollo: `npm run dev` → http://localhost:3040 (con `CS_AUTH=off` en `.env.local`: sin login, solo local) · `./scripts/cs --help`
+- **Web (v2.5)**: la plataforma se sirve en https://competitorseeker.luislandadentsu.workers.dev desde una **copia de servicio** aparte (`~/Claude/Projects/competitor-seeker-servidor`, siempre en `main`) con `scripts/servidor.sh instalar|actualizar|estado` (next start :3030 + cloudflared como LaunchAgents). La puerta es el Worker de `infra/puerta` (Workers VPC → túnel de cada Mac; `scripts/puerta.sh`). Login Google + `usuarios.json`. Paso a paso: `docs/setup-mac.md`.
 - Segunda Mac: `scripts/setup-maquina.sh`
 
 ## Test
@@ -111,6 +112,7 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 ## Critical Rules
 - `log.jsonl` es **append-only** y lo escribe solo `scripts/cs registrar`. Nunca borres ni reescribas histórico; una baja de marca la archiva (`marcas/_archivo/`), no la borra.
 - Nunca commitees secretos (`data/`, `.env*` están gitignored). Nunca push/publicación/borrado sin aprobación del owner.
+- La app está expuesta a internet: todo route handler nuevo empieza con `exigirUsuario()` (admin si toca secretos/config), y cualquier ruta nueva con secretos se añade a los `deny` de `.claude/settings.headless.json`.
 - Valida toda entrada externa en la frontera; los subagentes no escriben archivos.
 - Datos inmutables; archivos pequeños (200–400 líneas, 800 máx). Español, tono analítico y frío.
 - Trabaja solo dentro de esta carpeta (y la bóveda en `~/SecondBrain`).

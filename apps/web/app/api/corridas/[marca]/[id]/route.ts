@@ -32,6 +32,8 @@ export async function DELETE(_request: Request, { params }: Ctx): Promise<Respon
 
 /** GET /api/corridas/[marca]/[id] → resumen de la corrida (404 si no existe). */
 export async function GET(_request: Request, { params }: Ctx): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   const { marca, id } = await params;
   const invalido = validar(marca, id);
   if (invalido) return invalido;

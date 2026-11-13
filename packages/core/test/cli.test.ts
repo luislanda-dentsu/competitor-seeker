@@ -232,6 +232,14 @@ describe('registrar --desde-workflow', () => {
     expect(leerLog('k').items[0]?.movimiento).toContain("'Destapa la Navidad'")
   })
 
+  it('no lee archivos fuera del directorio temporal ni filtra su contenido', async () => {
+    const env = path.join(process.cwd(), 'package.json')
+    await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--desde-workflow', env])).rejects.toThrow(/solo acepta/)
+    const noJson = path.join(repo.raiz, 'wf2.output')
+    fs.writeFileSync(noJson, 'AUTH_SECRET=supersecreto')
+    await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--desde-workflow', noJson])).rejects.toThrow(/^(?!.*supersecreto).*no es JSON válido/)
+  })
+
   it('archivo inexistente → error claro', async () => {
     await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--desde-workflow', '/no/existe.output'])).rejects.toThrow(/salida del workflow/)
   })

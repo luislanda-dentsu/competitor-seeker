@@ -34,6 +34,9 @@ comprobar() {
     [ -n "$(valor_env "$v")" ] || fail "falta $v en .env.local (sin login la app no se publica)"
   done
   [ "$(valor_env CS_AUTH)" != "off" ] || fail "CS_AUTH=off es solo para desarrollo: quítalo de la copia de servicio"
+  ! grep -qE '^CS_AUTH=off' .env 2>/dev/null || fail "CS_AUTH=off en .env: quítalo de la copia de servicio"
+  chmod 600 .env.local; [ -f data/secrets.json ] && chmod 600 data/secrets.json
+  ok ".env.local y data/secrets.json solo legibles por ti (600)"
   [ "$(valor_env AUTH_SECRET | tr -d '\n' | wc -c | tr -d ' ')" -ge 32 ] || fail "AUTH_SECRET demasiado corto (openssl rand -hex 32)"
   ok "login configurado ($(valor_env AUTH_URL))"
   local rama; rama="$(git rev-parse --abbrev-ref HEAD)"

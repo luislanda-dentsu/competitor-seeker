@@ -43,6 +43,8 @@ export default {
     const cabeceras = limpias
     cabeceras.set('x-forwarded-host', url.host)
     cabeceras.set('x-forwarded-proto', 'https')
+    // Marca de «llegó por internet»: una copia en modo desarrollo (CS_AUTH=off) la rechaza.
+    cabeceras.set('x-cs-puerta', '1')
     // El cuerpo se lee una vez para poder reintentar en la otra Mac (son JSON pequeños).
     const cuerpo = request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.arrayBuffer()
 
@@ -58,7 +60,9 @@ export default {
       } catch {
         continue
       }
-      if (macCaida(res.status)) continue
+      // Una petición que cambia datos solo se reintenta si la conexión falló (arriba): ante un 5xx
+      // la primera Mac pudo haberla procesado y repetirla duplicaría (p. ej. una corrida).
+      if (macCaida(res.status) && cuerpo === undefined) continue
       if (leerCookie(request.headers.get('cookie'), COOKIE_MAC) === mac) return res
       const salida = new Response(res.body, res)
       salida.headers.append('set-cookie', `${COOKIE_MAC}=${mac}; Path=/; Max-Age=43200; Secure; HttpOnly; SameSite=Lax`)

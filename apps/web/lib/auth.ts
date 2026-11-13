@@ -28,7 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: { signIn: "/entrar", error: "/entrar/sin-acceso" },
   callbacks: {
     signIn({ user, profile }) {
-      if (profile && profile.email_verified === false) return false;
+      if (profile?.email_verified !== true) return false;
       return buscarUsuario(user.email) !== null;
     },
   },
