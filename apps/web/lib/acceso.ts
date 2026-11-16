@@ -38,6 +38,8 @@ export interface PeticionAcceso {
   permitido: boolean;
   /** La petición llegó por la puerta de Cloudflare (trae cf-connecting-ip). */
   viaPuerta: boolean;
+  /** El Host pedido es localhost/127.0.0.1/[::1] (corta el acceso desde la LAN y el DNS rebinding en modo desarrollo). */
+  hostLocal: boolean;
   /** Trae el secreto interno Mac ↔ Worker (solo vale para la consulta de estado de corridas). */
   interno?: boolean;
 }
@@ -59,9 +61,10 @@ export function decidirAcceso(p: PeticionAcceso): Decision {
     return { tipo: "error", status: 503, mensaje: "Acceso no configurado: faltan AUTH_SECRET, AUTH_GOOGLE_ID o AUTH_GOOGLE_SECRET en .env.local" };
   }
   if (p.modo === "abierto-local") {
-    return p.viaPuerta
-      ? { tipo: "error", status: 503, mensaje: "Este panel está en modo desarrollo (CS_AUTH=off) y no se sirve por la web" }
-      : { tipo: "pasar" };
+    if (p.viaPuerta) return { tipo: "error", status: 503, mensaje: "Este panel está en modo desarrollo (CS_AUTH=off) y no se sirve por la web" };
+    return p.hostLocal
+      ? { tipo: "pasar" }
+      : { tipo: "error", status: 403, mensaje: "Modo desarrollo (CS_AUTH=off): solo se sirve en http://localhost" };
   }
   if (esRutaPublica(p.pathname)) return { tipo: "pasar" };
   if (p.interno && p.pathname === RUTA_ESTADO_INTERNA) return { tipo: "pasar" };
@@ -74,6 +77,13 @@ export function decidirAcceso(p: PeticionAcceso): Decision {
     return api ? { tipo: "error", status: 403, mensaje: "Tu cuenta no tiene acceso" } : { tipo: "redirigir", a: "/entrar/sin-acceso" };
   }
   return { tipo: "pasar" };
+}
+
+/** Host de la petición apuntando a esta máquina (con o sin puerto). */
+export function esHostLocal(host: string | null): boolean {
+  if (!host) return false;
+  const nombre = host.startsWith("[") ? host.slice(0, host.indexOf("]") + 1) : host.split(":")[0];
+  return ["localhost", "127.0.0.1", "[::1]"].includes(nombre.toLowerCase());
 }
 
 /** Solo rutas internas como destino tras el login (evita redirecciones abiertas). */

@@ -1,7 +1,7 @@
 import { buscarUsuario, cargarEnv } from "@competitor-seeker/core";
 import { NextResponse, type NextRequest } from "next/server";
 // Rutas relativas (no `@/`): el proxy se carga sin alias.
-import { decidirAcceso, modoAcceso, secretoValido, type Decision } from "./lib/acceso";
+import { decidirAcceso, esHostLocal, modoAcceso, secretoValido, type Decision } from "./lib/acceso";
 import { auth } from "./lib/auth";
 import { esFichaCompetidor, proxyCompetidor } from "./lib/proxy-competidores";
 
@@ -27,6 +27,7 @@ function decidir(request: NextRequest, email: string | null): NextResponse {
       permitido: buscarUsuario(email) !== null,
       // La puerta siempre añade x-cs-puerta; Cloudflare añade cf-*. Cualquiera basta.
       viaPuerta: ["x-cs-puerta", "cf-connecting-ip", "cf-ray"].some((h) => request.headers.has(h)),
+      hostLocal: esHostLocal(request.headers.get("host")),
       interno: secretoValido(request.headers.get("x-cs-interno"), env.CS_SECRETO_INTERNO),
     }),
   );

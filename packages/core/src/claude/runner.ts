@@ -18,6 +18,11 @@ export interface OpcionesClaude {
   resume?: string
   agent?: string
   /**
+   * Rol para el hook de guardia (`scripts/hooks/guardia-agentes.mjs`, vía `CS_ROL_AGENTE`):
+   * `asistente` solo puede leer marcas/ y soul.md. Por defecto `corrida`.
+   */
+  rol?: 'corrida' | 'asistente'
+  /**
    * `--chrome` (Claude in Chrome). Desactivado por defecto: Instagram se rastrea
    * con el MCP chrome-devtools de `.mcp.json` (perfil dedicado), no con la extensión.
    */
@@ -168,8 +173,13 @@ export function matarGrupo(pid: number | undefined, senal: NodeJS.Signals = 'SIG
 export const ESPERA_SEGUNDO_PLANO_MS = 60 * 60 * 1000
 
 /** Entorno del proceso hijo: el de la app más el techo de espera (si no viene fijado). */
-export function entornoClaude(base: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
-  return { ...base, CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: base.CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS ?? String(ESPERA_SEGUNDO_PLANO_MS) }
+export function entornoClaude(base: NodeJS.ProcessEnv = process.env, rol: OpcionesClaude['rol'] = 'corrida'): NodeJS.ProcessEnv {
+  return {
+    ...base,
+    CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: base.CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS ?? String(ESPERA_SEGUNDO_PLANO_MS),
+    // Siempre lo fija la app (nunca se hereda): el hook de guardia decide con él.
+    CS_ROL_AGENTE: rol,
+  }
 }
 
 export function lanzarClaude(o: OpcionesClaude): ProcesoClaude {
@@ -185,7 +195,7 @@ function lanzarReal(o: OpcionesClaude, args: string[], bin: string): ProcesoClau
   const volcado = abrirVolcado(o.volcarA)
   // `detached`: el hijo lidera su propio grupo de procesos para poder cancelar
   // el árbol entero (claude + subagentes + navegador) con `process.kill(-pid)`.
-  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: entornoClaude(), detached: true })
+  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: entornoClaude(process.env, o.rol), detached: true })
   let resto = ''
   const stderr: string[] = []
 

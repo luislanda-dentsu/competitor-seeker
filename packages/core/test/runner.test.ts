@@ -91,8 +91,12 @@ describe('argsClaude', () => {
 
 describe('entornoClaude', () => {
   it('fija un techo de espera de 60 min para las tareas en segundo plano de `claude -p`', () => {
-    expect(entornoClaude({ PATH: '/bin' })).toEqual({ PATH: '/bin', CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: String(ESPERA_SEGUNDO_PLANO_MS) })
+    expect(entornoClaude({ PATH: '/bin' })).toEqual({ PATH: '/bin', CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: String(ESPERA_SEGUNDO_PLANO_MS), CS_ROL_AGENTE: 'corrida' })
     expect(ESPERA_SEGUNDO_PLANO_MS).toBe(3_600_000)
+  })
+  it('fija el rol del hook de guardia y no hereda uno del entorno', () => {
+    expect(entornoClaude({}, 'asistente').CS_ROL_AGENTE).toBe('asistente')
+    expect(entornoClaude({ CS_ROL_AGENTE: 'asistente' }).CS_ROL_AGENTE).toBe('corrida')
   })
   it('respeta un valor ya fijado en el entorno', () => {
     expect(entornoClaude({ CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: '0' }).CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS).toBe('0')

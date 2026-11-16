@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3040",
+    "dev": "next dev --hostname 127.0.0.1 --port 3040",
     "build": "next build",
-    "start": "next start --port 3030",
+    "start": "next start --hostname 127.0.0.1 --port 3030",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },

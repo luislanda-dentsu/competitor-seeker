@@ -160,6 +160,11 @@ Una invitación o revocación hecha en una Mac llega a la otra en la siguiente s
   les deniega `.env*`, `data/`, `~/.ssh`, `~/.config`, `~/Library`, el perfil de Chrome y las
   carpetas personales (comprobado con `claude -p`, también dentro de subagentes). Si añades
   un secreto en otra ruta, añádela también ahí.
+- Además, el hook `scripts/hooks/guardia-agentes.mjs` (cargado por ese mismo archivo) limita el
+  navegador de las corridas a `https://www.instagram.com/`, impide que WebFetch abra `file:`,
+  `localhost` o la red local, y deja al asistente del chat leer solo `marcas/` y `soul.md`.
+- La copia de desarrollo escucha solo en `127.0.0.1:3040` y, con `CS_AUTH=off`, solo responde si
+  se pide como `localhost`: nunca a otra máquina de la Wi-Fi.
 - Si sospechas que se filtró `AUTH_SECRET`: genera otro (`openssl rand -hex 32`), cámbialo en
   las dos Macs y `scripts/servidor.sh actualizar` en ambas. Todas las sesiones se cierran.
 - La copia de **desarrollo** (`CS_AUTH=off`) rechaza todo lo que llegue por la puerta de

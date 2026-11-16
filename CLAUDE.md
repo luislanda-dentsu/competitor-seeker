@@ -112,7 +112,7 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 ## Critical Rules
 - `log.jsonl` es **append-only** y lo escribe solo `scripts/cs registrar`. Nunca borres ni reescribas histórico; una baja de marca la archiva (`marcas/_archivo/`), no la borra.
 - Nunca commitees secretos (`data/`, `.env*` están gitignored). Nunca push/publicación/borrado sin aprobación del owner.
-- La app está expuesta a internet: todo route handler nuevo empieza con `exigirUsuario()` (admin si toca secretos/config), y cualquier ruta nueva con secretos se añade a los `deny` de `.claude/settings.headless.json`.
+- La app está expuesta a internet: todo route handler nuevo empieza con `exigirUsuario()` (admin si toca secretos/config), y cualquier ruta nueva con secretos se añade a los `deny` de `.claude/settings.headless.json`. Los agentes headless pasan además por el hook `scripts/hooks/guardia-agentes.mjs` (navegador solo Instagram, WebFetch sin `file:`/localhost/LAN, asistente solo `marcas/` y `soul.md`): si un agente necesita más, se amplía ahí con test.
 - Valida toda entrada externa en la frontera; los subagentes no escriben archivos.
 - Datos inmutables; archivos pequeños (200–400 líneas, 800 máx). Español, tono analítico y frío.
 - Trabaja solo dentro de esta carpeta (y la bóveda en `~/SecondBrain`).

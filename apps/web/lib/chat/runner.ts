@@ -188,6 +188,7 @@ export function responderChat(o: OpcionesResponder): ReadableStream<Uint8Array> 
       proceso = lanzarClaude({
         prompt,
         agent: "asistente",
+        rol: "asistente",
         ...(chat.sessionId ? { resume: chat.sessionId } : { sessionId: sesionNueva }),
         chrome: false,
         allowedTools: allowedToolsAsistente,

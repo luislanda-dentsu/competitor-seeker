@@ -10,7 +10,11 @@
       "Glob(./data/**)",
       "Glob(//**/*.key)",
       "Glob(//**/*.pem)",
+      "Glob(//**/*credential*)",
+      "Glob(//**/*secret*.json)",
+      "Glob(//**/.dev.vars)",
       "Glob(//**/.env*)",
+      "Glob(//**/cloudflared-token*)",
       "Glob(//**/data/cloudflared-token)",
       "Glob(//**/data/secrets.json)",
       "Glob(//**/id_ed25519*)",
@@ -36,7 +40,11 @@
       "Grep(./data/**)",
       "Grep(//**/*.key)",
       "Grep(//**/*.pem)",
+      "Grep(//**/*credential*)",
+      "Grep(//**/*secret*.json)",
+      "Grep(//**/.dev.vars)",
       "Grep(//**/.env*)",
+      "Grep(//**/cloudflared-token*)",
       "Grep(//**/data/cloudflared-token)",
       "Grep(//**/data/secrets.json)",
       "Grep(//**/id_ed25519*)",
@@ -68,7 +76,11 @@
       "Read(./data/**)",
       "Read(//**/*.key)",
       "Read(//**/*.pem)",
+      "Read(//**/*credential*)",
+      "Read(//**/*secret*.json)",
+      "Read(//**/.dev.vars)",
       "Read(//**/.env*)",
+      "Read(//**/cloudflared-token*)",
       "Read(//**/data/cloudflared-token)",
       "Read(//**/data/secrets.json)",
       "Read(//**/id_ed25519*)",
@@ -94,6 +106,19 @@
       "Read(~/Pictures/**)",
       "Read(~/SecondBrain/**)",
       "Write"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "WebFetch|Read|Grep|Glob|mcp__chrome-devtools__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/guardia-agentes.mjs\""
+          }
+        ]
+      }
     ]
   }
 }

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { decidirAcceso, destinoSeguro, modoAcceso, secretoValido, type PeticionAcceso } from "./acceso";
+import { decidirAcceso, destinoSeguro, esHostLocal, modoAcceso, secretoValido, type PeticionAcceso } from "./acceso";
 
 const SECRETO = "x".repeat(32);
-const base: PeticionAcceso = { pathname: "/", search: "", modo: "google", email: null, permitido: false, viaPuerta: true };
+const base: PeticionAcceso = { pathname: "/", search: "", modo: "google", email: null, permitido: false, viaPuerta: true, hostLocal: true };
 
 describe("modoAcceso", () => {
   it("falla cerrado si falta cualquier pieza de Google", () => {
@@ -21,6 +21,8 @@ describe("decidirAcceso", () => {
   it("modo abierto solo en local: lo que llega por la puerta se rechaza", () => {
     expect(decidirAcceso({ ...base, modo: "abierto-local", viaPuerta: false })).toEqual({ tipo: "pasar" });
     expect(decidirAcceso({ ...base, modo: "abierto-local", viaPuerta: true, pathname: "/api/corridas" })).toMatchObject({ status: 503 });
+    // Desde la LAN (Host = IP de la Mac) o por DNS rebinding (Host = dominio ajeno): no se sirve.
+    expect(decidirAcceso({ ...base, modo: "abierto-local", viaPuerta: false, hostLocal: false })).toMatchObject({ status: 403 });
   });
 
   it("sin sesión: páginas → /entrar con destino; API → 401; rutas públicas pasan", () => {
@@ -67,5 +69,12 @@ describe("consulta interna entre Macs", () => {
     expect(secretoValido(s.slice(1), s)).toBe(false);
     expect(secretoValido(null, s)).toBe(false);
     expect(secretoValido("", undefined)).toBe(false);
+  });
+});
+
+describe("esHostLocal", () => {
+  it("solo localhost, 127.0.0.1 y [::1], con o sin puerto", () => {
+    for (const h of ["localhost:3040", "127.0.0.1:3040", "[::1]:3040", "LOCALHOST"]) expect(esHostLocal(h), h).toBe(true);
+    for (const h of ["192.168.16.51:3040", "evil.com", "localhost.evil.com", "127.0.0.1.nip.io", null]) expect(esHostLocal(h), String(h)).toBe(false);
   });
 });
