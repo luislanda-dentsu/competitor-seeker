@@ -60,6 +60,9 @@ export interface ProcesoClaude {
 
 export const MOCK_STREAM = path.join(path.dirname(fileURLToPath(import.meta.url)), 'mock-stream.jsonl')
 
+export const TOOLS_CORRIDA = 'Workflow,Agent,Read,Grep,Glob,WebSearch,WebFetch,Bash,ToolSearch'
+export const TOOLS_ASISTENTE = 'Read,Grep'
+
 export function argsClaude(o: OpcionesClaude): string[] {
   const args = [
     '-p',
@@ -79,6 +82,14 @@ export function argsClaude(o: OpcionesClaude): string[] {
     '--strict-mcp-config',
     '--mcp-config',
     o.rol === 'asistente' ? '{"mcpServers":{}}' : MCP_HEADLESS,
+    // Lista blanca de herramientas internas: fuera ListAgents/SendMessage (hablarían con otras
+    // sesiones de la Mac), DesignSync/ShareOnboardingGuide (suben archivos), Cron, Skill…
+    '--tools',
+    o.rol === 'asistente' ? TOOLS_ASISTENTE : TOOLS_CORRIDA,
+    // Sin plugins, hooks ni skills del usuario (~/.claude): solo la config del proyecto.
+    '--setting-sources',
+    'project,local',
+    '--disable-slash-commands',
   ]
   if (o.chrome === true) args.push('--chrome')
   if (o.allowedTools?.length) args.push('--allowedTools', ...o.allowedTools)

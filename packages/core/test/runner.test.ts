@@ -81,6 +81,20 @@ describe('argsClaude', () => {
     expect(args[args.indexOf('--agent') + 1]).toBe('asistente')
   })
 
+  it('lista blanca de herramientas internas y sin config del usuario', () => {
+    const valor = (args: string[], flag: string) => args[args.indexOf(flag) + 1] ?? ''
+    const corrida = argsClaude({ prompt: 'p', rol: 'corrida' })
+    expect(valor(corrida, '--tools')).toBe('Workflow,Agent,Read,Grep,Glob,WebSearch,WebFetch,Bash,ToolSearch')
+    expect(valor(corrida, '--setting-sources')).toBe('project,local')
+    expect(corrida).toContain('--disable-slash-commands')
+    for (const t of ['ListAgents', 'SendMessage', 'DesignSync', 'ShareOnboardingGuide', 'Skill', 'Write', 'Edit']) {
+      expect(valor(corrida, '--tools').split(','), t).not.toContain(t)
+    }
+    const asistente = argsClaude({ prompt: 'p', rol: 'asistente', agent: 'asistente' })
+    expect(valor(asistente, '--tools')).toBe('Read,Grep')
+    expect(valor(argsClaude({ prompt: 'p' }), '--tools')).toBe(valor(corrida, '--tools'))
+  })
+
   it('sessionId y resume son excluyentes; json-schema se serializa', () => {
     expect(() => argsClaude({ prompt: 'p', sessionId: 'a', resume: 'b' })).toThrow(/excluyentes/)
     const args = argsClaude({ prompt: 'p', jsonSchema: { type: 'object' }, name: 'n' })
