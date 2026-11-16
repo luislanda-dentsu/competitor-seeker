@@ -95,6 +95,27 @@ describe('guardia de agentes headless', () => {
     expect(await evaluar(t('Read', { file_path: 'marcas/parval/fuga/x' }), corrida)).toMatch(/solo puede leer/)
   })
 
+  it('Bash: solo scripts/cs con argumentos simples', async () => {
+    const salida = '/private/tmp/claude-502/-Users-x-competitor-seeker/1c4d5c36/tasks/wfyvy3fem.output'
+    for (const command of [
+      `scripts/cs registrar --marca parval --corrida-id 2026-11-16-1518-parval-administrast --modo ui --pendiente --desde-workflow ${salida}`,
+      'scripts/cs ultima-corrida parval --fuente ig', './scripts/cs nuevo-id parval', 'scripts/cs apify-uso --json',
+    ]) expect(await evaluar(t('Bash', { command }), corrida), command).toBeNull()
+    for (const command of [
+      'cat marcas/kolareal/log.jsonl', 'ls -la', 'ps aux', 'git log', 'scripts/cs', 'scripts/cs ultima-corrida parval; cat .git/config',
+      'scripts/cs ultima-corrida parval && ps aux', 'scripts/cs registrar --json-b64 $(cat x)', 'scripts/cs x | tee y', 'scripts/cs x > y',
+      'scripts/cs x\ncat y', 'scripts/cs "x"', 'scripts/csx', '/bin/scripts/cs x', 'npx tsx packages/core/src/cli.ts nuevo-id parval',
+    ]) expect(await evaluar(t('Bash', { command }), corrida), command).toMatch(/Bash/)
+    expect(await evaluar(t('Bash', {}), corrida)).toMatch(/Bash/)
+  })
+
+  it('Apify: solo el scraper de Instagram y la lectura de sus resultados', async () => {
+    for (const a of ['apify--instagram-scraper', 'get-actor-run', 'get-dataset-items']) expect(await evaluar(t(`mcp__apify__${a}`, {}), corrida), a).toBeNull()
+    for (const a of ['call-actor', 'call-actor-mcp-tool', 'send-server-actor-request', 'search-actors', 'get-key-value-store-record', 'apify--instagram-profile-scraper']) {
+      expect(await evaluar(t(`mcp__apify__${a}`, {}), corrida), a).toMatch(/no está permitido/)
+    }
+  })
+
   it('falla cerrado: rol desconocido, entrada inválida, sin raíz', async () => {
     expect(await evaluar(t('Read', { file_path: 'CLAUDE.md' }), { ...corrida, rol: 'admin' })).toMatch(/Rol/)
     expect(await evaluar(null, corrida)).toMatch(/no válida/)

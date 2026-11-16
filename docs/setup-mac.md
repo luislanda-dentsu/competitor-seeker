@@ -163,7 +163,8 @@ Una invitación o revocación hecha en una Mac llega a la otra en la siguiente s
 - Además, el hook `scripts/hooks/guardia-agentes.mjs` (cargado por ese mismo archivo) solo deja
   al navegador las herramientas de lectura, sin escribir ni leer archivos y solo en Instagram;
   impide que WebFetch abra `file:`, `localhost` o la red local; limita las lecturas de cada corrida
-  y de cada chat a su propia marca (más las instrucciones). Si el hook falla, la herramienta no se
+  y de cada chat a su propia marca (más las instrucciones); y solo deja ejecutar `scripts/cs` (ni
+  `cat`, ni `ps`, ni nada más) y el scraper de Instagram de Apify. Si el hook falla, la herramienta no se
   ejecuta. El Chrome dedicado solo puede cargar dominios de Instagram.
 - Las corridas solo cargan dos MCP (Chrome dedicado y Apify con el token de `data/secrets.json`):
   nunca tus conectores de claude.ai (Gmail, Drive…). Sin token en `data/secrets.json`, la corrida

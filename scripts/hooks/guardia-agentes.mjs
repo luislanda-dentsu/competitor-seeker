@@ -8,6 +8,8 @@
 // · Read/Grep/Glob: la corrida solo su marca (CS_MARCA_AGENTE), los archivos de instrucciones y
 //   el temporal de su propia sesión; el asistente (CS_ROL_AGENTE=asistente) solo su marca y soul.md.
 //   Nunca un .env* aunque esté anidado.
+// · Bash: solo `scripts/cs <args>` sin metacaracteres (el CLI aplica su propia guarda de agente);
+// · Apify: solo el scraper de Instagram y la lectura de sus runs/datasets.
 // Falla cerrado: entrada rara, rol desconocido o excepción → deniega (y el comando hace `|| exit 2`).
 import dns from 'node:dns/promises'
 import fs from 'node:fs'
@@ -15,6 +17,9 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROLES = new Set(['corrida', 'asistente'])
+/** `scripts/cs …` con argumentos simples: nada de ; | & $ ` > < comillas ni saltos de línea. */
+const BASH_CS = /^(?:\.\/)?scripts\/cs(?: [A-Za-z0-9._:/=,-]+)+$/
+const TOOLS_APIFY = new Set(['apify--instagram-scraper', 'get-actor-run', 'get-dataset-items'])
 const HOSTS_IG = /^(?:[a-z0-9-]+\.)*instagram\.com$/
 const TOOLS_NAVEGADOR = new Set([
   'new_page', 'navigate_page', 'select_page', 'list_pages', 'close_page',
@@ -147,6 +152,13 @@ export async function evaluar(entrada, { rol = 'corrida', raiz, marca = '', reso
   const tool = entrada.tool_name
   const input = entrada.tool_input && typeof entrada.tool_input === 'object' ? entrada.tool_input : {}
 
+  if (tool === 'Bash') {
+    return BASH_CS.test(String(input.command ?? '')) ? null : 'Bash: el agente solo puede ejecutar `scripts/cs <comando>` con argumentos simples'
+  }
+  if (tool.startsWith('mcp__apify__')) {
+    const accion = tool.slice('mcp__apify__'.length)
+    return TOOLS_APIFY.has(accion) ? null : `Apify: ${accion} no está permitido (solo el scraper de Instagram y la lectura de sus resultados)`
+  }
   if (tool === 'WebFetch') return motivoWebFetch(input.url, resolver)
   if (tool.startsWith('mcp__chrome-devtools__')) return motivoNavegador(tool.slice('mcp__chrome-devtools__'.length), input)
   if (tool === 'Read' || tool === 'Grep' || tool === 'Glob') {

@@ -111,7 +111,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "WebFetch|Read|Grep|Glob|mcp__chrome-devtools__.*",
+        "matcher": "Bash|WebFetch|Read|Grep|Glob|mcp__chrome-devtools__.*|mcp__apify__.*",
         "hooks": [
           {
             "type": "command",
