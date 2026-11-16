@@ -160,9 +160,13 @@ Una invitación o revocación hecha en una Mac llega a la otra en la siguiente s
   les deniega `.env*`, `data/`, `~/.ssh`, `~/.config`, `~/Library`, el perfil de Chrome y las
   carpetas personales (comprobado con `claude -p`, también dentro de subagentes). Si añades
   un secreto en otra ruta, añádela también ahí.
-- Además, el hook `scripts/hooks/guardia-agentes.mjs` (cargado por ese mismo archivo) limita el
-  navegador de las corridas a `https://www.instagram.com/`, impide que WebFetch abra `file:`,
-  `localhost` o la red local, y deja al asistente del chat leer solo `marcas/` y `soul.md`.
+- Además, el hook `scripts/hooks/guardia-agentes.mjs` (cargado por ese mismo archivo) solo deja
+  al navegador las herramientas de lectura, sin escribir ni leer archivos y solo en Instagram;
+  impide que WebFetch abra `file:`, `localhost` o la red local; limita las lecturas de la corrida
+  al proyecto (sin `data/` ni `.env*`) y las del chat a `marcas/` y `soul.md`. Si el hook falla,
+  la herramienta no se ejecuta. El Chrome dedicado solo puede cargar dominios de Instagram.
+- **No dejes sesiones interactivas de `claude` abiertas en esta carpeta durante días**: su MCP
+  de Chrome retiene el perfil dedicado y las corridas de la web reportan «SESIÓN NO DISPONIBLE».
 - La copia de desarrollo escucha solo en `127.0.0.1:3040` y, con `CS_AUTH=off`, solo responde si
   se pide como `localhost`: nunca a otra máquina de la Wi-Fi.
 - Si sospechas que se filtró `AUTH_SECRET`: genera otro (`openssl rand -hex 32`), cámbialo en

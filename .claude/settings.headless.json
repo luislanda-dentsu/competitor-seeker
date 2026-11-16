@@ -115,7 +115,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/guardia-agentes.mjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/guardia-agentes.mjs\" || exit 2"
           }
         ]
       }
