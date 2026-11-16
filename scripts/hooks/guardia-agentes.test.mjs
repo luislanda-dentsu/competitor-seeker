@@ -8,12 +8,16 @@ import { evaluar, hostPrivado } from './guardia-agentes.mjs'
 
 const raiz = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'guardia-')))
 fs.mkdirSync(path.join(raiz, 'marcas', 'parval'), { recursive: true })
+fs.mkdirSync(path.join(raiz, 'marcas', 'otra'), { recursive: true })
+fs.mkdirSync(path.join(raiz, '.claude', 'agents'), { recursive: true })
 fs.mkdirSync(path.join(raiz, 'data'))
 fs.writeFileSync(path.join(raiz, 'soul.md'), '')
 const dnsFalso = async (host) => ({ 'www.parval.com.do': ['104.21.1.1'], 'localtest.me': ['127.0.0.1'], 'x.nip.io': ['192.168.1.5'] })[host] ?? Promise.reject(new Error('NXDOMAIN'))
-const corrida = { rol: 'corrida', raiz, resolver: dnsFalso }
-const asistente = { rol: 'asistente', raiz, resolver: dnsFalso }
-const t = (tool_name, tool_input) => ({ tool_name, tool_input })
+const corrida = { rol: 'corrida', raiz, marca: 'parval', resolver: dnsFalso }
+const asistente = { rol: 'asistente', raiz, marca: 'parval', resolver: dnsFalso }
+const SESION = 'aaaa-1111'
+const temporal = `/private/tmp/claude-502/${raiz.replace(/[^A-Za-z0-9]/g, '-')}`
+const t = (tool_name, tool_input) => ({ tool_name, tool_input, session_id: SESION })
 const nav = (accion, input) => t(`mcp__chrome-devtools__${accion}`, input)
 
 describe('guardia de agentes headless', () => {
@@ -52,36 +56,43 @@ describe('guardia de agentes headless', () => {
     }
   })
 
-  it('corrida: solo dentro del proyecto y su temporal de Claude', async () => {
-    expect(await evaluar(t('Read', { file_path: 'CLAUDE.md' }), corrida)).toBeNull()
-    expect(await evaluar(t('Read', { file_path: 'marcas/parval/marca.json' }), corrida)).toBeNull()
-    expect(await evaluar(t('Read', { file_path: '/private/tmp/claude-502/proyecto/tasks/x.output' }), corrida)).toBeNull()
-    expect(await evaluar(t('Grep', { pattern: 'x', path: 'marcas' }), corrida)).toBeNull()
-    expect(await evaluar(t('Glob', { pattern: 'marcas/*/marca.json' }), corrida)).toBeNull()
-    for (const file_path of ['.env.local', 'data/secrets.json', '.claude/settings.headless.json', '../advantio/config/agencia.env', '/etc/hosts', path.join(os.homedir(), '.ssh/id_ed25519'), '/tmp/otra-cosa']) {
-      expect(await evaluar(t('Read', { file_path }), corrida), file_path).toMatch(/proyecto/)
+  it('corrida: su marca, las instrucciones y el temporal de su sesión', async () => {
+    for (const file_path of ['CLAUDE.md', 'soul.md', 'agent.md', 'config.json', '.claude/agents/rastreador.md', 'marcas/parval/marca.json', `${temporal}/${SESION}/tasks/x.output`]) {
+      expect(await evaluar(t('Read', { file_path }), corrida), file_path).toBeNull()
     }
-    expect(await evaluar(t('Grep', { pattern: 'AUTH_SECRET' }), corrida)).toMatch(/subcarpeta/)
-    expect(await evaluar(t('Grep', { pattern: 'x', path: 'data' }), corrida)).toMatch(/proyecto/)
+    expect(await evaluar(t('Grep', { pattern: 'x', path: 'marcas/parval' }), corrida)).toBeNull()
+    expect(await evaluar(t('Glob', { pattern: '*.json', path: 'marcas/parval' }), corrida)).toBeNull()
+    for (const file_path of [
+      '.env.local', 'marcas/parval/.env', 'apps/web/.env.local', 'data/secrets.json', 'usuarios.json', '.git/config', '.claude/settings.headless.json', '.mcp.json',
+      'apps/web/.next/server/server-reference-manifest.json', 'marcas/otra/log.jsonl', '../advantio/config/agencia.env', '/etc/hosts',
+      path.join(os.homedir(), '.ssh/id_ed25519'), `${temporal}/otra-sesion/tasks/x.output`, '/private/tmp/claude-502/-Users-x-otro-proyecto/aaaa-1111/x', '/tmp/otra-cosa',
+    ]) {
+      expect(await evaluar(t('Read', { file_path }), corrida), file_path).toMatch(/solo puede leer/)
+    }
+    expect(await evaluar(t('Grep', { pattern: 'AUTH_SECRET' }), corrida)).toMatch(/solo puede leer/)
+    expect(await evaluar(t('Grep', { pattern: 'x', path: 'marcas' }), corrida)).toMatch(/solo puede leer/)
+    expect(await evaluar(t('Read', { file_path: 'marcas/parval/log.jsonl' }), { ...corrida, marca: '' })).toMatch(/solo puede leer/)
+    expect(await evaluar(t('Read', { file_path: 'marcas/parval/log.jsonl' }), { ...corrida, marca: '../parval' })).toMatch(/solo puede leer/)
+    expect(await evaluar({ ...t('Read', { file_path: `${temporal}/x/y` }), session_id: '../x' }, corrida)).toMatch(/solo puede leer/)
     for (const pattern of ['/Users/**/*.env', '../**/*.env', '~/.ssh/*']) {
       expect(await evaluar(t('Glob', { pattern }), corrida), pattern).toMatch(/relativo/)
     }
   })
 
-  it('asistente: solo marcas/ y soul.md', async () => {
+  it('asistente: solo su marca y soul.md', async () => {
     expect(await evaluar(t('Read', { file_path: path.join(raiz, 'marcas/parval/log.jsonl') }), asistente)).toBeNull()
     expect(await evaluar(t('Read', { file_path: 'soul.md' }), asistente)).toBeNull()
     expect(await evaluar(t('Grep', { pattern: 'x', path: 'marcas/parval' }), asistente)).toBeNull()
-    for (const file_path of ['.env.local', '../orbit/.dev.vars', 'marcas/../data/secrets.json', '/etc/hosts', 'CLAUDE.md', '/private/tmp/claude-502/x']) {
+    for (const file_path of ['.env.local', '../orbit/.dev.vars', 'marcas/../data/secrets.json', 'marcas/otra/log.jsonl', '/etc/hosts', 'CLAUDE.md', `${temporal}/${SESION}/x`]) {
       expect(await evaluar(t('Read', { file_path }), asistente), file_path).toMatch(/asistente/)
     }
     expect(await evaluar(t('Grep', { pattern: 'AUTH_SECRET' }), asistente)).toMatch(/asistente/)
   })
 
   it('un symlink dentro de marcas/ que sale fuera se deniega', async () => {
-    fs.symlinkSync(os.tmpdir(), path.join(raiz, 'marcas', 'fuga'))
-    expect(await evaluar(t('Read', { file_path: 'marcas/fuga/x' }), asistente)).toMatch(/asistente/)
-    expect(await evaluar(t('Read', { file_path: 'marcas/fuga/x' }), corrida)).toMatch(/proyecto/)
+    fs.symlinkSync(os.tmpdir(), path.join(raiz, 'marcas', 'parval', 'fuga'))
+    expect(await evaluar(t('Read', { file_path: 'marcas/parval/fuga/x' }), asistente)).toMatch(/asistente/)
+    expect(await evaluar(t('Read', { file_path: 'marcas/parval/fuga/x' }), corrida)).toMatch(/solo puede leer/)
   })
 
   it('falla cerrado: rol desconocido, entrada inválida, sin raíz', async () => {
@@ -92,7 +103,7 @@ describe('guardia de agentes headless', () => {
 
   it('como proceso: deniega con JSON y sale con error ante stdin vacío', () => {
     const script = fileURLToPath(new URL('./guardia-agentes.mjs', import.meta.url))
-    const env = { ...process.env, CLAUDE_PROJECT_DIR: raiz, CS_ROL_AGENTE: 'asistente' }
+    const env = { ...process.env, CLAUDE_PROJECT_DIR: raiz, CS_ROL_AGENTE: 'asistente', CS_MARCA_AGENTE: 'parval' }
     const r = spawnSync('node', [script], { input: JSON.stringify(t('Read', { file_path: '.env.local' })), env, encoding: 'utf8' })
     expect(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision).toBe('deny')
     const vacio = spawnSync('node', [script], { input: '', env, encoding: 'utf8' })

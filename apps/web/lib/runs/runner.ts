@@ -270,6 +270,8 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
     const proceso = lanzarClaude({
       prompt: promptCorrida({ marca: marca.slug, fechaCorrida: fechaLocal(ahora), ultimaCorrida, ultimaCorridaIg: ultimaCorridaIgRegistrada(marca.slug), corridaId, apify, ...(o.historica ? { ventana: o.historica.ventana } : {}) }),
       allowedTools: allowedToolsCorrida,
+      rol: "corrida",
+      marca: marca.slug,
       disallowedTools: disallowedToolsCorrida,
       jsonSchema: esquemaSalidaCorrida,
       name: `corrida-${corridaId}`,

@@ -5,8 +5,9 @@
 //   (filePath, sourcePath…) ni initScript, y new_page/navigate_page solo a Instagram;
 //   la red del navegador la acota además --allowedUrlPattern en scripts/chrome-ig.sh;
 // · WebFetch: solo http(s) públicos (resuelve el DNS: nada de loopback ni red local);
-// · Read/Grep/Glob: la corrida solo dentro del repo (sin data/, .env*, settings) y su carpeta
-//   temporal de Claude; el asistente (CS_ROL_AGENTE=asistente) solo marcas/ y soul.md.
+// · Read/Grep/Glob: la corrida solo su marca (CS_MARCA_AGENTE), los archivos de instrucciones y
+//   el temporal de su propia sesión; el asistente (CS_ROL_AGENTE=asistente) solo su marca y soul.md.
+//   Nunca un .env* aunque esté anidado.
 // Falla cerrado: entrada rara, rol desconocido o excepción → deniega (y el comando hace `|| exit 2`).
 import dns from 'node:dns/promises'
 import fs from 'node:fs'
@@ -67,21 +68,33 @@ function dentro(ruta, base) {
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))
 }
 
-/** Carpetas temporales de Claude Code (salida del Workflow): /tmp/claude-<uid>/… */
-function enTemporalClaude(ruta) {
-  return /^\/(private\/)?tmp\/claude-\d+(\/|$)/.test(ruta)
+/** Lo que la corrida puede leer del repo además de su marca: instrucciones y config compartida. */
+const ARCHIVOS_CORRIDA = ['soul.md', 'agent.md', 'CLAUDE.md', 'config.json']
+const CARPETAS_CORRIDA = ['.claude/agents', '.claude/workflows']
+
+/**
+ * Temporal de ESTA sesión de Claude Code (salida del Workflow):
+ * /tmp/claude-<uid>/<proyecto con / → ->/<session_id>/… — nunca el de otros proyectos o sesiones.
+ */
+function enTemporalSesion(ruta, raiz, sesion) {
+  if (!sesion || !/^[A-Za-z0-9-]+$/.test(sesion)) return false
+  const m = ruta.match(/^\/(?:private\/)?tmp\/claude-\d+\/([^/]+)\/([^/]+)(\/|$)/)
+  return !!m && m[1] === raiz.replace(/[^A-Za-z0-9]/g, '-') && m[2] === sesion
 }
 
-function rutaPermitida(ruta, rol, base) {
-  if (rol === 'asistente') return dentro(ruta, path.join(base, 'marcas')) || ruta === path.join(base, 'soul.md')
-  if (enTemporalClaude(ruta)) return true
-  if (!dentro(ruta, base)) return false
-  const rel = path.relative(base, ruta)
-  const primero = rel.split(path.sep)[0]
-  return !(primero === 'data' || primero === 'node_modules' || primero.startsWith('.env') || /^\.claude\/settings/.test(rel))
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+function rutaPermitida(ruta, c) {
+  const { rol, base, raiz, marca, sesion } = c
+  if (/^\.env/.test(path.basename(ruta))) return false
+  const deMarca = SLUG.test(marca ?? '') && dentro(ruta, path.join(base, 'marcas', marca))
+  if (rol === 'asistente') return deMarca || ruta === path.join(base, 'soul.md')
+  if (deMarca || enTemporalSesion(ruta, raiz, sesion)) return true
+  return ARCHIVOS_CORRIDA.some((a) => ruta === path.join(base, a)) || CARPETAS_CORRIDA.some((d) => dentro(ruta, path.join(base, d)))
 }
 
-function motivoArchivo(tool, input, rol, raiz) {
+function motivoArchivo(tool, input, c) {
+  const { rol, raiz } = c
   const base = rutaReal(raiz)
   if (tool === 'Glob') {
     const patron = String(input.pattern ?? '')
@@ -91,12 +104,11 @@ function motivoArchivo(tool, input, rol, raiz) {
   }
   const pedida = input.file_path ?? input.path ?? raiz
   const ruta = rutaReal(path.resolve(raiz, String(pedida)))
-  // Un Grep sobre la raíz recorrería .env.local y data/: debe apuntar a una subcarpeta o archivo.
-  if (tool === 'Grep' && rol === 'corrida' && ruta === base) return 'Grep: indica una subcarpeta (p. ej. marcas/<slug>), no la raíz del proyecto'
-  if (rutaPermitida(ruta, rol, base)) return null
+  if (rutaPermitida(ruta, { ...c, base })) return null
+  const m = c.marca || '<slug>'
   return rol === 'asistente'
-    ? 'El asistente solo puede leer marcas/ y soul.md (indica la ruta, p. ej. marcas/<slug>/log.jsonl)'
-    : 'Solo se puede leer dentro del proyecto (sin data/, .env* ni settings)'
+    ? `El asistente solo puede leer marcas/${m}/ y soul.md (indica la ruta, p. ej. marcas/${m}/log.jsonl)`
+    : `La corrida solo puede leer marcas/${m}/, soul.md, agent.md, CLAUDE.md, config.json, .claude/agents|workflows y el temporal de su sesión`
 }
 
 function motivoNavegador(accion, input) {
@@ -128,7 +140,7 @@ async function motivoWebFetch(url, resolver) {
 const resolverDns = async (host) => (await dns.lookup(host, { all: true, verbatim: true })).map((r) => r.address)
 
 /** Devuelve el motivo de la denegación o null si la herramienta puede usarse. */
-export async function evaluar(entrada, { rol = 'corrida', raiz, resolver = resolverDns }) {
+export async function evaluar(entrada, { rol = 'corrida', raiz, marca = '', resolver = resolverDns }) {
   if (!ROLES.has(rol)) return `Rol de agente desconocido: ${rol}`
   if (!entrada || typeof entrada !== 'object' || typeof entrada.tool_name !== 'string') return 'Entrada del hook no válida'
   if (!raiz) return 'Sin raíz del proyecto'
@@ -137,7 +149,9 @@ export async function evaluar(entrada, { rol = 'corrida', raiz, resolver = resol
 
   if (tool === 'WebFetch') return motivoWebFetch(input.url, resolver)
   if (tool.startsWith('mcp__chrome-devtools__')) return motivoNavegador(tool.slice('mcp__chrome-devtools__'.length), input)
-  if (tool === 'Read' || tool === 'Grep' || tool === 'Glob') return motivoArchivo(tool, input, rol, raiz)
+  if (tool === 'Read' || tool === 'Grep' || tool === 'Glob') {
+    return motivoArchivo(tool, input, { rol, raiz, marca, sesion: typeof entrada.session_id === 'string' ? entrada.session_id : '' })
+  }
   return null
 }
 
@@ -157,7 +171,7 @@ async function main() {
     /* falla cerrado en evaluar */
   }
   const raiz = process.env.CLAUDE_PROJECT_DIR || entrada?.cwd
-  const motivo = await evaluar(entrada, { rol: process.env.CS_ROL_AGENTE || 'corrida', raiz })
+  const motivo = await evaluar(entrada, { rol: process.env.CS_ROL_AGENTE || 'corrida', raiz, marca: process.env.CS_MARCA_AGENTE || '' })
   if (motivo) denegar(motivo)
 }
 

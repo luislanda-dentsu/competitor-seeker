@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "bash",
+      "args": ["scripts/chrome-ig.sh", "mcp"]
+    },
+    "apify": {
+      "type": "http",
+      "url": "https://mcp.apify.com?tools=actors,apify/instagram-scraper",
+      "headers": { "Authorization": "Bearer ${APIFY_TOKEN:-}" }
+    }
+  }
+}

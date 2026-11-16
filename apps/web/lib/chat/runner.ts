@@ -189,6 +189,7 @@ export function responderChat(o: OpcionesResponder): ReadableStream<Uint8Array> 
         prompt,
         agent: "asistente",
         rol: "asistente",
+        marca: o.marca,
         ...(chat.sessionId ? { resume: chat.sessionId } : { sessionId: sesionNueva }),
         chrome: false,
         allowedTools: allowedToolsAsistente,

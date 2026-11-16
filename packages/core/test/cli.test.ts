@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { conLockCorrida, CorridaBloqueada, ejecutar, parsearArgs, rutaLockCorrida, SalidaTexto } from '../src/cli.ts'
+import { conLockCorrida, CorridaBloqueada, ejecutar, guardaAgente, parsearArgs, rutaLockCorrida, SalidaTexto } from '../src/cli.ts'
 import { guardarCorrida, leerCorrida, listarCorridas } from '../src/corridas.ts'
 import { leerLog } from '../src/log.ts'
 import type { Corrida } from '../src/schemas/corrida.ts'
@@ -242,5 +242,28 @@ describe('registrar --desde-workflow', () => {
 
   it('archivo inexistente → error claro', async () => {
     await expect(ejecutar(['registrar', '--marca', 'k', '--corrida-id', 'c', '--desde-workflow', '/no/existe.output'])).rejects.toThrow(/salida del workflow/)
+  })
+})
+
+describe('guardas del CLI ante rutas y agentes', () => {
+  it('rechaza slugs e ids de corrida con rutas', async () => {
+    await expect(ejecutar(['ultima-corrida', '../../../tmp/nada'])).rejects.toThrow(/Slug de marca inválido/)
+    await expect(ejecutar(['registrar', '--marca', 'parval', '--corrida-id', '../../../.claude/settings.local', '--pendiente'])).rejects.toThrow(/Id de corrida inválido/)
+    await expect(ejecutar(['confirmar', '--marca', '../x', '--corrida-id', 'a', '--accion', 'registrar'])).rejects.toThrow(/Slug/)
+  })
+
+  it('un agente solo usa los comandos del grafo, sin --forzar y sobre su marca', () => {
+    const env = { CS_ROL_AGENTE: 'corrida', CS_MARCA_AGENTE: 'parval' }
+    const args = (argv: string[]) => parsearArgs(argv)
+    expect(() => guardaAgente('ultima-corrida', args(['ultima-corrida', 'parval']), env)).not.toThrow()
+    expect(() => guardaAgente('registrar', args(['registrar', '--marca', 'parval', '--corrida-id', 'x', '--pendiente']), env)).not.toThrow()
+    expect(() => guardaAgente('apify-uso', args(['apify-uso', '--json']), env)).not.toThrow()
+    expect(() => guardaAgente('registrar', args(['registrar', '--marca', 'parval', '--corrida-id', 'x', '--forzar']), env)).toThrow(/--forzar/)
+    expect(() => guardaAgente('confirmar', args(['confirmar', '--marca', 'parval']), env)).toThrow(/no puede ejecutar/)
+    expect(() => guardaAgente('marca', args(['marca', 'crear', '--nombre', 'x']), env)).toThrow(/no puede ejecutar/)
+    expect(() => guardaAgente('registrar', args(['registrar', '--marca', 'otra', '--corrida-id', 'x']), env)).toThrow(/marca de su corrida/)
+    expect(() => guardaAgente('nuevo-id', args(['nuevo-id', 'otra']), env)).toThrow(/marca de su corrida/)
+    expect(() => guardaAgente('ultima-corrida', args(['ultima-corrida', 'parval']), { CS_ROL_AGENTE: 'asistente' })).toThrow(/no puede ejecutar/)
+    expect(() => guardaAgente('confirmar', args(['confirmar']), {})).not.toThrow()
   })
 })

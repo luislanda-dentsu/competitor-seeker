@@ -1,7 +1,7 @@
 ---
 name: rastreador
 description: Investiga el contenido reciente de UN competidor (redes, sitio, campañas) desde una fecha dada. Devuelve hallazgos crudos, sin juicio estratégico.
-tools: WebSearch, WebFetch, Read
+tools: WebSearch, WebFetch
 model: sonnet
 ---
 

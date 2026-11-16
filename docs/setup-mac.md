@@ -162,9 +162,13 @@ Una invitación o revocación hecha en una Mac llega a la otra en la siguiente s
   un secreto en otra ruta, añádela también ahí.
 - Además, el hook `scripts/hooks/guardia-agentes.mjs` (cargado por ese mismo archivo) solo deja
   al navegador las herramientas de lectura, sin escribir ni leer archivos y solo en Instagram;
-  impide que WebFetch abra `file:`, `localhost` o la red local; limita las lecturas de la corrida
-  al proyecto (sin `data/` ni `.env*`) y las del chat a `marcas/` y `soul.md`. Si el hook falla,
-  la herramienta no se ejecuta. El Chrome dedicado solo puede cargar dominios de Instagram.
+  impide que WebFetch abra `file:`, `localhost` o la red local; limita las lecturas de cada corrida
+  y de cada chat a su propia marca (más las instrucciones). Si el hook falla, la herramienta no se
+  ejecuta. El Chrome dedicado solo puede cargar dominios de Instagram.
+- Las corridas solo cargan dos MCP (Chrome dedicado y Apify con el token de `data/secrets.json`):
+  nunca tus conectores de claude.ai (Gmail, Drive…). Sin token en `data/secrets.json`, la corrida
+  sigue sin Apify. Desde un agente, `scripts/cs` no puede confirmar ni forzar registros: eso
+  queda para una persona en la UI.
 - **No dejes sesiones interactivas de `claude` abiertas en esta carpeta durante días**: su MCP
   de Chrome retiene el perfil dedicado y las corridas de la web reportan «SESIÓN NO DISPONIBLE».
 - La copia de desarrollo escucha solo en `127.0.0.1:3040` y, con `CS_AUTH=off`, solo responde si

@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { obtenerUsoActual } from './apify/actual.ts'
 import { leerConfig } from './config.ts'
-import { existeCorrida, fechaLocal, guardarCorrida, leerCorrida, nuevoIdCorrida, ultimaCorridaIgRegistrada, ultimaCorridaRegistrada } from './corridas.ts'
+import { esIdCorridaValido, existeCorrida, fechaLocal, guardarCorrida, leerCorrida, nuevoIdCorrida, ultimaCorridaIgRegistrada, ultimaCorridaRegistrada } from './corridas.ts'
 import { describirErrorZod } from './jsonl.ts'
 import { conId, registrarEntradas } from './log.ts'
 import { competidoresActivos, crearMarca, existeMarca, leerMarca, listarMarcas } from './marcas.ts'
@@ -196,8 +196,8 @@ export interface OpcionesEjecucion {
 }
 
 async function cmdRegistrar(a: ArgsCli, op: OpcionesEjecucion): Promise<unknown> {
-  const marca = requerir(a.opciones, 'marca')
-  const corridaId = requerir(a.opciones, 'corrida-id')
+  const marca = slugValido(requerir(a.opciones, 'marca'))
+  const corridaId = idValido(requerir(a.opciones, 'corrida-id'))
   const pendiente = a.opciones.pendiente === true
   const forzar = a.opciones.forzar === true
   const modo = a.opciones.modo === 'ui' ? 'ui' : 'terminal'
@@ -291,8 +291,8 @@ function registrarConLock(
 }
 
 function cmdConfirmar(a: ArgsCli): Promise<unknown> {
-  const marca = requerir(a.opciones, 'marca')
-  const corridaId = requerir(a.opciones, 'corrida-id')
+  const marca = slugValido(requerir(a.opciones, 'marca'))
+  const corridaId = idValido(requerir(a.opciones, 'corrida-id'))
   const accion = requerir(a.opciones, 'accion')
   if (accion !== 'registrar' && accion !== 'descartar') throw new Error('--accion debe ser registrar|descartar')
   return conLockCorrida(marca, corridaId, () => {
@@ -353,14 +353,43 @@ export class SalidaTexto {
   constructor(readonly texto: string) {}
 }
 
+/** Slug de marca: `[a-z0-9]+(-[a-z0-9]+)*` (sin rutas: `../` no llega al sistema de archivos). */
+export function slugValido(s: string): string {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s) || s.length > 80) throw new Error(`Slug de marca inválido: ${JSON.stringify(s)}`)
+  return s
+}
+
+function idValido(id: string): string {
+  if (!esIdCorridaValido(id)) throw new Error(`Id de corrida inválido: ${JSON.stringify(id)}`)
+  return id
+}
+
+/** Comandos que puede usar un agente headless (CS_ROL_AGENTE definido): solo los del grafo de la corrida. */
+const COMANDOS_AGENTE = new Set(['registrar', 'ultima-corrida', 'nuevo-id', 'apify-uso'])
+
+/**
+ * Lanzado por un agente (`claude -p` de la app): nada de --forzar ni confirmar (eso lo decide una
+ * persona en la UI), y solo sobre la marca de su corrida (CS_MARCA_AGENTE).
+ */
+export function guardaAgente(cmd: string | undefined, a: ArgsCli, env: NodeJS.ProcessEnv = process.env): void {
+  if (!env.CS_ROL_AGENTE) return
+  if (env.CS_ROL_AGENTE !== 'corrida' || !cmd || !COMANDOS_AGENTE.has(cmd)) {
+    throw new Error(`Un agente no puede ejecutar \`cs ${cmd ?? ''}\``)
+  }
+  if (a.opciones.forzar === true) throw new Error('Un agente no puede usar --forzar: usa --pendiente y la persona decide en la UI')
+  const marca = cmd === 'registrar' ? a.opciones.marca : a.posicionales[1]
+  if (marca !== undefined && marca !== env.CS_MARCA_AGENTE) throw new Error(`Un agente solo puede operar sobre la marca de su corrida`)
+}
+
 export async function ejecutar(argv: readonly string[], op: OpcionesEjecucion = {}): Promise<unknown> {
   const a = parsearArgs(argv)
   const cmd = a.posicionales[0]
   if (cmd === undefined || cmd === 'help' || a.opciones.help === true) return new SalidaTexto(AYUDA)
+  guardaAgente(cmd, a)
   const slug = () => {
     const s = a.posicionales[1]
     if (!s) throw new Error(`Falta el slug de la marca.\n${AYUDA}`)
-    return s
+    return slugValido(s)
   }
   switch (cmd) {
     case 'registrar':
