@@ -169,6 +169,9 @@ Una invitación o revocación hecha en una Mac llega a la otra en la siguiente s
   nunca tus conectores de claude.ai (Gmail, Drive…). Sin token en `data/secrets.json`, la corrida
   sigue sin Apify. Desde un agente, `scripts/cs` no puede confirmar ni forzar registros: eso
   queda para una persona en la UI.
+- Los agentes de la web solo tienen las herramientas que necesitan (lista blanca) y no cargan tus
+  plugins, skills ni ajustes de `~/.claude`: no pueden ver ni escribir a otras sesiones de `claude`
+  abiertas en la Mac ni subir archivos a claude.ai.
 - **No dejes sesiones interactivas de `claude` abiertas en esta carpeta durante días**: su MCP
   de Chrome retiene el perfil dedicado y las corridas de la web reportan «SESIÓN NO DISPONIBLE».
 - La copia de desarrollo escucha solo en `127.0.0.1:3040` y, con `CS_AUTH=off`, solo responde si
