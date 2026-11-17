@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Poppins } from "next/font/google";
-import { AppShell } from "@/components/app/shell/AppShell";
 import { ThemeScript } from "@/components/app/shell/ThemeScript";
 import "./globals.css";
 
@@ -38,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeScript />
       </head>
       <body className="min-h-full">
-        <AppShell>{children}</AppShell>
+        {children}
       </body>
     </html>
   );

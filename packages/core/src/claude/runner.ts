@@ -4,6 +4,7 @@ import { spawn, type ChildProcess } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { leerSecrets } from '../config.ts'
 import { cargarEnv } from '../env.ts'
 import { repoRoot } from '../rutas.ts'
 import { parsearLineasStream, type EventoStream } from './stream-json.ts'
@@ -17,6 +18,13 @@ export interface OpcionesClaude {
   /** `--resume <id>` para continuar una sesión. */
   resume?: string
   agent?: string
+  /**
+   * Rol para el hook de guardia (`scripts/hooks/guardia-agentes.mjs`, vía `CS_ROL_AGENTE`):
+   * `asistente` solo puede leer marcas/ y soul.md. Por defecto `corrida`.
+   */
+  rol?: 'corrida' | 'asistente'
+  /** Slug de la marca: el hook y `scripts/cs` limitan al agente a esta marca (`CS_MARCA_AGENTE`). */
+  marca?: string
   /**
    * `--chrome` (Claude in Chrome). Desactivado por defecto: Instagram se rastrea
    * con el MCP chrome-devtools de `.mcp.json` (perfil dedicado), no con la extensión.
@@ -52,6 +60,9 @@ export interface ProcesoClaude {
 
 export const MOCK_STREAM = path.join(path.dirname(fileURLToPath(import.meta.url)), 'mock-stream.jsonl')
 
+export const TOOLS_CORRIDA = 'Workflow,Agent,Read,Grep,Glob,WebSearch,WebFetch,Bash,ToolSearch'
+export const TOOLS_ASISTENTE = 'Read,Grep'
+
 export function argsClaude(o: OpcionesClaude): string[] {
   const args = [
     '-p',
@@ -67,6 +78,18 @@ export function argsClaude(o: OpcionesClaude): string[] {
     'none',
     '--settings',
     '.claude/settings.headless.json',
+    // Solo los MCP de la corrida (nunca los del usuario ni los conectores de claude.ai: Gmail, Drive…).
+    '--strict-mcp-config',
+    '--mcp-config',
+    o.rol === 'asistente' ? '{"mcpServers":{}}' : MCP_HEADLESS,
+    // Lista blanca de herramientas internas: fuera ListAgents/SendMessage (hablarían con otras
+    // sesiones de la Mac), DesignSync/ShareOnboardingGuide (suben archivos), Cron, Skill…
+    '--tools',
+    o.rol === 'asistente' ? TOOLS_ASISTENTE : TOOLS_CORRIDA,
+    // Sin plugins, hooks ni skills del usuario (~/.claude): solo la config del proyecto.
+    '--setting-sources',
+    'project,local',
+    '--disable-slash-commands',
   ]
   if (o.chrome === true) args.push('--chrome')
   if (o.allowedTools?.length) args.push('--allowedTools', ...o.allowedTools)
@@ -168,8 +191,32 @@ export function matarGrupo(pid: number | undefined, senal: NodeJS.Signals = 'SIG
 export const ESPERA_SEGUNDO_PLANO_MS = 60 * 60 * 1000
 
 /** Entorno del proceso hijo: el de la app más el techo de espera (si no viene fijado). */
-export function entornoClaude(base: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
-  return { ...base, CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: base.CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS ?? String(ESPERA_SEGUNDO_PLANO_MS) }
+/** MCP de las corridas: chrome-devtools (perfil dedicado) y Apify con el token de la app. */
+export const MCP_HEADLESS = '.claude/mcp-headless.json'
+
+/** Variables del panel que el agente nunca necesita (login, secreto Mac ↔ Worker). */
+const VARIABLES_PRIVADAS = /^(AUTH_|CS_SECRETO_INTERNO$|CS_ADMIN_EMAIL$|APIFY_TOKEN$)/
+
+export interface ContextoAgente {
+  rol?: OpcionesClaude['rol']
+  marca?: string
+  /** Solo corridas: lo usa la cabecera de Apify en `.claude/mcp-headless.json`. */
+  apifyToken?: string
+}
+
+/** Entorno del proceso hijo: el de la app sin secretos, más el techo de espera y el contexto del hook. */
+export function entornoClaude(base: NodeJS.ProcessEnv = process.env, c: ContextoAgente = {}): NodeJS.ProcessEnv {
+  const rol = c.rol ?? 'corrida'
+  const env: NodeJS.ProcessEnv = { ...base }
+  for (const k of Object.keys(env)) if (VARIABLES_PRIVADAS.test(k)) delete env[k]
+  return {
+    ...env,
+    CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: base.CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS ?? String(ESPERA_SEGUNDO_PLANO_MS),
+    // Siempre los fija la app (nunca se heredan): el hook de guardia y `scripts/cs` deciden con ellos.
+    CS_ROL_AGENTE: rol,
+    CS_MARCA_AGENTE: c.marca ?? '',
+    ...(rol === 'corrida' && c.apifyToken ? { APIFY_TOKEN: c.apifyToken } : {}),
+  }
 }
 
 export function lanzarClaude(o: OpcionesClaude): ProcesoClaude {
@@ -185,7 +232,7 @@ function lanzarReal(o: OpcionesClaude, args: string[], bin: string): ProcesoClau
   const volcado = abrirVolcado(o.volcarA)
   // `detached`: el hijo lidera su propio grupo de procesos para poder cancelar
   // el árbol entero (claude + subagentes + navegador) con `process.kill(-pid)`.
-  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: entornoClaude(), detached: true })
+  const proceso = spawn(bin, args, { cwd: repoRoot(), stdio: ['ignore', 'pipe', 'pipe'], env: entornoClaude(process.env, { rol: o.rol, marca: o.marca, apifyToken: o.rol === 'asistente' ? undefined : leerSecrets().apifyToken }), detached: true })
   let resto = ''
   const stderr: string[] = []
 

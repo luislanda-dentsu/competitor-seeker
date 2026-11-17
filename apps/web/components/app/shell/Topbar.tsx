@@ -18,6 +18,7 @@ import { MobileNav } from "@/components/app/shell/MobileNav";
 import { NotificationCenter } from "@/components/app/shell/NotificationCenter";
 import { usePageTitle } from "@/components/app/shell/PageTitle";
 import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
+import { UserMenu } from "@/components/app/shell/UserMenu";
 
 const PERIODOS = [
   { value: "3", label: "Últimas 3 corridas" },
@@ -93,6 +94,8 @@ export function Topbar(): React.ReactElement {
           </TooltipTrigger>
           <TooltipPopup>Paleta de comandos · próximamente</TooltipPopup>
         </Tooltip>
+
+        <UserMenu />
       </div>
     </header>
   );

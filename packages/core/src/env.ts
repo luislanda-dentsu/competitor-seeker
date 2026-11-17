@@ -24,6 +24,19 @@ export const Env = z.object({
   CS_SYNC_AUTO: booleano.default(true),
   PORT: z.coerce.number().int().positive().default(3030),
   CS_RUNNER: z.enum(['real', 'mock']).default('real'),
+  // Acceso (v2.5). Sin estas tres variables la app no sirve nada, salvo CS_AUTH=off (solo desarrollo local).
+  AUTH_SECRET: z.string().min(32).optional(),
+  AUTH_GOOGLE_ID: z.string().min(1).optional(),
+  AUTH_GOOGLE_SECRET: z.string().min(1).optional(),
+  /** URL pública canónica (la del Worker); el callback de Google se construye sobre ella. */
+  AUTH_URL: z.string().url().optional(),
+  /** Primer admin: entra siempre como admin aunque `usuarios.json` esté vacío. */
+  CS_ADMIN_EMAIL: z.string().email().optional(),
+  CS_AUTH: z.enum(['on', 'off']).default('on'),
+  /** Qué Mac es esta para la puerta de Cloudflare (binding del Worker). */
+  CS_MAC: z.enum(['MAC_LUIS', 'MAC_COMPANERA']).optional(),
+  /** Secreto compartido Mac ↔ Worker para consultar si la otra Mac tiene una corrida en curso. */
+  CS_SECRETO_INTERNO: z.string().min(32).optional(),
 })
 
 export type Env = z.infer<typeof Env>

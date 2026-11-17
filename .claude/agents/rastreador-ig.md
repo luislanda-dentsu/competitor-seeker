@@ -1,7 +1,7 @@
 ---
 name: rastreador-ig
 description: Navega Instagram con el MCP chrome-devtools (perfil de Chrome dedicado, ya logueado con la cuenta IG de la agencia) y extrae el contenido reciente de TODOS los perfiles competidores de la corrida, secuencialmente. Devuelve hallazgos crudos, sin juicio estratégico.
-tools: Read, mcp__chrome-devtools
+tools: mcp__chrome-devtools
 model: sonnet
 ---
 

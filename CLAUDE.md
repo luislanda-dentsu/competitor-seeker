@@ -96,7 +96,8 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 
 ## Build & Run
 - `npm install` · `cp .env.example .env.local` (rellena `CLAUDE_BIN` absoluto si hace falta) · una vez: `scripts/chrome-ig.sh login` (perfil dedicado con IG logueado) y cerrar esa ventana
-- `npm run dev` → http://localhost:3030 · `./scripts/cs --help`
+- Desarrollo: `npm run dev` → http://localhost:3040 (con `CS_AUTH=off` en `.env.local`: sin login, solo local) · `./scripts/cs --help`
+- **Web (v2.5)**: la plataforma se sirve en https://competitorseeker.luislandadentsu.workers.dev desde una **copia de servicio** aparte (`~/Claude/Projects/competitor-seeker-servidor`, siempre en `main`) con `scripts/servidor.sh instalar|actualizar|estado` (next start :3030 + cloudflared como LaunchAgents). La puerta es el Worker de `infra/puerta` (Workers VPC → túnel de cada Mac; `scripts/puerta.sh`). Login Google + `usuarios.json`. Paso a paso: `docs/setup-mac.md`.
 - Segunda Mac: `scripts/setup-maquina.sh`
 
 ## Test
@@ -111,6 +112,7 @@ Si reporta `SESIÓN NO DISPONIBLE`: dile al usuario que cierre el Chrome dedicad
 ## Critical Rules
 - `log.jsonl` es **append-only** y lo escribe solo `scripts/cs registrar`. Nunca borres ni reescribas histórico; una baja de marca la archiva (`marcas/_archivo/`), no la borra.
 - Nunca commitees secretos (`data/`, `.env*` están gitignored). Nunca push/publicación/borrado sin aprobación del owner.
+- La app está expuesta a internet: todo route handler nuevo empieza con `exigirUsuario()` (admin si toca secretos/config), y cualquier ruta nueva con secretos se añade a los `deny` de `.claude/settings.headless.json`. Los agentes headless pasan además por el hook `scripts/hooks/guardia-agentes.mjs` (listas blancas: Bash solo `scripts/cs <args>` sin metacaracteres; Apify solo el scraper de Instagram y `get-actor-run`/`get-dataset-items`; herramientas de chrome-devtools sin parámetros de archivo y solo Instagram; WebFetch sin `file:`/localhost/LAN, también por DNS; Read/Grep/Glob de la corrida solo su marca (`CS_MARCA_AGENTE`), `soul.md`/`agent.md`/`CLAUDE.md`/`config.json`, `.claude/agents|workflows` y el temporal de su sesión; asistente solo su marca y `soul.md`; falla cerrado). El runner lanza con `--strict-mcp-config --mcp-config .claude/mcp-headless.json` (solo chrome-devtools y Apify con el token de `data/secrets.json`; nunca los conectores del usuario), con `--tools` en lista blanca (corrida: Workflow/Agent/Read/Grep/Glob/WebSearch/WebFetch/Bash/ToolSearch; asistente: Read/Grep), `--setting-sources project,local` y `--disable-slash-commands` (sin ListAgents/SendMessage, plugins ni skills del usuario), sin las variables `AUTH_*`/`CS_SECRETO_INTERNO` en el entorno, y `scripts/cs` con `CS_ROL_AGENTE` solo admite `registrar` (sin `--forzar`), `ultima-corrida`, `nuevo-id` y `apify-uso` sobre su marca y el navegador solo alcanza dominios de Instagram (`--allowedUrlPattern` en `scripts/chrome-ig.sh`, MCP fijado a 1.13.0): si un agente necesita más, se amplía ahí con test.
 - Valida toda entrada externa en la frontera; los subagentes no escriben archivos.
 - Datos inmutables; archivos pequeños (200–400 líneas, 800 máx). Español, tono analítico y frío.
 - Trabaja solo dentro de esta carpeta (y la bóveda en `~/SecondBrain`).

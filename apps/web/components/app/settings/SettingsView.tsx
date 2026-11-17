@@ -1,6 +1,6 @@
 "use client";
 
-import { AppWindow, Building2, Gauge, KeyRound, Users } from "lucide-react";
+import { AppWindow, Building2, Gauge, KeyRound, ShieldCheck, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
 import { ApifyPanel } from "@/components/app/settings/ApifyPanel";
@@ -8,6 +8,7 @@ import { BrandsPanel } from "@/components/app/settings/BrandsPanel";
 import { BudgetPanel } from "@/components/app/settings/BudgetPanel";
 import { ChromePanel } from "@/components/app/settings/ChromePanel";
 import { CompetitorsPanel } from "@/components/app/settings/CompetitorsPanel";
+import { UsersPanel } from "@/components/app/settings/UsersPanel";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import type { DatosAjustes } from "@/lib/settings/tipos";
 
@@ -17,6 +18,7 @@ export const PESTANAS = [
   { value: "apify", label: "Apify", icon: KeyRound },
   { value: "presupuestos", label: "Presupuestos", icon: Gauge },
   { value: "chrome", label: "Chrome / IG", icon: AppWindow },
+  { value: "usuarios", label: "Usuarios", icon: ShieldCheck },
 ] as const;
 
 export type Pestana = (typeof PESTANAS)[number]["value"];
@@ -80,6 +82,9 @@ export function SettingsView({ datos }: { datos: DatosAjustes }): React.ReactEle
       </TabsPanel>
       <TabsPanel value="chrome">
         <ChromePanel estado={datos.chrome} />
+      </TabsPanel>
+      <TabsPanel value="usuarios">
+        <UsersPanel />
       </TabsPanel>
     </Tabs>
   );

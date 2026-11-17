@@ -6,6 +6,7 @@ import { PeriodoSelector } from "@/components/app/periodo/PeriodoSelector";
 import { periodoDeRequest } from "@/lib/periodo-servidor";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { AvisoOtraMac } from "@/components/app/runs/AvisoOtraMac";
 import { CorridasView } from "@/components/app/runs/CorridasView";
 import { RunHistoryTable } from "@/components/app/runs/RunHistoryTable";
 import { apifyParaUi } from "@/lib/runs/apify";
@@ -51,6 +52,9 @@ async function CorridasContenido({ searchParams }: { searchParams: PageProps<"/c
 
   return (
     <div className="flex flex-col gap-4">
+      <Suspense fallback={null}>
+        <AvisoOtraMac />
+      </Suspense>
       <CorridasView apify={apifyParaUi()} enCurso={enCurso} marcaInicial={activa.slug} marcas={marcasUi} />
       <RunHistoryTable
         acciones={<PeriodoSelector periodo={periodo} />}

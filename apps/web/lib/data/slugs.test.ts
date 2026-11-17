@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { proxy } from "../../proxy";
+import { proxyCompetidor as proxy } from "../proxy-competidores";
 import { cargarCompetidor } from "./competidor";
 import { cargarDatosMarca } from "./marca";
 import { olvidarSlugsCacheados, resolverMarcaActiva, slugsDeCompetidores } from "./slugs";

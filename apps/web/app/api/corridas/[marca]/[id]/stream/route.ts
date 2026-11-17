@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { exigirUsuario } from "@/lib/sesion";
 import { connection } from "next/server";
 import { NextResponse } from "next/server";
 import { buscarCorrida } from "@/lib/runs/consulta";
@@ -42,6 +43,8 @@ function streamCerrado(ruta: string, desde: number, datos: unknown): ReadableStr
  * cancelada huérfana) recibe `fin` de inmediato tras lo grabado.
  */
 export async function GET(request: Request, { params }: Ctx): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   const { marca, id } = await params;
   if (!esSlugMarcaValido(marca)) return NextResponse.json({ error: "Marca inválida" }, { status: 400 });

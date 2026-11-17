@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { exigirUsuario } from "@/lib/sesion";
 import { connection } from "next/server";
 import { existeMarca, guardarMarca, handleInstagram, leerMarca, slugify, type Competidor } from "@competitor-seeker/core";
 import { sincronizarAjustes } from "@/lib/sync/ajustes";
@@ -14,6 +15,8 @@ function aUi(c: Competidor): CompetidorAjustes {
 
 /** GET /api/marcas/[slug]/competidores → `{ competidores }` (todos, activos o no). */
 export async function GET(_request: Request, { params }: Ctx): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   const { slug } = await params;
   if (!SLUG_RE.test(slug)) return errorJson("Slug inválido", 400);
@@ -31,6 +34,8 @@ export async function GET(_request: Request, { params }: Ctx): Promise<Response>
  * El log histórico no se toca: quitar un competidor solo lo saca de la lista.
  */
 export async function PUT(request: Request, { params }: Ctx): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   const { slug } = await params;
   if (!SLUG_RE.test(slug)) return errorJson("Slug inválido", 400);
   if (!existeMarca(slug)) return errorJson(`La marca "${slug}" no existe`, 404);

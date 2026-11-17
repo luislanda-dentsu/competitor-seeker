@@ -12,7 +12,16 @@ mkdir -p "$PERFIL"
 case "${1:-mcp}" in
   mcp)
     # Sin --isolated: es excluyente con --user-data-dir en chrome-devtools-mcp.
-    exec npx -y chrome-devtools-mcp@latest --user-data-dir="$PERFIL" --channel=stable
+    # Versión fijada (no @latest). Red del navegador limitada a Instagram y sus CDN
+    # (--allowedUrlPattern, Chrome 149+): un texto inyectado no puede llevarlo a localhost,
+    # a la red local ni a otra web. Sin navegación a file:. Ver scripts/hooks/guardia-agentes.mjs.
+    exec npx -y chrome-devtools-mcp@1.13.0 --user-data-dir="$PERFIL" --channel=stable \
+      --fileNavigations=false \
+      --allowedUrlPattern='https://instagram.com/*' \
+      --allowedUrlPattern='https://*.instagram.com/*' \
+      --allowedUrlPattern='https://*.cdninstagram.com/*' \
+      --allowedUrlPattern='https://*.fbcdn.net/*' \
+      --allowedUrlPattern='https://*.facebook.com/*'
     ;;
   login)
     # Mismos flags de cifrado que Puppeteer (chrome-devtools-mcp): sin ellos las cookies se cifran

@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { exigirUsuario } from "@/lib/sesion";
 import { z } from "zod";
 import { commitYPush, estadoSync, pull } from "@competitor-seeker/core";
 import { errorJson, leerCuerpo, okJson } from "@/lib/settings/api";
@@ -7,12 +8,16 @@ const CuerpoSync = z.object({ accion: z.enum(["pull", "push"]) });
 
 /** GET /api/sync → `EstadoSync` (remoto, rama, adelante/atrás, sucio, último pull/push, conflicto, error). */
 export async function GET(): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   await connection();
   return okJson(await estadoSync());
 }
 
 /** POST /api/sync `{ accion: 'pull' | 'push' }` → resultado + estado actualizado. Siempre manual. */
 export async function POST(request: Request): Promise<Response> {
+  const usuario = await exigirUsuario();
+  if (usuario instanceof Response) return usuario;
   const { datos, respuesta } = await leerCuerpo(request, CuerpoSync);
   if (respuesta) return respuesta;
   try {

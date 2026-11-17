@@ -81,6 +81,20 @@ describe('argsClaude', () => {
     expect(args[args.indexOf('--agent') + 1]).toBe('asistente')
   })
 
+  it('lista blanca de herramientas internas y sin config del usuario', () => {
+    const valor = (args: string[], flag: string) => args[args.indexOf(flag) + 1] ?? ''
+    const corrida = argsClaude({ prompt: 'p', rol: 'corrida' })
+    expect(valor(corrida, '--tools')).toBe('Workflow,Agent,Read,Grep,Glob,WebSearch,WebFetch,Bash,ToolSearch')
+    expect(valor(corrida, '--setting-sources')).toBe('project,local')
+    expect(corrida).toContain('--disable-slash-commands')
+    for (const t of ['ListAgents', 'SendMessage', 'DesignSync', 'ShareOnboardingGuide', 'Skill', 'Write', 'Edit']) {
+      expect(valor(corrida, '--tools').split(','), t).not.toContain(t)
+    }
+    const asistente = argsClaude({ prompt: 'p', rol: 'asistente', agent: 'asistente' })
+    expect(valor(asistente, '--tools')).toBe('Read,Grep')
+    expect(valor(argsClaude({ prompt: 'p' }), '--tools')).toBe(valor(corrida, '--tools'))
+  })
+
   it('sessionId y resume son excluyentes; json-schema se serializa', () => {
     expect(() => argsClaude({ prompt: 'p', sessionId: 'a', resume: 'b' })).toThrow(/excluyentes/)
     const args = argsClaude({ prompt: 'p', jsonSchema: { type: 'object' }, name: 'n' })
@@ -91,8 +105,28 @@ describe('argsClaude', () => {
 
 describe('entornoClaude', () => {
   it('fija un techo de espera de 60 min para las tareas en segundo plano de `claude -p`', () => {
-    expect(entornoClaude({ PATH: '/bin' })).toEqual({ PATH: '/bin', CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: String(ESPERA_SEGUNDO_PLANO_MS) })
+    expect(entornoClaude({ PATH: '/bin' })).toEqual({ PATH: '/bin', CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: String(ESPERA_SEGUNDO_PLANO_MS), CS_ROL_AGENTE: 'corrida', CS_MARCA_AGENTE: '' })
     expect(ESPERA_SEGUNDO_PLANO_MS).toBe(3_600_000)
+  })
+  it('fija el rol del hook de guardia y no hereda uno del entorno', () => {
+    expect(entornoClaude({}, { rol: 'asistente' }).CS_ROL_AGENTE).toBe('asistente')
+    expect(entornoClaude({ CS_ROL_AGENTE: 'asistente' }).CS_ROL_AGENTE).toBe('corrida')
+    expect(entornoClaude({ CS_MARCA_AGENTE: 'otra' }, { marca: 'parval' }).CS_MARCA_AGENTE).toBe('parval')
+  })
+  it('no pasa al agente los secretos del panel; el token de Apify solo a la corrida', () => {
+    const base = { PATH: '/bin', AUTH_SECRET: 's', AUTH_GOOGLE_SECRET: 'g', AUTH_URL: 'u', CS_SECRETO_INTERNO: 'i', CS_ADMIN_EMAIL: 'a', APIFY_TOKEN: 'heredado', CS_REPO_ROOT: '/r' }
+    const corrida = entornoClaude(base, { marca: 'parval', apifyToken: 'tok' })
+    for (const k of ['AUTH_SECRET', 'AUTH_GOOGLE_SECRET', 'AUTH_URL', 'CS_SECRETO_INTERNO', 'CS_ADMIN_EMAIL']) expect(corrida[k], k).toBeUndefined()
+    expect(corrida.APIFY_TOKEN).toBe('tok')
+    expect(corrida.CS_REPO_ROOT).toBe('/r')
+    expect(entornoClaude(base, { rol: 'asistente', apifyToken: 'tok' }).APIFY_TOKEN).toBeUndefined()
+  })
+  it('solo carga los MCP de la corrida (ninguno en el asistente)', () => {
+    const corrida = argsClaude({ prompt: 'x' })
+    expect(corrida).toContain('--strict-mcp-config')
+    expect(corrida[corrida.indexOf('--mcp-config') + 1]).toBe('.claude/mcp-headless.json')
+    const asis = argsClaude({ prompt: 'x', rol: 'asistente' })
+    expect(asis[asis.indexOf('--mcp-config') + 1]).toBe('{"mcpServers":{}}')
   })
   it('respeta un valor ya fijado en el entorno', () => {
     expect(entornoClaude({ CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS: '0' }).CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS).toBe('0')

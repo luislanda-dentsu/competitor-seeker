@@ -32,7 +32,11 @@ export const allowedToolsCorrida: readonly string[] = [
   'WebSearch',
   'WebFetch',
   'mcp__chrome-devtools__*',
-  'mcp__apify__*',
+  // Apify: solo lo que usa el rastreador-apify (nada de call-actor ni otros actores).
+  'mcp__apify__apify--instagram-scraper',
+  'mcp__apify__get-actor-run',
+  'mcp__apify__get-dataset-items',
+  // `scripts/cs` además rechaza otros comandos, --forzar y otras marcas (CS_ROL_AGENTE).
   'Bash(scripts/cs *)',
   'Bash(./scripts/cs *)',
 ]
@@ -51,6 +55,10 @@ export const disallowedToolsCorrida: readonly string[] = [
   'RemoteTrigger',
   'PushNotification',
   'AskUserQuestion',
+  // Leen cualquier recurso de un MCP (p. ej. la API de Apify con el token): fuera del hook.
+  'ListMcpResourcesTool',
+  'ReadMcpResourceTool',
+  'ReadMcpResourceDirTool',
 ]
 
 /** `--json-schema` del JSON final que devuelve el orquestador en una corrida headless. */
@@ -122,6 +130,9 @@ export const disallowedToolsAsistente: readonly string[] = [
   'WebFetch',
   'mcp__chrome-devtools__*',
   'mcp__apify__*',
+  'ListMcpResourcesTool',
+  'ReadMcpResourceTool',
+  'ReadMcpResourceDirTool',
   // El log viene de scraping: un texto inyectado no debe poder hacer leer secretos ni estado local.
   'Read(./.env*)',
   'Read(./data/**)',

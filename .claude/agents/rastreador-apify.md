@@ -1,7 +1,7 @@
 ---
 name: rastreador-apify
 description: Consulta Instagram vía Apify (actor apify/instagram-scraper) para TODOS los perfiles competidores de la corrida (una llamada de posts + una de details) y devuelve hallazgos crudos y datos estructurados por post y por perfil. Sin juicio estratégico.
-tools: Read, mcp__apify__apify--instagram-scraper, mcp__apify__get-actor-run, mcp__apify__get-dataset-items
+tools: mcp__apify__apify--instagram-scraper, mcp__apify__get-actor-run, mcp__apify__get-dataset-items
 model: sonnet
 ---
 

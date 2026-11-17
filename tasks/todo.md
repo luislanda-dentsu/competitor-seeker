@@ -112,3 +112,32 @@ Criterios de aceptación:
 - [x] Papel siempre en claro (tokens propios de `.informe`), shell oculto al imprimir, filas sin partir, cabeceras repetidas.
 - [x] Métricas: una histórica rehecha sobre la misma ventana reemplaza la lectura y el punto de serie de la anterior para ese competidor (Excel 12:10 vs 12:40).
 - [x] Verificado: PDF real de Parval 01/11–31/12/2025 (18 páginas) con Chrome headless; 235 tests, typecheck y lint en verde.
+
+## v2.5 — Plataforma en la web, dos Macs (aprobado 2026-11-13)
+Decisión del owner: todo (corridas + chat + PDF) por web en `https://competitorseeker.luislandadentsu.workers.dev`, login de Google y usuarios como Orbit, coste 0. Las corridas corren en las Macs: la de Luis principal, la de la compañera de respaldo.
+
+**0. Spike (bloquea B)** — Worker trivial → Workers VPC → Cloudflare Tunnel (remoto, sin dominio) → `localhost:3030`; probar SSE de 40 min, cabeceras Host/forwarded y que la URL `workers.dev` funcione. Si falla, avisar antes de seguir.
+
+**A. Acceso — PR 1 `feat/acceso-google`**
+- [ ] Auth.js v5 + Google (`openid email profile`), sesión JWT. `AUTH_URL` fijo a la URL pública; `AUTH_SECRET` y cliente Google iguales en las dos Macs (la sesión sobrevive al cambio de Mac).
+- [ ] `usuarios.json` en la raíz (sincronizado como `config.json`; añadir a RUTAS_DATOS y rutasSync): `{email, rol: admin|miembro, invitadoPor, fecha}`. Primer admin: `CS_ADMIN_EMAIL`.
+- [ ] Falla cerrado: sin auth configurada no se sirve nada salvo con `CS_AUTH=off` explícito (solo desarrollo); el script de servicio se niega a arrancar sin auth.
+- [ ] Guarda pura en `proxy.ts` (antes del rewrite 404 de competidores) + comprobación de sesión en cada route handler que muta; admin-only: usuarios, token Apify, presupuestos, login de Chrome.
+- [ ] Revocación: inmediata en la Mac donde se hace; en la otra, al siguiente sync (documentado).
+- [ ] Ajustes → Usuarios; `/entrar`, `/entrar/sin-acceso`; avatar + «Salir».
+
+**B. Servicio y puerta — PR 2 `feat/servicio-web`**
+- [ ] Clon de servicio separado, fijo en `main` (`~/Claude/Projects/competitor-seeker-servidor`), con su `data/`: `next build && next start -p 3030` bajo LaunchAgent + `caffeinate`. Desarrollo pasa a `:3040`. Script de actualización: pull → build → restart.
+- [ ] Worker `competitorseeker` (`infra/puerta/`): dos VPC services (mac-luis, mac-companera), cookie de afinidad, failover si la Mac no responde, página «panel no disponible», preview URLs desactivadas.
+- [ ] `cloudflared` como servicio en cada Mac (túnel propio por Mac).
+- [ ] Aviso en Corridas de una corrida en curso en la otra Mac (solo aviso).
+
+**C. Documentación — PR 3**
+- [ ] `docs/setup-mac.md`: paso a paso completo para la Mac de la compañera, escrito a partir de lo ejecutado de verdad en esta Mac (incl. una corrida lanzada desde la URL pública), con entrega segura de secretos.
+- [ ] `scripts/setup-maquina.sh` ampliado.
+
+**D. Antes de abrir el link**: revisión de seguridad independiente (incluye qué puede leer en disco el agente del chat).
+
+**Pasos de la owner**: `wrangler login` + túnel en el dashboard de Cloudflare (cuenta de Orbit); cliente OAuth en Google Cloud (proyecto de Orbit) con las URI de redirección; que la Mac no duerma.
+
+**Riesgos**: si las dos Macs están apagadas o dormidas, la web no responde; Workers VPC está en beta (gratis hoy; plan B Tailscale Funnel); todo gasta la suscripción de Claude y el presupuesto de Apify de la Mac que ejecuta.
