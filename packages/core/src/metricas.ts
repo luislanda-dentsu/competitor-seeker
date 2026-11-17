@@ -189,6 +189,29 @@ function fechaEfectiva(c: Corrida): string {
   return c.tipo === 'historica' && c.ventana ? c.ventana.hasta : c.fecha
 }
 
+const tieneLectura = (c: Corrida, competidor: string): boolean =>
+  (c.lecturas ?? []).some((l) => l.competidor === competidor)
+
+/**
+ * true si `c` es histórica y otra histórica POSTERIOR con lectura de `competidor` cubre toda
+ * su ventana (p. ej. parval 2026-11-13: la de las 12:10 dio a Excel por «sin publicaciones»
+ * por una inspección incompleta; la de las 12:40 rehízo solo Excel con el mismo periodo).
+ */
+function historicaReemplazada(c: Corrida, corridas: readonly Corrida[], competidor: string): boolean {
+  if (c.tipo !== 'historica' || !c.ventana) return false
+  const v = c.ventana
+  return corridas.some(
+    (o) =>
+      o !== c &&
+      o.tipo === 'historica' &&
+      o.ventana !== undefined &&
+      o.inicio > c.inicio &&
+      o.ventana.desde <= v.desde &&
+      o.ventana.hasta >= v.hasta &&
+      tieneLectura(o, competidor),
+  )
+}
+
 export interface OpcionesMetricas {
   periodo?: Periodo
   /** Fecha ISO de "hoy" para periodos abiertos (tests). */
@@ -274,8 +297,11 @@ export function metricasCompetidor(
   const delta = actual !== null && referencia !== null ? actual - referencia : null
 
   // 4. Serie y lecturas por corrida del periodo (una histórica cuenta en la fecha de su ventana).
+  //    Una histórica rehecha después sobre la misma ventana (o una que la contiene) reemplaza
+  //    a la anterior para este competidor: si no, el periodo mostraría dos lecturas que se contradicen.
   const corridasPeriodo = corridas
     .filter((c) => enPeriodo(fechaEfectiva(c), periodo))
+    .filter((c) => !historicaReemplazada(c, corridas, competidor))
     .sort((a, b) => fechaEfectiva(a).localeCompare(fechaEfectiva(b)) || a.inicio.localeCompare(b.inicio))
   const serie: PuntoSerieCompetidor[] = corridasPeriodo
     .filter((c) => c.competidores.includes(competidor) || c.publicaciones?.some((p) => p.competidor === competidor))
