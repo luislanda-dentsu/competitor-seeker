@@ -34,7 +34,7 @@ function TopbarTitle(): React.ReactElement {
 
 export function Topbar(): React.ReactElement {
   return (
-    <header className="mx-auto flex h-16 w-full max-w-[1680px] shrink-0 items-center gap-3 px-4 sm:px-6 lg:h-20 lg:px-8">
+    <header data-no-print className="mx-auto flex h-16 w-full max-w-[1680px] shrink-0 items-center gap-3 px-4 sm:px-6 lg:h-20 lg:px-8">
       <MobileNav />
       {/* usePathname es dato de runtime en rutas dinámicas: va en Suspense */}
       <Suspense

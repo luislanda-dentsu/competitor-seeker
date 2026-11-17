@@ -293,7 +293,11 @@ if (perfilesIG.length) {
       (historica
         ? `MODO HISTÓRICO (sigue la sección "Modo histórico" de tus instrucciones): baja por el grid hasta la ventana, ` +
           `localiza sus límites abriendo pocos posts y devuelve en "urlsVentana" TODAS las URLs del grid que caen en la ventana ` +
-          `(más los fijados y un post de margen a cada lado). No abras cada post: Apify traerá fecha, formato, texto y cifras. `
+          `(más los fijados y un post de margen a cada lado). No abras cada post: Apify traerá fecha, formato, texto y cifras. ` +
+          `OJO CON LOS FIJADOS: los 3 primeros del grid pueden ser posts fijados ANTIGUOS. Nunca deduzcas de ellos la fecha más ` +
+          `reciente de la cuenta ni que no hay posts en la ventana: empieza a sondear en la posición 4 o posterior. ` +
+          `Solo puedes decir que un perfil no tiene posts en la ventana si sondeaste un post (no fijado) posterior a ${ventana.hasta} ` +
+          `y el siguiente sondeado ya es anterior a ${ventana.desde}; si no, entrega igualmente las URLs de la zona de la ventana. `
         : '') +
       `En cada publicación incluye "fechaHora" con el atributo datetime exacto del <time> (UTC); el workflow calcula la fecha local. ` +
       `Usa el navegador (sesión ya iniciada en el perfil dedicado). ` +
@@ -427,6 +431,14 @@ phase('Análisis')
 const publicaciones = consolidarPublicaciones(datosIG && datosIG.publicaciones, datosApify && datosApify.publicaciones)
   .filter(p => enVentana(p.fecha))
 const perfiles = historica ? [] : consolidarPerfiles(datosIG && datosIG.perfiles, datosApify && datosApify.perfiles)
+
+// Corrida histórica: perfiles inspeccionados que se quedan sin ningún post en la ventana. Es una
+// inspección incompleta, no una prueba de inactividad (corrida 2026-11-13 12:10: Excel salió con
+// 0 posts porque el agente tomó los fijados antiguos por lo más reciente de la cuenta).
+const sinPostsVentana = historica && datosIG && !/SESI[ÓO]N NO DISPONIBLE/i.test(datosIG.hallazgos || '')
+  ? perfilesIG.map(c => c.nombre).filter(n => !publicaciones.some(p => p.competidor === n))
+  : []
+if (sinPostsVentana.length) log(`Instagram: 0 posts en la ventana para ${sinPostsVentana.join(', ')} (inspección incompleta)`)
 log(`Datos estructurados: ${publicaciones.length} publicaciones, ${perfiles.length} perfiles`)
 
 // Recuentos calculados aquí para que el analista los copie, no los cuente (objeción 16:18: "8 → 9").
@@ -458,6 +470,10 @@ let notaCaidos = caidos.length
 if (igCaido || igSesion === 'no-disponible') {
   notaCaidos += `\n\nEl rastreo de Instagram con navegador no pudo inspeccionar los perfiles (${igSesion === 'no-disponible' ? 'sesión no disponible' : 'falla técnica'}): ` +
     `al valorar los canales propios en Instagram, considera que no hubo inspección, no que no hubo actividad.`
+}
+if (sinPostsVentana.length) {
+  notaCaidos += `\n\nNo hay posts de Instagram dentro de la ventana para: ${sinPostsVentana.join(', ')}. Trátalo como inspección INCOMPLETA ` +
+    `de Instagram (entrada "sin-datos" que lo diga), NUNCA como "sin publicaciones en el periodo" ni como inactividad.`
 }
 if (historica && apifyCfg.habilitado && !apifyInfo.incluido) {
   notaCaidos += `\n\nApify no se consultó (${apifyInfo.motivo || 'sin URLs'}): no hay cifras de esta ventana; no las inventes ni las estimes.`

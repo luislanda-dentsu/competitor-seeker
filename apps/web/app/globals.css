@@ -610,3 +610,67 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* ── Informe imprimible (/informe → «Guardar como PDF») ─────────────────── */
+/* El informe es papel: siempre en claro, sea cual sea el tema de la app (y sin depender de JS al imprimir). */
+.informe {
+  color-scheme: light;
+  --card: #ffffff;
+  --card-2: #f1f1f1;
+  --border: #dedede;
+  --border-strong: #bdbdbd;
+  --fg: #010101;
+  --fg-muted: #3a3a3a;
+  --fg-dim: #5c5c5c;
+  --s-nuevo: #1b7130;
+  --s-confuso: #7d6200;
+  --s-sin-datos: #5c5c5c;
+  --s-no-funciona: #c0281a;
+  --s-nuevo-soft: color-mix(in oklab, #1b7130 16%, transparent);
+  --s-confuso-soft: color-mix(in oklab, #7d6200 16%, transparent);
+  --s-sin-datos-soft: color-mix(in oklab, #5c5c5c 16%, transparent);
+  --s-no-funciona-soft: color-mix(in oklab, #c0281a 16%, transparent);
+  background: var(--card);
+  color: var(--fg);
+}
+@page {
+  size: A4;
+  margin: 14mm 12mm;
+}
+@media print {
+  [data-no-print] {
+    display: none !important;
+  }
+  /* En tema oscuro el lienzo por defecto (márgenes de la hoja) también sería oscuro. */
+  :root {
+    color-scheme: light !important;
+  }
+  html,
+  body,
+  .bg-canvas {
+    background: #fff !important;
+  }
+  #contenido {
+    max-width: none;
+    padding: 0;
+  }
+  /* Los chips de señal conservan su color en papel. */
+  .informe {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .informe-competidor {
+    break-before: page;
+  }
+  .informe-fila {
+    break-inside: avoid;
+  }
+  .informe h2,
+  .informe h3,
+  .informe h4 {
+    break-after: avoid;
+  }
+  .informe thead {
+    display: table-header-group;
+  }
+}
