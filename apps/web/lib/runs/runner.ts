@@ -236,7 +236,7 @@ export async function lanzarCorrida(o: OpcionesLanzar): Promise<ResultadoLanzar>
   const ahora = new Date();
   const inicio = ahora.toISOString();
   try {
-    const decision = await decidirApifyParaCorrida(o.incluirApify);
+    const decision = await decidirApifyParaCorrida(o.incluirApify, { historica: !!o.historica });
     const apify = o.historica ? { ...decision, topePosts: o.historica.topePosts } : decision;
     // Fase 6: traer lo de la otra Mac antes de calcular `ultimaCorrida`. Con conflicto la corrida sigue.
     try {

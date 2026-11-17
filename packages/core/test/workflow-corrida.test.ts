@@ -430,6 +430,24 @@ describe('corrida histórica (v2.3)', () => {
     expect(analista).toContain('solo se consultaron 2 de 4 de Alpha')
   })
 
+  it('un perfil sin posts en la ventana es inspección incompleta, no inactividad; y el IG avisa de los fijados', async () => {
+    const capturas: { tipo: string; prompt: string }[] = []
+    const dos = {
+      ...ARGS,
+      apify: { habilitado: true, resultsLimit: 12, topePosts: 10 },
+      competidores: [
+        { nombre: 'Alpha', url: 'https://www.instagram.com/alpha/' },
+        { nombre: 'Excel', url: 'https://www.instagram.com/excel/' },
+      ],
+    }
+    await correrWorkflow(dos, agenteHistorico({ capturas }))
+    expect(capturas.find((c) => c.tipo === 'rastreador-ig')!.prompt).toContain('OJO CON LOS FIJADOS')
+    const analista = capturas.find((c) => c.tipo === 'analista')!.prompt
+    expect(analista).toContain('No hay posts de Instagram dentro de la ventana para: Excel')
+    expect(analista).toContain('NUNCA como "sin publicaciones en el periodo"')
+    expect(analista).not.toMatch(/ventana para: [^.]*Alpha/)
+  })
+
   it('sin sesión de Instagram no se gasta Apify y se dice por qué', async () => {
     const capturas: { tipo: string; prompt: string }[] = []
     const r = ResultadoWorkflow.parse(await correrWorkflow(ARGS, agenteHistorico({ sinSesion: true, capturas })))
