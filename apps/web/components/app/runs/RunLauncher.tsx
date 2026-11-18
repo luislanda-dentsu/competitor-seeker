@@ -1,6 +1,6 @@
 "use client";
 
-import { History, Play } from "lucide-react";
+import { CalendarRange, History, Play } from "lucide-react";
 import { useId, useState } from "react";
 import { ConfirmHistoricaDialog, fmtUsd, useEstimacionHistorica, VentanaFields } from "@/components/app/runs/HistoricaLauncher";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,17 @@ function ayerLocal(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+/** `AAAA-MM-DD` → `DD/MM/AAAA`. */
+function fmtFecha(iso: string): string {
+  const [a, m, d] = iso.slice(0, 10).split("-");
+  return `${d}/${m}/${a}`;
+}
+
+const PERIODOS = [
+  { value: "ultima", label: "Desde la última corrida" },
+  { value: "pasado", label: "Periodo pasado (desde – hasta)" },
+];
+
 export interface RunLauncherProps {
   marcas: readonly MarcaUi[];
   marcaInicial: string;
@@ -27,7 +38,7 @@ export interface RunLauncherProps {
   onLanzar: (marca: string, incluirApify: boolean, historica?: LanzarHistorica) => void;
 }
 
-/** Marca · nº de competidores · periodo pasado (opcional) · Switch Apify con estimación · estado git · "Correr ahora". */
+/** Marca · periodo de la corrida (desde la última o un periodo pasado) · Switch Apify con estimación · estado git · "Correr ahora". */
 export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, onLanzar }: RunLauncherProps): React.ReactElement {
   const [marca, setMarca] = useState(marcaInicial);
   const [incluirApify, setIncluirApify] = useState(false);
@@ -35,7 +46,6 @@ export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, on
   const [ventana, setVentana] = useState<VentanaUi>({ desde: "", hasta: "" });
   const [confirmar, setConfirmar] = useState(false);
   const idApify = useId();
-  const idHistorica = useId();
   const seleccionada = marcas.find((m) => m.slug === marca) ?? marcas[0];
   const items = marcas.map((m) => ({ label: m.nombre, value: m.slug }));
   const sinCompetidores = !seleccionada || seleccionada.competidores === 0;
@@ -93,16 +103,41 @@ export function RunLauncher({ marcas, marcaInicial, apify, ocupado, lanzando, on
             </span>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <span className="t-label">Periodo</span>
-            <label className="flex h-8 items-center gap-2.5 text-sm" htmlFor={idHistorica}>
-              <Switch checked={historica} disabled={ocupado || lanzando} id={idHistorica} onCheckedChange={(v) => setHistorica(v)} />
-              <span className="text-fg">Periodo pasado</span>
-            </label>
+          <div className="flex min-w-0 flex-col gap-1.5 lg:w-64 lg:shrink-0">
+            <span className="t-label">Periodo de la corrida</span>
+            <Select
+              disabled={ocupado || lanzando}
+              items={PERIODOS}
+              onValueChange={(v) => typeof v === "string" && setHistorica(v === "pasado")}
+              value={historica ? "pasado" : "ultima"}
+            >
+              <SelectTrigger aria-label="Periodo de la corrida">
+                <CalendarRange aria-hidden="true" className="size-4 opacity-70" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectPopup>
+                {PERIODOS.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectPopup>
+            </Select>
             {historica ? (
-              <VentanaFields disabled={ocupado || lanzando} max={ayerLocal()} onChange={setVentana} ventana={ventana} />
+              <>
+                <VentanaFields disabled={ocupado || lanzando} max={ayerLocal()} onChange={setVentana} ventana={ventana} />
+                <span className="text-xs text-fg-muted">Máx. 92 días, terminando como tarde ayer. No mueve la «Última corrida».</span>
+              </>
             ) : (
-              <span className="text-xs text-fg-muted">Desde la última corrida hasta hoy.</span>
+              <span className="text-xs text-fg-muted">
+                {seleccionada?.ultimaCorrida ? (
+                  <>
+                    Del <span className="font-mono tabular-nums text-fg">{fmtFecha(seleccionada.ultimaCorrida)}</span> a hoy.
+                  </>
+                ) : (
+                  "Primera corrida: las últimas ~4 semanas."
+                )}
+              </span>
             )}
           </div>
 

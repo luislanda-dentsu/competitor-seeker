@@ -3,13 +3,6 @@
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
-import {
-  Select,
-  SelectItem,
-  SelectPopup,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ToastProvider } from "@/components/ui/toast";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/ui/tooltip";
 import { BrandSwitcher } from "@/components/app/shell/BrandSwitcher";
@@ -19,13 +12,6 @@ import { NotificationCenter } from "@/components/app/shell/NotificationCenter";
 import { usePageTitle } from "@/components/app/shell/PageTitle";
 import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
 import { UserMenu } from "@/components/app/shell/UserMenu";
-
-const PERIODOS = [
-  { value: "3", label: "Últimas 3 corridas" },
-  { value: "5", label: "Últimas 5 corridas" },
-  { value: "10", label: "Últimas 10 corridas" },
-  { value: "todas", label: "Todas las corridas" },
-];
 
 function TopbarTitle(): React.ReactElement {
   const title = usePageTitle();
@@ -48,24 +34,6 @@ export function Topbar(): React.ReactElement {
       </Suspense>
 
       <div className="flex items-center gap-2">
-        {/* Período (sin lógica aún) */}
-        <Select defaultValue="3" items={PERIODOS}>
-          <SelectTrigger
-            aria-label="Período"
-            className="tone-ink hidden h-8 min-h-8 min-w-0 rounded-pill border-transparent bg-card ps-3.5 font-medium text-fg shadow-none sm:h-8 md:inline-flex"
-            size="sm"
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectPopup>
-            {PERIODOS.map((p) => (
-              <SelectItem key={p.value} value={p.value}>
-                {p.label}
-              </SelectItem>
-            ))}
-          </SelectPopup>
-        </Select>
-
         <GitSyncStatus />
 
         <BrandSwitcher />

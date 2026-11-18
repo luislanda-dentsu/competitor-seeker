@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { competidoresActivos, enPeriodo, listarCorridas, listarMarcas } from "@competitor-seeker/core";
+import { competidoresActivos, enPeriodo, listarCorridas, listarMarcas, ultimaCorridaRegistrada } from "@competitor-seeker/core";
 import { PeriodoSelector } from "@/components/app/periodo/PeriodoSelector";
 import { periodoDeRequest } from "@/lib/periodo-servidor";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ async function CorridasContenido({ searchParams }: { searchParams: PageProps<"/c
   const activa = (await marcaActiva(marcas)) ?? marcas[0]!;
   const marcasUi: MarcaUi[] = marcas.map((m) => {
     const activos = competidoresActivos(m);
-    return { slug: m.slug, nombre: m.nombre, competidores: activos.length, perfilesIg: activos.filter((c) => c.instagram).length };
+    return { slug: m.slug, nombre: m.nombre, competidores: activos.length, perfilesIg: activos.filter((c) => c.instagram).length, ultimaCorrida: ultimaCorridaRegistrada(m.slug) };
   });
   const { corridas: todas, invalidas } = listarCorridas(activa.slug);
   // Las pendientes de confirmación se muestran siempre: requieren acción aunque estén fuera del periodo.
