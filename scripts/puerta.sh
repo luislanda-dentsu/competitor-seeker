@@ -3,7 +3,8 @@
 # Se ejecuta en la Mac que tiene `wrangler login` hecho con la cuenta de Cloudflare del equipo (la de Orbit).
 #
 #   scripts/puerta.sh alta-mac <MAC_LUIS|MAC_COMPANERA> <archivo-token>
-#       crea el túnel cs-<mac> + su servicio VPC (→ localhost:3030), guarda el token del túnel
+#       crea el túnel cs-<mac> + su servicio VPC (→ 127.0.0.1:3030: la app solo escucha en IPv4; con
+#       `localhost` cloudflared prueba antes [::1] y cada petición deja un ERR de conexión rechazada), guarda el token del túnel
 #       en <archivo-token> (600) y deja el service_id en infra/puerta/wrangler.jsonc
 #   scripts/puerta.sh desplegar          ← npx wrangler deploy de infra/puerta
 #   scripts/puerta.sh secreto-interno    ← sube CS_SECRETO_INTERNO (de .env.local) como secreto del Worker
@@ -31,7 +32,7 @@ case "${1:-}" in
       [ -n "$id" ] || fail "no se pudo crear el túnel $nombre"
       ok "túnel $nombre creado ($id)"
     else ok "túnel $nombre ya existe ($id)"; fi
-    servicio="$("${WRANGLER[@]}" vpc service create "$nombre-web" --type http --tunnel-id "$id" --hostname localhost --http-port 3030 2>&1 | awk '/Created VPC service:/{print $NF}')"
+    servicio="$("${WRANGLER[@]}" vpc service create "$nombre-web" --type http --tunnel-id "$id" --ipv4 127.0.0.1 --http-port 3030 2>&1 | awk '/Created VPC service:/{print $NF}')"
     [ -n "$servicio" ] || fail "no se pudo crear el servicio VPC (¿ya existe? wrangler vpc service list)"
     ok "servicio VPC $nombre-web ($servicio)"
     umask 077

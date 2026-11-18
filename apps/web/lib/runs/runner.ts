@@ -400,20 +400,20 @@ function cerrarCorrida(viva: CorridaViva, fin: FinProceso, ultimoTexto: string):
   }
 }
 
-/** commit + push de los datos de la corrida; anota `git:{pushed,error?}` y nunca lanza. */
+/** commit + push de los datos de la corrida; si falla anota `git:{pushed:false,error}` y avisa. Nunca lanza. */
 async function sincronizarCierre(c: Corrida): Promise<void> {
   try {
     const n = c.entradas.length;
     const r = await commitYPush(`corrida(${c.marca}): ${c.id} — ${n} ${n === 1 ? "entrada" : "entradas"}, ${c.estado}`, { auto: true });
-    if (r.ok && r.omitido) return;
-    const git = r.ok ? { pushed: true } : { pushed: false, error: r.motivo === "conflicto" ? `conflicto en ${r.archivos.join(", ")}` : `${r.motivo}: ${r.error}` };
+    // Si se subió no se anota nada: escribir `git.pushed` DESPUÉS del commit dejaba la corrida modificada
+    // en el árbol (y en la copia de servicio, siempre sucia). Solo el fallo se anota (lo lee la campana).
+    if (r.ok) return;
+    const git = { pushed: false, error: r.motivo === "conflicto" ? `conflicto en ${r.archivos.join(", ")}` : `${r.motivo}: ${r.error}` };
     guardarCorrida({ ...leerCorrida(c.marca, c.id), git });
-    if (!r.ok) {
-      try {
-        notificarFinCorrida({ ...c, git });
-      } catch {
-        /* sin notificación no se rompe el cierre */
-      }
+    try {
+      notificarFinCorrida({ ...c, git });
+    } catch {
+      /* sin notificación no se rompe el cierre */
     }
   } catch (e) {
     log(`git no sincronizó la corrida ${c.id}:`, e);
