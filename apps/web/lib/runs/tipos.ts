@@ -7,6 +7,8 @@ export interface MarcaUi {
   competidores: number;
   /** Competidores activos con perfil de Instagram (para la estimación de Apify). */
   perfilesIg: number;
+  /** Fecha de la última corrida normal registrada (inicio de la siguiente), o null si no hay. */
+  ultimaCorrida: string | null;
 }
 
 export interface ApifyUi {
