@@ -1,0 +1,663 @@
+{
+  "id": "2026-11-18-1054-parval-administrast",
+  "marca": "parval",
+  "fecha": "2026-11-18",
+  "ultimaCorrida": "2026-11-13",
+  "inicio": "2026-11-18T14:54:30.002Z",
+  "fin": "2026-11-18T14:57:55.530Z",
+  "duracionMs": 205528,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 2,
+  "objeciones": [],
+  "fuentes": [
+    "web",
+    "ig",
+    "apify"
+  ],
+  "apify": {
+    "resultados": 34,
+    "costeEstimadoUsd": 0.0918,
+    "incluido": true,
+    "omitido": false,
+    "runId": "Z81MsmcmVi2BZ8NST"
+  },
+  "competidores": [
+    "Interval",
+    "CCI Puesto de Bolsa",
+    "Excel Puesto de Bolsa",
+    "Alpha Sociedad de Valores",
+    "United Capital"
+  ],
+  "entradas": [
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-17",
+      "movimiento": "Reel «Interval Talks»: explica por qué no todos los bonos ofrecen el mismo rendimiento.",
+      "senal": "nuevo",
+      "lectura": "Contenido educativo sobre bonos en formato reel, con 9 comentarios, el mayor número de comentarios entre los posts de Interval del periodo.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 51,
+        "comentarios": 9,
+        "vistas": 1285
+      },
+      "id": "46db5262944b66a0",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-13",
+      "movimiento": "Carrusel con caption «Estuvimos presentes en Mercado Women: The Game Changers...».",
+      "senal": "nuevo",
+      "lectura": "Registro de participación en un evento; la caption no indica que el evento sea propio.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 99,
+        "comentarios": 4
+      },
+      "id": "d91a715d84d87c9e",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "Interval",
+      "fecha": "2026-11-18",
+      "movimiento": "Cuatro búsquedas web sin resultados sobre Interval en el periodo; no se identificó sitio oficial ni sector.",
+      "senal": "sin-datos",
+      "lectura": "Sin prensa ni sitio detectable; solo Instagram aporta señal.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "1a5ca3bae6db5866",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-16",
+      "movimiento": "Reel «Ya se siente la brisita navideña... bienvenida a la Navidad en CCI».",
+      "senal": "nuevo",
+      "lectura": "Reel de ambiente institucional con el mayor número de likes de los dos posts del periodo (155).",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 155,
+        "comentarios": 10,
+        "vistas": 5031
+      },
+      "id": "ab5e26a3993bcfaf",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-13",
+      "movimiento": "Reel «Lanzamiento de la Scuela de Inversiones Snack & CCI con @elsnack.report».",
+      "senal": "nuevo",
+      "lectura": "Iniciativa educativa en alianza con un tercero; 8647 vistas, más que el otro reel del periodo.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 93,
+        "comentarios": 7,
+        "vistas": 8647
+      },
+      "id": "1b669c91106ff583",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "CCI Puesto de Bolsa",
+      "fecha": "2026-11-18",
+      "movimiento": "Sin prensa, campañas ni cambios de sitio fechados entre 2026-11-13 y 2026-11-18; no se revisó el sitio oficial directamente.",
+      "senal": "sin-datos",
+      "lectura": "La web no aporta movimiento del periodo.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "996a3fd835d91c91",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-11-16",
+      "movimiento": "Imagen: «Excel entre las 100 empresas con mejor reputación corporativa de RD, ranking Merco Empresas 2026».",
+      "senal": "nuevo",
+      "lectura": "Único post del periodo; comunica un reconocimiento de reputación.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 62,
+        "comentarios": 4
+      },
+      "id": "1c3b14c55e7f9b96",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "Excel Puesto de Bolsa",
+      "fecha": "2026-11-18",
+      "movimiento": "El sitio excel.com.do solo muestra el valor cuota diario de once fondos; sin noticias ni campañas fechadas en noviembre de 2026.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web del periodo.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "80da5b7aa3353162",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-11-18",
+      "movimiento": "Reel «Gabi y Diego en los 30, episodio 2: doble sueldo y vacaciones».",
+      "senal": "nuevo",
+      "lectura": "Segundo episodio de una serie; 16 likes y 0 comentarios en el reel.",
+      "fuentes": [
+        "ig",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 16,
+        "comentarios": 0,
+        "vistas": 477
+      },
+      "id": "49b2f16073aeb6b7",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "Alpha Sociedad de Valores",
+      "fecha": "2026-11-18",
+      "movimiento": "Sin prensa, campañas ni cambios de sitio fechados entre 2026-11-13 y 2026-11-18; el home de alpha.com.do no muestra contenido de aniversario.",
+      "senal": "sin-datos",
+      "lectura": "La web no aporta movimiento del periodo.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "d95635cc9d99b3f5",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    },
+    {
+      "marca": "United Capital",
+      "fecha": "2026-11-18",
+      "movimiento": "Sin posts en Instagram en la ventana (el más reciente es del 2026-11-11) y sin prensa ni cambios de sitio fechados entre 2026-11-13 y 2026-11-18.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento nuevo; los posts previos solo miden rendimiento.",
+      "fuentes": [
+        "ig",
+        "apify",
+        "web"
+      ],
+      "id": "54964a7f366e31b5",
+      "corrida": "2026-11-18-1054-parval-administrast"
+    }
+  ],
+  "publicaciones": [
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/Df4rWDoom-h/",
+      "fecha": "2026-11-18",
+      "formato": "reel",
+      "tema": "Gabi y Diego en los 30, episodio 2: doble sueldo y vacaciones",
+      "likes": 16,
+      "comentarios": 0,
+      "vistas": 477,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfppbfZybRT/",
+      "fecha": "2026-11-12",
+      "formato": "imagen",
+      "tema": "Invertir no tiene que ser complicado; opciones de inversión en la App Alpha",
+      "likes": 13,
+      "comentarios": 1,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfnPHtUIGTF/",
+      "fecha": "2026-11-11",
+      "formato": "reel",
+      "tema": "Novedades App Alpha: notificaciones, certificaciones de inversión y cartas de exoneración",
+      "likes": 33,
+      "comentarios": 0,
+      "vistas": 1425,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfkhyWMonrm/",
+      "fecha": "2026-11-10",
+      "formato": "reel",
+      "tema": "Vacaciones y gastos: la corredora explica decisiones, emociones y planificación",
+      "likes": 50,
+      "comentarios": 3,
+      "vistas": 2053,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfiSB3aIV4h/",
+      "fecha": "2026-11-09",
+      "formato": "carrusel",
+      "tema": "Empezar a invertir sin esperar el mes perfecto; planificación financiera",
+      "likes": 17,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/Dfat_JpIcOk/",
+      "fecha": "2026-11-06",
+      "formato": "carrusel",
+      "tema": "15 años de historia, una nueva era Alpha",
+      "likes": 137,
+      "comentarios": 8,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfZ685mIQPO/",
+      "fecha": "2026-11-06",
+      "formato": "carrusel",
+      "tema": "Momentos del 15 Aniversario Alpha",
+      "likes": 548,
+      "comentarios": 21,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfXIO50Igcg/",
+      "fecha": "2026-11-05",
+      "formato": "reel",
+      "tema": "Celebración de los 15 años de Alpha",
+      "likes": 219,
+      "comentarios": 6,
+      "vistas": 6923,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfUseTkoeFR/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Cada decisión tiene una razón; Gigantes del Cibao y plan desde la App Alpha",
+      "likes": 114,
+      "comentarios": 3,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "url": "https://www.instagram.com/p/DfVre7pIrk5/",
+      "fecha": "2026-11-04",
+      "formato": "reel",
+      "tema": "Listos para celebrar 15 años de Alpha",
+      "likes": 215,
+      "comentarios": 5,
+      "vistas": 5468,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/Df0MZCQRaBl/",
+      "fecha": "2026-11-16",
+      "formato": "reel",
+      "tema": "Bienvenida a la Navidad en CCI con el equipo",
+      "likes": 155,
+      "comentarios": 10,
+      "vistas": 5031,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfsJk0ERHQi/",
+      "fecha": "2026-11-13",
+      "formato": "reel",
+      "tema": "Lanzamiento de la Scuela de Inversiones Snack & CCI con @elsnack.report",
+      "likes": 93,
+      "comentarios": 7,
+      "vistas": 8647,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfmjN4yDu6a/",
+      "fecha": "2026-11-11",
+      "formato": "carrusel",
+      "tema": "16ta Emisión de Papeles Comerciales de CCI Puesto de Bolsa",
+      "likes": 42,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/Dffu2xgR11F/",
+      "fecha": "2026-11-08",
+      "formato": "reel",
+      "tema": "Torneo Mitre 2026, fin de semana de golf con CCI",
+      "likes": 73,
+      "comentarios": 8,
+      "vistas": 1789,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfaOaYmxb4X/",
+      "fecha": "2026-11-06",
+      "formato": "reel",
+      "tema": "Torneo Mitre junto a CCI",
+      "likes": 58,
+      "comentarios": 3,
+      "vistas": 1812,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfVC9zHRIjr/",
+      "fecha": "2026-11-04",
+      "formato": "reel",
+      "tema": "Comenta DOBLE: cómo invertir tu doble sueldo con criterio",
+      "likes": 121,
+      "comentarios": 23,
+      "vistas": 3010,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "url": "https://www.instagram.com/p/DfzaqZJIfhR/",
+      "fecha": "2026-11-16",
+      "formato": "imagen",
+      "tema": "Excel entre las 100 empresas con mejor reputación corporativa de RD, ranking Merco Empresas 2026",
+      "likes": 62,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/Df20-YEvkqS/",
+      "fecha": "2026-11-17",
+      "formato": "reel",
+      "tema": "Interval Talks: por qué no todos los bonos ofrecen el mismo rendimiento",
+      "likes": 51,
+      "comentarios": 9,
+      "vistas": 1285,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfsCCG_oFiK/",
+      "fecha": "2026-11-13",
+      "formato": "carrusel",
+      "tema": "Presencia en Mercado Women: The Game Changers",
+      "likes": 99,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfmgnO7R47t/",
+      "fecha": "2026-11-11",
+      "formato": "imagen",
+      "tema": "Todavía este puede ser el año donde empiezas a invertir",
+      "likes": 70,
+      "comentarios": 3,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfXRnQPEVyD/",
+      "fecha": "2026-11-05",
+      "formato": "carrusel",
+      "tema": "Gala de Aniversarios: 85 años Orquesta Sinfónica Nacional y 40 años Fundación Sinfonía",
+      "likes": 160,
+      "comentarios": 5,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Interval",
+      "url": "https://www.instagram.com/p/DfU6x4KoIRF/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Cóctel APB Región Norte en Santiago",
+      "likes": 146,
+      "comentarios": 4,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfmiiLKm4bS/",
+      "fecha": "2026-11-11",
+      "formato": "carrusel",
+      "tema": "Equipo United Capital en las gradas apoyando a los Gigantes del Cibao; Juntos somos Gigantes",
+      "likes": 372,
+      "comentarios": 3,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfkBLUvBrRF/",
+      "fecha": "2026-11-10",
+      "formato": "reel",
+      "tema": "El futuro se construye con propósito, junto a los Gigantes del Cibao",
+      "likes": 280,
+      "comentarios": 7,
+      "vistas": 7494,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfYIVnCOfqD/",
+      "fecha": "2026-11-06",
+      "formato": "imagen",
+      "tema": "Conmemoración de la Constitución Dominicana; United Capital reafirma su compromiso con el desarrollo del país",
+      "likes": 17,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfZt6xhkQIR/",
+      "fecha": "2026-11-06",
+      "formato": "carrusel",
+      "tema": "Visita de los Gigantes del Cibao a las oficinas, happy hour con el equipo",
+      "likes": 626,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "url": "https://www.instagram.com/p/DfTRo7pG58D/",
+      "fecha": "2026-11-03",
+      "formato": "carrusel",
+      "tema": "Cóctel de introducción de la Asociación de Puestos de Bolsa (APB) en Santiago",
+      "likes": 140,
+      "comentarios": 1,
+      "fuente": "apify"
+    }
+  ],
+  "perfiles": [
+    {
+      "competidor": "Interval",
+      "seguidores": 41672,
+      "publicacionesTotales": 178,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "seguidores": 39667,
+      "publicacionesTotales": 900,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "seguidores": 26283,
+      "publicacionesTotales": 881,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "seguidores": 37219,
+      "publicacionesTotales": 1816,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "United Capital",
+      "seguidores": 20417,
+      "publicacionesTotales": 1098,
+      "fuente": "apify"
+    }
+  ],
+  "lecturas": [
+    {
+      "competidor": "Interval",
+      "resumen": [
+        "Instagram: 5 publicaciones en datos (2 en/desde 2026-11-13); formatos {reel:1, carrusel:3, imagen:1}; 526 likes, 25 comentarios, 1285 vistas (Apify).",
+        "2026-11-17: reel «Interval Talks» sobre bonos y rendimiento (51 likes, 9 comentarios, 1285 vistas).",
+        "2026-11-13: carrusel «Estuvimos presentes en Mercado Women: The Game Changers» (99 likes, 4 comentarios).",
+        "Antes de la ventana: carruseles de la Gala de Aniversarios (160 likes) y del Cóctel APB Región Norte (146 likes).",
+        "Web: sin datos en el periodo. Seguidores: 41672 (Apify)."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Combina contenido educativo sobre inversión (Interval Talks sobre bonos; «puede ser el año donde empiezas a invertir») con registro de su participación en eventos del sector y sociales (Mercado Women, Gala de Aniversarios, Cóctel APB)."
+        ],
+        "pilares": [
+          "Educación financiera",
+          "Presencia en eventos"
+        ],
+        "formatosYCadencia": "Carrusel como formato dominante (3 de 5 publicaciones); un reel en los datos. 5 publicaciones entre 2026-11-04 y 2026-11-17.",
+        "implicaciones": [
+          "Los carruseles de eventos de los datos obtuvieron entre 99 y 160 likes; el reel educativo, 51 likes y 9 comentarios."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/p/Df20-YEvkqS/",
+          "https://www.instagram.com/p/DfmgnO7R47t/",
+          "https://www.instagram.com/p/DfsCCG_oFiK/",
+          "https://www.instagram.com/p/DfXRnQPEVyD/",
+          "https://www.instagram.com/p/DfU6x4KoIRF/"
+        ]
+      }
+    },
+    {
+      "competidor": "CCI Puesto de Bolsa",
+      "resumen": [
+        "Instagram: 6 publicaciones en datos (2 en/desde 2026-11-13); formatos {reel:5, carrusel:1}; 542 likes, 51 comentarios, 20289 vistas (Apify).",
+        "2026-11-16: reel de bienvenida a la Navidad en CCI (155 likes, 5031 vistas).",
+        "2026-11-13: reel del lanzamiento de la Scuela de Inversiones Snack & CCI con @elsnack.report (93 likes, 8647 vistas).",
+        "Antes de la ventana: dos reels del Torneo Mitre, carrusel de la 16ta Emisión de Papeles Comerciales y reel «Comenta DOBLE» (23 comentarios).",
+        "Web: sin prensa ni campañas fechadas en el periodo. Seguidores: 39667 (Apify)."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Predomina el reel y reparte el contenido entre patrocinio deportivo (Torneo Mitre), educación (Scuela de Inversiones, «Comenta DOBLE»), cultura de equipo (Navidad) y producto (papeles comerciales)."
+        ],
+        "pilares": [
+          "Patrocinio y eventos",
+          "Educación de inversión",
+          "Cultura corporativa",
+          "Producto"
+        ],
+        "formatosYCadencia": "Reel dominante (5 de 6 publicaciones); 6 publicaciones entre 2026-11-04 y 2026-11-16.",
+        "implicaciones": [
+          "El reel «Comenta DOBLE» registró el máximo de comentarios del conjunto (23).",
+          "El reel de la Scuela de Inversiones registró el máximo de vistas (8647)."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/Df0MZCQRaBl/",
+          "https://www.instagram.com/p/DfsJk0ERHQi/",
+          "https://www.instagram.com/p/DfmjN4yDu6a/",
+          "https://www.instagram.com/p/Dffu2xgR11F/",
+          "https://www.instagram.com/p/DfaOaYmxb4X/",
+          "https://www.instagram.com/p/DfVC9zHRIjr/"
+        ]
+      }
+    },
+    {
+      "competidor": "Excel Puesto de Bolsa",
+      "resumen": [
+        "Instagram: 1 publicación en datos (1 en/desde 2026-11-13); formato {imagen:1}; 62 likes, 4 comentarios (Apify).",
+        "2026-11-16: imagen sobre el ranking Merco Empresas 2026 de reputación corporativa.",
+        "Sin otros posts desde 2026-11-04 en el resultado de Apify.",
+        "Web: el sitio solo muestra valor cuota diario de fondos; sin noticias del periodo. Seguidores: 26283 (Apify)."
+      ]
+    },
+    {
+      "competidor": "Alpha Sociedad de Valores",
+      "resumen": [
+        "Instagram: 10 publicaciones en datos (1 en/desde 2026-11-13); formatos {reel:5, imagen:1, carrusel:4}; 1362 likes, 47 comentarios, 16346 vistas (Apify).",
+        "2026-11-18: reel «Gabi y Diego en los 30, episodio 2» (16 likes, 477 vistas).",
+        "Entre 2026-11-04 y 2026-11-06: posts del 15 Aniversario con 137, 548, 219 y 215 likes.",
+        "Entre 2026-11-09 y 2026-11-12: contenido de planificación y App Alpha, con entre 13 y 50 likes por post.",
+        "Web: sin prensa ni campañas fechadas en el periodo. Seguidores: 37219 (Apify)."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Tras los posts del 15 Aniversario (2026-11-04 a 2026-11-06), el contenido pasa a temas de planificación financiera, App Alpha y una serie de reels («Gabi y Diego»)."
+        ],
+        "pilares": [
+          "Aniversario institucional",
+          "App Alpha y producto",
+          "Planificación financiera personal"
+        ],
+        "formatosYCadencia": "Reel y carrusel casi parejos (5 y 4 de 10); 10 publicaciones entre 2026-11-04 y 2026-11-18.",
+        "implicaciones": [
+          "Los posts de aniversario tuvieron entre 137 y 548 likes; los cinco posteriores, entre 13 y 50.",
+          "La serie «Gabi y Diego» tiene un solo episodio visible en los datos (episodio 2, 16 likes)."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/DfZ685mIQPO/",
+          "https://www.instagram.com/p/Dfat_JpIcOk/",
+          "https://www.instagram.com/p/DfXIO50Igcg/",
+          "https://www.instagram.com/p/DfVre7pIrk5/",
+          "https://www.instagram.com/p/DfiSB3aIV4h/",
+          "https://www.instagram.com/p/DfnPHtUIGTF/",
+          "https://www.instagram.com/p/Df4rWDoom-h/"
+        ]
+      }
+    },
+    {
+      "competidor": "United Capital",
+      "resumen": [
+        "Instagram: 5 publicaciones en datos (0 en/desde 2026-11-13); formatos {carrusel:3, reel:1, imagen:1}; 1435 likes, 17 comentarios, 7494 vistas (Apify).",
+        "Sin publicaciones detectadas en la ventana; el post más reciente es del 2026-11-11 (carrusel, 372 likes).",
+        "Tres posts del 2026-11-06 al 2026-11-11 sobre los Gigantes del Cibao; el carrusel de la visita a oficinas llegó a 626 likes.",
+        "Web: sin prensa ni cambios de sitio fechados en el periodo. Seguidores: 20417 (Apify)."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Concentra sus posts recientes en el vínculo con los Gigantes del Cibao (visita a oficinas, reel de propósito, equipo en las gradas)."
+        ],
+        "pilares": [
+          "Alianza con Gigantes del Cibao"
+        ],
+        "formatosYCadencia": "Carrusel como formato dominante (3 de 5); sin posts en la ventana desde 2026-11-11.",
+        "implicaciones": [
+          "Los tres posts de los Gigantes del Cibao tuvieron 372, 280 y 626 likes."
+        ],
+        "confianza": "baja",
+        "postsCitados": [
+          "https://www.instagram.com/p/DfZt6xhkQIR/",
+          "https://www.instagram.com/p/DfkBLUvBrRF/",
+          "https://www.instagram.com/p/DfmiiLKm4bS/"
+        ]
+      }
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "cc9c6265-bc19-400a-a752-8cf2a56df9e3",
+  "ig": {
+    "sesion": "ok"
+  }
+}
