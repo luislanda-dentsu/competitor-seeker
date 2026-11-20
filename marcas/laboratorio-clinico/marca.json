@@ -16,6 +16,13 @@
       "url": "https://www.instagram.com/labpatriarivas/",
       "instagram": "labpatriarivas",
       "activo": true
+    },
+    {
+      "slug": "analisa",
+      "nombre": "Analisa",
+      "url": "https://www.instagram.com/labanalisard/",
+      "instagram": "labanalisard",
+      "activo": true
     }
   ]
 }
