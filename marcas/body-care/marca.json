@@ -9,6 +9,20 @@
       "url": "https://www.instagram.com/dove/",
       "instagram": "dove",
       "activo": true
+    },
+    {
+      "slug": "nivea",
+      "nombre": "Nivea",
+      "url": "https://www.instagram.com/nivea/",
+      "instagram": "nivea",
+      "activo": true
+    },
+    {
+      "slug": "vaseline",
+      "nombre": "Vaseline",
+      "url": "https://www.instagram.com/vaselinebrand/",
+      "instagram": "vaselinebrand",
+      "activo": true
     }
   ]
 }
