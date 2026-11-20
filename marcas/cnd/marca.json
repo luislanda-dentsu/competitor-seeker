@@ -2,5 +2,27 @@
   "slug": "cnd",
   "nombre": "CND",
   "creadaEn": "2026-11-20T14:24:12.194Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "casa-brugal",
+      "nombre": "Casa Brugal",
+      "url": "https://www.instagram.com/casabrugal/",
+      "instagram": "casabrugal",
+      "activo": true
+    },
+    {
+      "slug": "grupo-sid",
+      "nombre": "Grupo SID",
+      "url": "https://www.instagram.com/gruposid/",
+      "instagram": "gruposid",
+      "activo": true
+    },
+    {
+      "slug": "grupo-pc",
+      "nombre": "Grupo PC",
+      "url": "https://www.instagram.com/grupopuntacana/",
+      "instagram": "grupopuntacana",
+      "activo": true
+    }
+  ]
 }
