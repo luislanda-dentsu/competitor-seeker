@@ -1,0 +1,102 @@
+{
+  "id": "2026-11-20-1039-la-mer-administrast",
+  "marca": "la-mer",
+  "fecha": "2026-11-20",
+  "ultimaCorrida": null,
+  "tipo": "historica",
+  "ventana": {
+    "desde": "2026-11-01",
+    "hasta": "2026-11-19"
+  },
+  "inicio": "2026-11-20T14:39:50.569Z",
+  "fin": "2026-11-20T14:40:31.275Z",
+  "duracionMs": 40706,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 1,
+  "objeciones": [],
+  "fuentes": [
+    "web"
+  ],
+  "apify": {
+    "resultados": 0,
+    "costeEstimadoUsd": 0,
+    "incluido": false,
+    "omitido": true,
+    "motivo": "sesión de Instagram no disponible: sin URLs de la ventana"
+  },
+  "competidores": [
+    "Hippólito",
+    "Firmas",
+    "Azzurro"
+  ],
+  "entradas": [
+    {
+      "marca": "Hippólito",
+      "fecha": "2026-11-19",
+      "movimiento": "Sin datos en la ventana 2026-11-01 a 2026-11-19: tres búsquedas web sin contenido fechado en la ventana; el fetch al sitio hippolitostore.com falló por error de certificado TLS; el perfil de Instagram no se inspeccionó (sesión no disponible).",
+      "senal": "sin-datos",
+      "lectura": "No hay evidencia para valorar actividad de Hippólito en la ventana; no equivale a ausencia de actividad.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "0c207838b4fc4f1b",
+      "corrida": "2026-11-20-1039-la-mer-administrast"
+    },
+    {
+      "marca": "Firmas",
+      "fecha": "2026-11-19",
+      "movimiento": "Sin datos en la ventana 2026-11-01 a 2026-11-19: tres búsquedas web sin resultados que mencionen a Firmas o tiendafirmas; el sitio consultado no resolvió; el perfil de Instagram no se inspeccionó (sesión no disponible).",
+      "senal": "sin-datos",
+      "lectura": "No hay evidencia para valorar actividad de Firmas en la ventana; la identidad del negocio no se pudo confirmar.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "4f53816630e83421",
+      "corrida": "2026-11-20-1039-la-mer-administrast"
+    },
+    {
+      "marca": "Azzurro",
+      "fecha": "2026-11-19",
+      "movimiento": "Sin datos en la ventana 2026-11-01 a 2026-11-19: cuatro búsquedas web sin prensa, sitio oficial ni campañas atribuibles; el handle tienda_azzurro no se pudo vincular a una marca o sitio; el perfil de Instagram no se inspeccionó (sesión no disponible).",
+      "senal": "sin-datos",
+      "lectura": "No hay evidencia para valorar actividad de Azzurro en la ventana; falta confirmar identidad y sitio oficial para repetir la búsqueda.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "6915370162260f21",
+      "corrida": "2026-11-20-1039-la-mer-administrast"
+    }
+  ],
+  "publicaciones": [],
+  "perfiles": [],
+  "lecturas": [
+    {
+      "competidor": "Hippólito",
+      "resumen": [
+        "Sin publicaciones detectadas en el periodo; inspección: tres búsquedas web, fetch a hippolitostore.com fallido por certificado TLS, Instagram no inspeccionado (sesión no disponible).",
+        "RECUENTOS: 0 publicaciones en datos, 0 en la ventana 2026-11-01 → 2026-11-19; sin cifras de Apify."
+      ]
+    },
+    {
+      "competidor": "Firmas",
+      "resumen": [
+        "Sin publicaciones detectadas en el periodo; inspección: tres búsquedas web sin menciones de Firmas, sitio no resoluble, Instagram no inspeccionado (sesión no disponible).",
+        "RECUENTOS: 0 publicaciones en datos, 0 en la ventana 2026-11-01 → 2026-11-19; sin cifras de Apify."
+      ]
+    },
+    {
+      "competidor": "Azzurro",
+      "resumen": [
+        "Sin publicaciones detectadas en el periodo; inspección: cuatro búsquedas web sin resultados atribuibles, Instagram no inspeccionado (sesión no disponible).",
+        "RECUENTOS: 0 publicaciones en datos, 0 en la ventana 2026-11-01 → 2026-11-19; sin cifras de Apify."
+      ]
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "707570af-701f-4c09-bce7-3a9b42ba24b8",
+  "ig": {
+    "sesion": "no-disponible"
+  }
+}
