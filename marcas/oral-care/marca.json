@@ -23,6 +23,13 @@
       "url": "https://www.instagram.com/listerine/",
       "instagram": "listerine",
       "activo": true
+    },
+    {
+      "slug": "sensodyne",
+      "nombre": "Sensodyne",
+      "url": "https://www.instagram.com/sensodynecl/",
+      "instagram": "sensodynecl",
+      "activo": true
     }
   ]
 }
