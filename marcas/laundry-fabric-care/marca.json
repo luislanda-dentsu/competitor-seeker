@@ -16,6 +16,13 @@
       "url": "https://www.instagram.com/tidelaundry/",
       "instagram": "tidelaundry",
       "activo": true
+    },
+    {
+      "slug": "omo",
+      "nombre": "OMO",
+      "url": "https://www.instagram.com/omo_rd/",
+      "instagram": "omo_rd",
+      "activo": true
     }
   ]
 }
