@@ -9,6 +9,13 @@
       "url": "https://www.instagram.com/downy/",
       "instagram": "downy",
       "activo": true
+    },
+    {
+      "slug": "tide",
+      "nombre": "Tide",
+      "url": "https://www.instagram.com/tidelaundry/",
+      "instagram": "tidelaundry",
+      "activo": true
     }
   ]
 }
