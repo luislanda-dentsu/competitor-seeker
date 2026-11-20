@@ -2,5 +2,27 @@
   "slug": "dishwashers",
   "nombre": "Dishwashers",
   "creadaEn": "2026-11-20T15:17:34.741Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "dawn",
+      "nombre": "Dawn",
+      "url": "https://www.instagram.com/dawndishwash/?hl=es",
+      "instagram": "dawndishwash",
+      "activo": true
+    },
+    {
+      "slug": "mr-musculo",
+      "nombre": "Mr. Musculo",
+      "url": "https://www.instagram.com/mrmusculo.mexico/",
+      "instagram": "mrmusculo.mexico",
+      "activo": true
+    },
+    {
+      "slug": "cleancult",
+      "nombre": "Cleancult",
+      "url": "https://www.instagram.com/cleancult/",
+      "instagram": "cleancult",
+      "activo": true
+    }
+  ]
 }
