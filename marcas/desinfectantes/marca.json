@@ -23,6 +23,13 @@
       "url": "https://www.instagram.com/mistolinrd/",
       "instagram": "mistolinrd",
       "activo": true
+    },
+    {
+      "slug": "pine-sol",
+      "nombre": "Pine-sol",
+      "url": "https://www.instagram.com/pinesol/",
+      "instagram": "pinesol",
+      "activo": true
     }
   ]
 }
