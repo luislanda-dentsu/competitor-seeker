@@ -2,5 +2,13 @@
   "slug": "laundry-fabric-care",
   "nombre": "Laundry & Fabric Care",
   "creadaEn": "2026-11-20T14:57:20.788Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "downy",
+      "nombre": "Downy",
+      "url": "https://www.instagram.com/downy/",
+      "instagram": "downy",
+      "activo": true
+    }
+  ]
 }
