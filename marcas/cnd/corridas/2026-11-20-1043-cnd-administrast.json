@@ -1,0 +1,732 @@
+{
+  "id": "2026-11-20-1043-cnd-administrast",
+  "marca": "cnd",
+  "fecha": "2026-11-20",
+  "ultimaCorrida": null,
+  "tipo": "historica",
+  "ventana": {
+    "desde": "2026-10-01",
+    "hasta": "2026-11-19"
+  },
+  "inicio": "2026-11-20T14:43:47.710Z",
+  "fin": "2026-11-20T14:49:18.630Z",
+  "duracionMs": 330920,
+  "estado": "registrada",
+  "verificado": true,
+  "intentos": 2,
+  "objeciones": [],
+  "fuentes": [
+    "web",
+    "ig",
+    "apify"
+  ],
+  "apify": {
+    "resultados": 53,
+    "costeEstimadoUsd": 0.1431,
+    "incluido": true,
+    "omitido": false,
+    "runId": "xo0ffaGbQFf8zkAwM"
+  },
+  "competidores": [
+    "Casa Brugal",
+    "Grupo SID",
+    "Grupo PC"
+  ],
+  "entradas": [
+    {
+      "marca": "Casa Brugal",
+      "fecha": "2026-11-11",
+      "movimiento": "El grid de @casabrugal muestra 3 publicaciones de formato imagen con fecha en la ventana (2026-11-11, 2026-11-04, 2026-10-05). No se obtuvo caption ni tema; no hay cifras de Apify para estas URLs (el actor devolvió restricted_page).",
+      "senal": "confuso",
+      "lectura": "Existe actividad en Instagram dentro de la ventana, pero sin caption ni tema el ángulo no es legible.",
+      "fuentes": [
+        "ig"
+      ],
+      "id": "7c86d43aaeb71694",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Casa Brugal",
+      "fecha": "2026-11-19",
+      "movimiento": "Tres búsquedas web y el fetch de CaribJournal no devolvieron notas, campañas, lanzamientos ni patrocinios de Casa Brugal fechados entre 2026-10-01 y 2026-11-19.",
+      "senal": "sin-datos",
+      "lectura": "Sin movimiento web verificable en la ventana.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "c270a00a877650de",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-10-09",
+      "movimiento": "Comunicado web 'Grupo SID Recognized as a Major Dominican Exporter' (más de US$77 M invertidos en 2025, 22 mercados, 146 SKU). El mismo día publicó un reel de ADOEXPO, Gran Exportador Dominicano: 173 likes, 29 comentarios, 3199 vistas.",
+      "senal": "nuevo",
+      "lectura": "Replican en Instagram el mensaje de exportador el mismo día que en la sala de prensa.",
+      "fuentes": [
+        "web",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 173,
+        "comentarios": 29,
+        "vistas": 3199
+      },
+      "id": "87cde859e4da3ed2",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-10-15",
+      "movimiento": "Reel sobre la renovación de Oncología Ginecológica en el Hospital Maternidad (1 día después del comunicado web del 2026-10-14 sobre la Fundación Caminantes por la Vida): 51 likes, 2 comentarios, 1599 vistas.",
+      "senal": "nuevo",
+      "lectura": "Cubren la obra de la fundación en web e Instagram; la tracción del reel se registra sin comparación.",
+      "fuentes": [
+        "web",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 51,
+        "comentarios": 2,
+        "vistas": 1599
+      },
+      "id": "d0889c3444665bf9",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-10-15",
+      "movimiento": "Carrusel de sorteo de boletas para el juego inaugural de los Leones del Escogido: 2571 likes, 337 comentarios. El 2026-11-19 publicó un reel de sorteo de jersey del mismo equipo: 531 likes, 161 comentarios, 6745 vistas.",
+      "senal": "nuevo",
+      "lectura": "El sorteo con Leones del Escogido aparece en dos publicaciones del periodo y la primera concentra la mayor interacción del conjunto.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 2571,
+        "comentarios": 337
+      },
+      "id": "1feb542722df18c8",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-10-28",
+      "movimiento": "Comunicado web del lanzamiento de dos snacks de chicharrón Don Pedro (Induveca) y carrusel del mismo día en Instagram: 533 likes, 12 comentarios.",
+      "senal": "nuevo",
+      "lectura": "Entrada de Don Pedro a la categoría snacks comunicada en web e Instagram a la vez.",
+      "fuentes": [
+        "web",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 533,
+        "comentarios": 12
+      },
+      "id": "bb40fbb5031ec9c7",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-10-30",
+      "movimiento": "Comunicado web de la keynote de Ligia Bonetti en el congreso FECAICA (agenda industrial regional, concepto CERCA) y reel del mismo día: 112 likes, 5 comentarios, 2043 vistas.",
+      "senal": "nuevo",
+      "lectura": "Posicionamiento de la presidenta ejecutiva como voz industrial regional en ambos canales.",
+      "fuentes": [
+        "web",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 112,
+        "comentarios": 5,
+        "vistas": 2043
+      },
+      "id": "1512d0f7bb1f5d93",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-11-04",
+      "movimiento": "Carrusel 'MERCO Empresas RD 2026, 1.º en Consumo Masivo': 325 likes, 14 comentarios. El 2026-11-18 publicó imagen de Ligia Bonetti en MERCO Líderes RD 2026 (305 likes, 21 comentarios) y el 2026-10-22 una imagen de Great Place to Work Manufactura 2026 (532 likes, 37 comentarios).",
+      "senal": "nuevo",
+      "lectura": "Tres publicaciones del periodo comunican rankings y certificaciones de reputación.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 325,
+        "comentarios": 14
+      },
+      "id": "c6df2eaee708ccad",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-11-06",
+      "movimiento": "Carrusel con la trayectoria de Ana Patricia Rodríguez, de pasante a Encargada de Marcas MercaSID, con vacantes: 924 likes, 167 comentarios.",
+      "senal": "nuevo",
+      "lectura": "Contenido de talento interno con vacantes obtiene la segunda mayor interacción del conjunto.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 924,
+        "comentarios": 167
+      },
+      "id": "e928fa07784c4f52",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo SID",
+      "fecha": "2026-11-19",
+      "movimiento": "En la ventana constan 23 publicaciones con cifras de Apify (formatos: 8 reels, 4 imágenes, 11 carruseles); 8 reels con dato de vistas. En web, 4 comunicados, todos en octubre; sin notas de noviembre.",
+      "senal": "nuevo",
+      "lectura": "Ritmo alto en Instagram durante toda la ventana; la sala de prensa se detiene el 30-oct.",
+      "fuentes": [
+        "web",
+        "apify"
+      ],
+      "metricas": {
+        "likes": 8964,
+        "comentarios": 917,
+        "vistas": 41056,
+        "posts": 23
+      },
+      "id": "7a15c83eb3dc769d",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-10-08",
+      "movimiento": "Dos publicaciones por el WTTC Icon Award a Frank Rainieri: carrusel desde la Cumbre Mundial en Malta (1387 likes, 78 comentarios) y reel (206 comentarios, 41580 vistas; likes ocultos).",
+      "senal": "nuevo",
+      "lectura": "El reconocimiento al fundador concentra las cifras más altas del conjunto de publicaciones con dato.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 1387,
+        "comentarios": 78
+      },
+      "id": "49c661d1f8c122de",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-11-01",
+      "movimiento": "Carrusel '57 años construyendo mucho más que un destino' (39 comentarios; likes ocultos) y campaña de aniversario en al menos 5 medios dominicanos el 1 y 2 de noviembre, con mensajes de turismo deportivo, hotelería de lujo y sostenibilidad, arte y cultura.",
+      "senal": "nuevo",
+      "lectura": "Aniversario comunicado en Instagram y con nota distribuida en prensa.",
+      "fuentes": [
+        "web",
+        "apify"
+      ],
+      "metricas": {
+        "comentarios": 39
+      },
+      "id": "d876317b52cb5658",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-11-18",
+      "movimiento": "Imagen 'Merco Líderes RD 2026, Frank Elías Rainieri 1.º en reputación': 864 likes, 30 comentarios. El 2026-11-04 publicó carrusel del ranking MERCO Empresas RD 2026, líder en turismo (446 likes, 6 comentarios) y el 2026-11-11 carrusel de WTM 2026 (389 likes, 14 comentarios).",
+      "senal": "nuevo",
+      "lectura": "Línea de rankings y reconocimientos en tres publicaciones de noviembre.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "likes": 864,
+        "comentarios": 30
+      },
+      "id": "aec739dcc63b3d15",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-10-13",
+      "movimiento": "Diario Libre publica una nota con Manuel Sajour que presenta al grupo como pionero en turismo deportivo (Corales Puntacana Championship); arecoa.com replica el ángulo el 2026-10-14.",
+      "senal": "nuevo",
+      "lectura": "Mensaje de turismo deportivo repetido en dos medios en dos días consecutivos.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "2f038dc79342326d",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-10-23",
+      "movimiento": "Contenido patrocinado en Diario Libre sobre salud visual en el Este: centro de visión de Verón y más de 60 jornadas médicas desde 2006 con Fundación Grupo Puntacana.",
+      "senal": "nuevo",
+      "lectura": "Pauta pagada con foco en la labor de la fundación.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "8d4eded56ad69390",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-10-24",
+      "movimiento": "Imagen 'Cumpleaños de don Frank Rainieri, Centro Cultural Rainieri': 201 comentarios, likes ocultos. La cuenta centrorainieri publicó el 2026-10-23 un reel de la apertura del centro (71 comentarios, 23093 vistas).",
+      "senal": "nuevo",
+      "lectura": "El Centro Cultural Rainieri se comunica desde la cuenta del grupo y desde una cuenta propia.",
+      "fuentes": [
+        "apify"
+      ],
+      "metricas": {
+        "comentarios": 201
+      },
+      "id": "f1fa53a5d3287645",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    },
+    {
+      "marca": "Grupo PC",
+      "fecha": "2026-11-19",
+      "movimiento": "Una fuente secundaria (diariosocialrd.com) sitúa al grupo tercero en el ranking 'Empresas Factor de Éxito en Sostenibilidad 2026' con 75,34 sobre 100; la fecha exacta de publicación no está confirmada.",
+      "senal": "confuso",
+      "lectura": "El hecho consta solo en fuente secundaria y sin fecha, no se puede ubicar en la ventana.",
+      "fuentes": [
+        "web"
+      ],
+      "id": "2a41f750bd7ad092",
+      "corrida": "2026-11-20-1043-cnd-administrast"
+    }
+  ],
+  "publicaciones": [
+    {
+      "competidor": "Casa Brugal",
+      "url": "https://www.instagram.com/casabrugal/p/DfnNAHJCXO_/",
+      "fecha": "2026-11-11",
+      "formato": "imagen",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Casa Brugal",
+      "url": "https://www.instagram.com/casabrugal/p/DfVyR0ulbH_/",
+      "fecha": "2026-11-04",
+      "formato": "imagen",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Casa Brugal",
+      "url": "https://www.instagram.com/casabrugal/p/DeH5zhxCVsh/",
+      "fecha": "2026-10-05",
+      "formato": "imagen",
+      "fuente": "ig"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/Df4rribvrUj/",
+      "fecha": "2026-11-18",
+      "formato": "imagen",
+      "tema": "Merco Líderes RD 2026, Frank Elías Rainieri 1.º en reputación",
+      "likes": 864,
+      "comentarios": 30,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/DfnS8RNEXG6/",
+      "fecha": "2026-11-11",
+      "formato": "carrusel",
+      "tema": "WTM 2026, reconocimiento a Frank y Haydée Rainieri",
+      "likes": 389,
+      "comentarios": 14,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/DfVj6-LoLXX/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "Ranking MERCO Empresas RD 2026, líder en turismo",
+      "likes": 446,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/DfMxVRNoIvG/",
+      "fecha": "2026-11-01",
+      "formato": "carrusel",
+      "tema": "57 años construyendo mucho más que un destino",
+      "comentarios": 39,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/De4NwOEOIhm/",
+      "fecha": "2026-10-24",
+      "formato": "imagen",
+      "tema": "Cumpleaños de don Frank Rainieri, Centro Cultural Rainieri",
+      "comentarios": 201,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/DeP8sE6pBxb/",
+      "fecha": "2026-10-08",
+      "formato": "reel",
+      "tema": "WTTC Icon Award a Frank R. Rainieri (video)",
+      "comentarios": 206,
+      "vistas": 41580,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/DePWGvlFeHT/",
+      "fecha": "2026-10-08",
+      "formato": "carrusel",
+      "tema": "WTTC Icon Award, Cumbre Mundial en Malta",
+      "likes": 1387,
+      "comentarios": 78,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo PC",
+      "url": "https://www.instagram.com/p/Dd9q4rKFfeT/",
+      "fecha": "2026-10-01",
+      "formato": "reel",
+      "tema": "Volvamos a los 80, Aeropuerto de Punta Cana",
+      "likes": 166,
+      "comentarios": 6,
+      "vistas": 4759,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Df76sZlxe-7/",
+      "fecha": "2026-11-19",
+      "formato": "reel",
+      "tema": "Sorteo jersey Leones del Escogido",
+      "likes": 531,
+      "comentarios": 161,
+      "vistas": 6745,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Df7T1vxh3j0/",
+      "fecha": "2026-11-19",
+      "formato": "reel",
+      "tema": "Día Internacional del Hombre",
+      "likes": 134,
+      "comentarios": 6,
+      "vistas": 3874,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Df5gZxkJ7Sp/",
+      "fecha": "2026-11-18",
+      "formato": "imagen",
+      "tema": "Ligia Bonetti reconocida en MERCO Líderes RD 2026",
+      "likes": 305,
+      "comentarios": 21,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Df0E6EtJ0Jh/",
+      "fecha": "2026-11-16",
+      "formato": "imagen",
+      "tema": "Gestión estratégica, visión y valor a largo plazo",
+      "likes": 138,
+      "comentarios": 7,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfxLBxdp47F/",
+      "fecha": "2026-11-15",
+      "formato": "reel",
+      "tema": "Reforestación Bahía de las Calderas, 2,000 mangles",
+      "likes": 282,
+      "comentarios": 8,
+      "vistas": 6468,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfseaWalAtC/",
+      "fecha": "2026-11-13",
+      "formato": "carrusel",
+      "tema": "Ligia Bonetti en la X Feria de Emprendedores",
+      "likes": 174,
+      "comentarios": 6,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Dfpy_xPJY1H/",
+      "fecha": "2026-11-12",
+      "formato": "imagen",
+      "tema": "Día Mundial de la Calidad",
+      "likes": 148,
+      "comentarios": 12,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Dfnf67eFL_H/",
+      "fecha": "2026-11-11",
+      "formato": "carrusel",
+      "tema": "Congreso COPARDOM 2026, caso de bienestar laboral",
+      "likes": 189,
+      "comentarios": 7,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfZ-focjsrH/",
+      "fecha": "2026-11-06",
+      "formato": "carrusel",
+      "tema": "Trayectoria de Ana Patricia Rodríguez en MercaSID; vacantes",
+      "likes": 924,
+      "comentarios": 167,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfVnrNVlMHU/",
+      "fecha": "2026-11-04",
+      "formato": "carrusel",
+      "tema": "MERCO Empresas RD 2026, 1.º en Consumo Masivo",
+      "likes": 325,
+      "comentarios": 14,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfSKvyOlESj/",
+      "fecha": "2026-11-03",
+      "formato": "carrusel",
+      "tema": "Foto de los orígenes ajustada con ChatGPT",
+      "likes": 248,
+      "comentarios": 9,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfIVSh7p62Y/",
+      "fecha": "2026-10-30",
+      "formato": "reel",
+      "tema": "Ligia Bonetti en Congreso FECAICA, concepto CERCA",
+      "likes": 112,
+      "comentarios": 5,
+      "vistas": 2043,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DfDIYvVFFVm/",
+      "fecha": "2026-10-28",
+      "formato": "carrusel",
+      "tema": "Don Pedro lanza snacks de chicharrón horneado y popcorn",
+      "likes": 533,
+      "comentarios": 12,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/De-K4BkFLq2/",
+      "fecha": "2026-10-26",
+      "formato": "carrusel",
+      "tema": "Brigadistas de MercaSID",
+      "likes": 194,
+      "comentarios": 2,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/De2jaekFH73/",
+      "fecha": "2026-10-23",
+      "formato": "carrusel",
+      "tema": "Reconocimiento INFOTEP a MercaSID e Induveca por formación dual",
+      "likes": 226,
+      "comentarios": 13,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DezxF-CpvDF/",
+      "fecha": "2026-10-22",
+      "formato": "imagen",
+      "tema": "Great Place to Work Manufactura y Producción 2026",
+      "likes": 532,
+      "comentarios": 37,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DerYQofxjkX/",
+      "fecha": "2026-10-19",
+      "formato": "reel",
+      "tema": "Prevención del cáncer de mama, Fundación Caminantes por la Vida",
+      "likes": 640,
+      "comentarios": 27,
+      "vistas": 14731,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DehgCDClANE/",
+      "fecha": "2026-10-15",
+      "formato": "carrusel",
+      "tema": "Sorteo boletas juego inaugural Leones del Escogido",
+      "likes": 2571,
+      "comentarios": 337,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DehsG-gJYct/",
+      "fecha": "2026-10-15",
+      "formato": "reel",
+      "tema": "Renovación Oncología Ginecológica en Hospital Maternidad",
+      "likes": 51,
+      "comentarios": 2,
+      "vistas": 1599,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DeUuffjJCsS/",
+      "fecha": "2026-10-10",
+      "formato": "reel",
+      "tema": "Día Mundial de la Salud Mental",
+      "likes": 90,
+      "comentarios": 3,
+      "vistas": 2397,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DeSxuuEJNXa/",
+      "fecha": "2026-10-09",
+      "formato": "reel",
+      "tema": "ADOEXPO, Gran Exportador Dominicano",
+      "likes": 173,
+      "comentarios": 29,
+      "vistas": 3199,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/DeIA9RylNEc/",
+      "fecha": "2026-10-05",
+      "formato": "carrusel",
+      "tema": "EducaSID en la FIL Santo Domingo",
+      "likes": 50,
+      "comentarios": 0,
+      "fuente": "apify"
+    },
+    {
+      "competidor": "Grupo SID",
+      "url": "https://www.instagram.com/p/Dd-DiX8lEI-/",
+      "fecha": "2026-10-01",
+      "formato": "carrusel",
+      "tema": "Induveca reconocida por Grupo Ramos como Aliado Clave",
+      "likes": 394,
+      "comentarios": 32,
+      "fuente": "apify"
+    }
+  ],
+  "perfiles": [],
+  "lecturas": [
+    {
+      "competidor": "Casa Brugal",
+      "resumen": [
+        "Instagram: 3 publicaciones de formato imagen con fecha en la ventana (2026-11-11, 2026-11-04, 2026-10-05), según RECUENTOS; sin caption, tema ni cifras (Apify devolvió restricted_page).",
+        "Apify no devolvió ningún post con propietario casabrugal; solo un video de fundacionbrugal del 2026-10-19 (cuenta distinta), con 569 likes, 14 comentarios y 336604 vistas.",
+        "Web: sin notas, campañas, lanzamientos ni patrocinios fechados entre 2026-10-01 y 2026-11-19; el contenido hallado es de julio y agosto de 2026."
+      ]
+    },
+    {
+      "competidor": "Grupo SID",
+      "resumen": [
+        "23 publicaciones en Instagram en la ventana (8 reels, 4 imágenes, 11 carruseles): 8964 likes, 917 comentarios, 41056 vistas (8 reels con dato).",
+        "Temas: reconocimientos y rankings (MERCO, Great Place to Work, ADOEXPO), lanzamiento de snacks Don Pedro, Fundación Caminantes por la Vida, sorteos de Leones del Escogido, talento y vacantes en MercaSID, y fechas conmemorativas.",
+        "Mayores cifras: sorteo de boletas Leones (2571 likes, 337 comentarios, 2026-10-15) y trayectoria de Ana Patricia Rodríguez (924 likes, 167 comentarios, 2026-11-06).",
+        "Web: 4 comunicados en octubre (9, 14, 28 y 30), cada uno con publicación de Instagram el mismo día o el siguiente; sin notas en noviembre."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Replican los comunicados corporativos en Instagram casi simultáneamente: exportador (web 2026-10-09, reel 2026-10-09), Don Pedro (2026-10-28 ambos canales) y FECAICA (2026-10-30 ambos canales).",
+          "Dedican una parte relevante del feed a reconocimientos y rankings de reputación (GPTW 2026-10-22, MERCO Empresas 2026-11-04, MERCO Líderes 2026-11-18, ADOEXPO).",
+          "Usan sorteos de entradas y camiseta de los Leones del Escogido (2026-10-15 y 2026-11-19), con interacción alta en comentarios.",
+          "Publican contenido de talento interno y empleo (MercaSID, 2026-11-06), con interacción superior a la mayoría de publicaciones."
+        ],
+        "pilares": [
+          "Reconocimientos y reputación corporativa",
+          "Lanzamientos y negocio (Don Pedro, exportación)",
+          "Liderazgo de la presidenta ejecutiva",
+          "Responsabilidad social y sostenibilidad (Caminantes por la Vida, reforestación)",
+          "Talento y cultura interna",
+          "Sorteos y alianzas deportivas"
+        ],
+        "formatosYCadencia": "Carrusel como formato más frecuente (11 de 23), seguido de reels (8) e imágenes (4); 23 publicaciones en la ventana con presencia a lo largo de octubre y noviembre. Web con 4 comunicados solo en octubre.",
+        "implicaciones": [
+          "Vigilar la coordinación web e Instagram en lanzamientos, ya que se repite en tres casos.",
+          "Los sorteos con alianza deportiva generan la interacción más alta del conjunto; observar si se repiten.",
+          "Los rankings de reputación ocupan varias publicaciones; seguir si siguen apareciendo."
+        ],
+        "confianza": "alta",
+        "postsCitados": [
+          "https://www.instagram.com/p/DeSxuuEJNXa/",
+          "https://www.instagram.com/p/DfDIYvVFFVm/",
+          "https://www.instagram.com/p/DfIVSh7p62Y/",
+          "https://www.instagram.com/p/DezxF-CpvDF/",
+          "https://www.instagram.com/p/DfVnrNVlMHU/",
+          "https://www.instagram.com/p/Df5gZxkJ7Sp/",
+          "https://www.instagram.com/p/DehgCDClANE/",
+          "https://www.instagram.com/p/Df76sZlxe-7/",
+          "https://www.instagram.com/p/DfZ-focjsrH/"
+        ]
+      }
+    },
+    {
+      "competidor": "Grupo PC",
+      "resumen": [
+        "8 publicaciones en Instagram en la ventana (2 imágenes, 4 carruseles, 2 reels): 3252 likes (5 con dato; likes ocultos en 3), 580 comentarios, 46339 vistas (2 reels).",
+        "Temas: WTTC Icon Award a Frank Rainieri (2026-10-08, dos publicaciones), aniversario de 57 años (2026-11-01), Centro Cultural Rainieri (2026-10-24), rankings MERCO (2026-11-04 y 2026-11-18) y WTM 2026 (2026-11-11).",
+        "Mayor cifra: carrusel del WTTC Icon Award con 1387 likes y 78 comentarios; reel del mismo premio con 41580 vistas y 206 comentarios.",
+        "Web: nota con Manuel Sajour sobre turismo deportivo (2026-10-13, replicada 2026-10-14), contenido patrocinado de salud visual (2026-10-23) y campaña de aniversario en al menos 5 medios el 1 y 2 de noviembre."
+      ],
+      "estrategia": {
+        "hipotesis": [
+          "Centran el feed en reconocimientos al fundador y a la empresa: WTTC Icon Award (2026-10-08, carrusel y reel), MERCO Empresas (2026-11-04), WTM (2026-11-11) y MERCO Líderes (2026-11-18)."
+        ],
+        "pilares": [
+          "Reconocimientos y reputación",
+          "Aniversario e historia del grupo",
+          "Turismo deportivo",
+          "Fundación y salud",
+          "Arte y cultura (Centro Cultural Rainieri)"
+        ],
+        "formatosYCadencia": "Carrusel como formato más frecuente (4 de 8), con 2 reels e imágenes; 8 publicaciones en la ventana. En prensa, difusión concentrada el 1 y 2 de noviembre.",
+        "implicaciones": [
+          "Seguir si los reconocimientos continúan como eje del feed.",
+          "Observar la repetición de notas de prensa en varios medios en fechas clave, como el aniversario."
+        ],
+        "confianza": "media",
+        "postsCitados": [
+          "https://www.instagram.com/p/DePWGvlFeHT/",
+          "https://www.instagram.com/p/DeP8sE6pBxb/",
+          "https://www.instagram.com/p/DfVj6-LoLXX/",
+          "https://www.instagram.com/p/DfnS8RNEXG6/",
+          "https://www.instagram.com/p/Df4rribvrUj/"
+        ]
+      }
+    }
+  ],
+  "modo": "ui",
+  "maquina": "Administrastors-MacBook-Air.local",
+  "sessionId": "85784392-2ed3-4593-a08b-979a03a9e534",
+  "ig": {
+    "sesion": "ok"
+  }
+}
