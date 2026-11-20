@@ -23,6 +23,13 @@
       "url": "https://www.instagram.com/labanalisard/",
       "instagram": "labanalisard",
       "activo": true
+    },
+    {
+      "slug": "globular",
+      "nombre": "Globular",
+      "url": "https://www.instagram.com/globulab.rd/",
+      "instagram": "globulab.rd",
+      "activo": true
     }
   ]
 }
