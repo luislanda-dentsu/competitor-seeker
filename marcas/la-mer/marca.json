@@ -2,5 +2,27 @@
   "slug": "la-mer",
   "nombre": "La Mer",
   "creadaEn": "2026-11-20T14:11:33.236Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "hippolito",
+      "nombre": "Hippólito",
+      "url": "https://www.instagram.com/hippolitostore/",
+      "instagram": "hippolitostore",
+      "activo": true
+    },
+    {
+      "slug": "firmas",
+      "nombre": "Firmas",
+      "url": "https://www.instagram.com/tiendafirmas/",
+      "instagram": "tiendafirmas",
+      "activo": true
+    },
+    {
+      "slug": "azzurro",
+      "nombre": "Azzurro",
+      "url": "https://www.instagram.com/tienda_azzurro/",
+      "instagram": "tienda_azzurro",
+      "activo": true
+    }
+  ]
 }
