@@ -16,6 +16,13 @@
       "url": "https://www.instagram.com/crest/",
       "instagram": "crest",
       "activo": true
+    },
+    {
+      "slug": "listerin",
+      "nombre": "Listerin",
+      "url": "https://www.instagram.com/listerine/",
+      "instagram": "listerine",
+      "activo": true
     }
   ]
 }
