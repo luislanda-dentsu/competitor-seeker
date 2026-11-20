@@ -2,5 +2,13 @@
   "slug": "oral-care",
   "nombre": "Oral care",
   "creadaEn": "2026-11-20T14:37:53.295Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "oral-b",
+      "nombre": "Oral B",
+      "url": "https://www.instagram.com/oralb/",
+      "instagram": "oralb",
+      "activo": true
+    }
+  ]
 }
