@@ -2,5 +2,34 @@
   "slug": "la-colonial",
   "nombre": "La Colonial",
   "creadaEn": "2026-11-20T14:17:36.746Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "humano",
+      "nombre": "Humano",
+      "url": "https://www.instagram.com/humanoseguros/",
+      "instagram": "humanoseguros",
+      "activo": true
+    },
+    {
+      "slug": "universal",
+      "nombre": "Universal",
+      "url": "https://www.instagram.com/universal_rd/",
+      "instagram": "universal_rd",
+      "activo": true
+    },
+    {
+      "slug": "reservas",
+      "nombre": "Reservas",
+      "url": "https://www.instagram.com/segurosreservasrd/",
+      "instagram": "segurosreservasrd",
+      "activo": true
+    },
+    {
+      "slug": "mapfre-bhd",
+      "nombre": "Mapfre BHD",
+      "url": "https://www.instagram.com/mapfrebhd/",
+      "instagram": "mapfrebhd",
+      "activo": true
+    }
+  ]
 }
