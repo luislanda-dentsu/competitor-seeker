@@ -9,6 +9,13 @@
       "url": "https://www.instagram.com/labreferencia/",
       "instagram": "labreferencia",
       "activo": true
+    },
+    {
+      "slug": "patria-rivas",
+      "nombre": "Patria Rivas",
+      "url": "https://www.instagram.com/labpatriarivas/",
+      "instagram": "labpatriarivas",
+      "activo": true
     }
   ]
 }
