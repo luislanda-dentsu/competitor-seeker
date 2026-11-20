@@ -2,5 +2,27 @@
   "slug": "desinfectantes",
   "nombre": "Desinfectantes",
   "creadaEn": "2026-11-20T15:30:07.501Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "lysol",
+      "nombre": "Lysol",
+      "url": "https://www.instagram.com/lysol/",
+      "instagram": "lysol",
+      "activo": true
+    },
+    {
+      "slug": "clorox",
+      "nombre": "Clorox",
+      "url": "https://www.instagram.com/clorox/",
+      "instagram": "clorox",
+      "activo": true
+    },
+    {
+      "slug": "mistolin",
+      "nombre": "Mistolin",
+      "url": "https://www.instagram.com/mistolinrd/",
+      "instagram": "mistolinrd",
+      "activo": true
+    }
+  ]
 }
