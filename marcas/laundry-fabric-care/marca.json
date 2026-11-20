@@ -23,6 +23,13 @@
       "url": "https://www.instagram.com/omo_rd/",
       "instagram": "omo_rd",
       "activo": true
+    },
+    {
+      "slug": "comfort",
+      "nombre": "Comfort",
+      "url": "https://www.instagram.com/suavizantecomfort/?hl=es",
+      "instagram": "suavizantecomfort",
+      "activo": true
     }
   ]
 }
