@@ -2,5 +2,13 @@
   "slug": "body-care",
   "nombre": "Body Care",
   "creadaEn": "2026-11-20T15:40:27.793Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "dove",
+      "nombre": "Dove",
+      "url": "https://www.instagram.com/dove/",
+      "instagram": "dove",
+      "activo": true
+    }
+  ]
 }
