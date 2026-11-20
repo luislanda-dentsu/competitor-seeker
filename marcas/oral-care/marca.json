@@ -9,6 +9,13 @@
       "url": "https://www.instagram.com/oralb/",
       "instagram": "oralb",
       "activo": true
+    },
+    {
+      "slug": "crest",
+      "nombre": "Crest",
+      "url": "https://www.instagram.com/crest/",
+      "instagram": "crest",
+      "activo": true
     }
   ]
 }
