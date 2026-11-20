@@ -2,5 +2,13 @@
   "slug": "laboratorio-clinico",
   "nombre": "Laboratorio Clinico",
   "creadaEn": "2026-11-20T15:53:04.887Z",
-  "competidores": []
+  "competidores": [
+    {
+      "slug": "referencia",
+      "nombre": "Referencia",
+      "url": "https://www.instagram.com/labreferencia/",
+      "instagram": "labreferencia",
+      "activo": true
+    }
+  ]
 }
